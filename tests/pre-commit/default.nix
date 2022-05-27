@@ -1,6 +1,6 @@
-{ pkgs, lib }:
+{ pkgs, plugins }:
 let
-  output = lib.mkPreCommit {
+  output = plugins.pre-commit.mkConfig {
     config = {
       repos = [
         {

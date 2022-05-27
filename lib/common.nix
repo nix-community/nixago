@@ -1,10 +1,10 @@
 { pkgs, lib }:
 {
-  mkModule = { data, files, output, shellHookExtra ? "", flags ? { } }:
+  mkTemplate = { data, files, output, shellHookExtra ? "", flags ? { } }:
     with pkgs.lib;
     (evalModules {
       modules = [
-        ../modules/generator.nix
+        ../modules/template.nix
         {
           inherit data files output shellHookExtra;
         }

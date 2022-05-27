@@ -1,9 +1,9 @@
 { pkgs, lib }:
 { config }:
 let
-  result = lib.common.mkModule {
+  result = lib.common.mkTemplate {
     data = { data = config; };
-    files = [ ../cue/just.cue ];
+    files = [ ./template.cue ];
     output = ".justfile";
     flags = {
       expression = "rendered";

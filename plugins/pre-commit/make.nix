@@ -25,10 +25,10 @@ let
   '';
 
   # Generate the module
-  result = lib.common.mkModule {
+  result = lib.common.mkTemplate {
     inherit shellHookExtra;
     data = config;
-    files = [ ../cue/pre-commit.cue ];
+    files = [ ./template.cue ];
     output = ".pre-commit-config.yaml";
   };
 in

@@ -12,6 +12,7 @@
       let
         pkgs = import nixpkgs { inherit system; };
         lib = self.lib.${system};
+        plugins = self.plugins.${system};
 
         preCommitConfig = {
           repos = [
@@ -29,7 +30,7 @@
             }
           ];
         };
-        preCommit = lib.mkPreCommit { config = preCommitConfig; };
+        preCommit = plugins.pre-commit.mkConfig { config = preCommitConfig; };
 
         justConfig = {
           tasks = {
@@ -38,11 +39,11 @@
             ];
           };
         };
-        just = lib.mkJust { config = justConfig; };
+        just = plugins.just.mkConfig { config = justConfig; };
       in
       {
         checks = {
-          pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs lib; };
+          pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
         };
 
         lib = {
@@ -51,6 +52,8 @@
           mkJust = import ./lib/just.nix { inherit pkgs lib; };
           mkPreCommit = import ./lib/pre-commit.nix { inherit pkgs lib; };
         };
+
+        plugins = import ./plugins { inherit pkgs lib; };
 
         devShell = pkgs.mkShell {
           shellHook = preCommit.shellHook + "\n" + just.shellHook;
