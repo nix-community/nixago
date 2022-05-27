@@ -1,3 +1,17 @@
+/* A module for generating configuration files.
+
+  This module does the actual work of generating a configuration file from its
+  option values. Underneath the hood, it calls out to `cue-eval` via the
+  `nix-cue` pkg (see the default value for the `configFile` option). The `files`
+  option should contain a list of files to evaluate, `output` should be the name
+  of the file to output, and the `data` option should be set to a nix expression
+  which will provide concrete data to evaluate with. The `configFile` option
+  will be a derivation that builds the configuration file and `shellHook` will
+  contain a small shellHook for automatically linking (and updating) the
+  configuration file to the current working directory. The `shellHookExtra`
+  option can be set to define extra shell commands to run when the configuration
+  file is regenerated due to the underlying data changing.
+*/
 { config, lib, nix-cue, pkgs, ... }@args:
 with pkgs.lib;
 let
