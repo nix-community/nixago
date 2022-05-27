@@ -2,6 +2,9 @@
 let
   output = plugins.just.mkConfig {
     config = {
+      head = ''
+        var := "value"
+      '';
       tasks = {
         task1 = [
           ''echo "Doing the thing"''
