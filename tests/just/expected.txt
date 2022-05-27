@@ -1,0 +1,7 @@
+
+
+task1:
+    echo "Doing the thing"
+    @doThing
+    
+

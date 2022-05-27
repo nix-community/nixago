@@ -59,6 +59,7 @@
 
         # Local tests
         checks = {
+          just = pkgs.callPackage ./tests/just { inherit pkgs plugins; };
           pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
         };
 
