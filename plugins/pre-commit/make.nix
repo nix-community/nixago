@@ -10,7 +10,7 @@ let
   shellHookExtra = (import ./common.nix { inherit pre-commit stagesStr; }).shellHookExtra;
 
   # Generate the module
-  result = lib.common.mkTemplate {
+  result = lib.mkTemplate {
     inherit shellHookExtra;
     data = config;
     files = [ ./template.cue ];

@@ -14,45 +14,58 @@
         lib = self.lib.${system};
         plugins = self.plugins.${system};
 
+        mkTools = tools: (builtins.listToAttrs
+          (
+            builtins.map
+              (tool:
+                pkgs.lib.nameValuePair (pkgs.lib.getName tool) { pkg = tool; exe = pkgs.lib.getExe tool; })
+              tools
+          ) // { all = tools; });
+
+        # Define development tools
+        tools = mkTools [
+          pkgs.cue
+          pkgs.just
+          pkgs.nixpkgs-fmt
+          pkgs.pre-commit
+        ];
+
+        # Create pre-commit configuration
         preCommitConfig = {
           nixpkgs-fmt = {
-            entry = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
+            entry = tools.nixpkgs-fmt.exe;
             language = "system";
             files = "\\.nix";
           };
         };
         preCommit = plugins.pre-commit.mkLocalConfig { config = preCommitConfig; };
 
+        # Create justfile
         justConfig = {
           tasks = {
             fmt = [
-              "@${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt $(git ls-files **/*.nix)"
+              "@${tools.nixpkgs-fmt.exe} $(git ls-files **/*.nix)"
             ];
           };
         };
         just = plugins.just.mkConfig { config = justConfig; };
       in
       {
+        # Load lib functions
+        lib = (import ./lib { inherit pkgs lib; }) // { nix-cue = nix-cue.lib.${system}; };
+
+        # Load plugins
+        plugins = import ./plugins { inherit pkgs lib; };
+
+        # Local tests
         checks = {
           pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
         };
 
-        lib = {
-          nix-cue = nix-cue.lib.${system};
-          common = import ./lib/common.nix { inherit pkgs lib; };
-          mkJust = import ./lib/just.nix { inherit pkgs lib; };
-          mkPreCommit = import ./lib/pre-commit.nix { inherit pkgs lib; };
-        };
-
-        plugins = import ./plugins { inherit pkgs lib; };
-
+        # Local shell for development
         devShell = pkgs.mkShell {
           shellHook = preCommit.shellHook + "\n" + just.shellHook;
-          packages = [
-            pkgs.cue
-            pkgs.just
-            pkgs.pre-commit
-          ];
+          packages = tools.all;
         };
       }
     );

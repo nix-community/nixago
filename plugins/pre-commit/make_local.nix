@@ -25,7 +25,7 @@ let
   };
 
   # Generate the module
-  result = lib.common.mkTemplate {
+  result = lib.mkTemplate {
     inherit data shellHookExtra;
     files = [ ./template.cue ];
     output = ".pre-commit-config.yaml";

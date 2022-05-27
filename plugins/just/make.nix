@@ -1,7 +1,7 @@
 { pkgs, lib }:
 { config }:
 let
-  result = lib.common.mkTemplate {
+  result = lib.mkTemplate {
     data = { data = config; };
     files = [ ./template.cue ];
     output = ".justfile";
