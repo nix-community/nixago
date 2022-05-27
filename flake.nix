@@ -15,22 +15,13 @@
         plugins = self.plugins.${system};
 
         preCommitConfig = {
-          repos = [
-            {
-              repo = "local";
-              hooks = [
-                {
-                  id = "nixpkgs-fmt";
-                  name = "nixpkgs-fmt";
-                  entry = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
-                  language = "system";
-                  files = "\\.nix";
-                }
-              ];
-            }
-          ];
+          nixpkgs-fmt = {
+            entry = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
+            language = "system";
+            files = "\\.nix";
+          };
         };
-        preCommit = plugins.pre-commit.mkConfig { config = preCommitConfig; };
+        preCommit = plugins.pre-commit.mkLocalConfig { config = preCommitConfig; };
 
         justConfig = {
           tasks = {
