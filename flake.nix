@@ -28,18 +28,29 @@
           ];
         };
         preCommit = lib.mkPreCommit { config = preCommitConfig; };
+
+        justConfig = {
+          tasks = {
+            fmt = [
+              "@${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt $(git ls-files **/*.nix)"
+            ];
+          };
+        };
+        just = lib.mkJust { config = justConfig; };
       in
       {
         lib = {
           nix-cue = nix-cue.lib.${system};
           common = import ./lib/common.nix { inherit pkgs lib; };
+          mkJust = import ./lib/just.nix { inherit pkgs lib; };
           mkPreCommit = import ./lib/pre-commit.nix { inherit pkgs lib; };
         };
 
         devShell = pkgs.mkShell {
-          shellHook = preCommit.shellHook;
+          shellHook = preCommit.shellHook + "\n" + just.shellHook;
           packages = [
             pkgs.cue
+            pkgs.just
             pkgs.pre-commit
           ];
         };
