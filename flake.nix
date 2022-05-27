@@ -64,7 +64,7 @@
 
         # Local shell for development
         devShell = pkgs.mkShell {
-          shellHook = preCommit.shellHook + "\n" + just.shellHook;
+          shellHook = lib.mkShellHook [ preCommit just ];
           packages = tools.all;
         };
       }
