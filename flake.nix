@@ -62,10 +62,15 @@
           pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
         };
 
-        # Local shell for development
-        devShell = pkgs.mkShell {
-          shellHook = lib.mkShellHook [ preCommit just ];
-          packages = tools.all;
+        # Local shell for development.
+        # The shell does not currently build on i686-linux machines due to a
+        # downstream dependency of pkgs.pre-commit.
+        # See: https://github.com/NixOS/nixpkgs/issues/174847
+        devShells = nixpkgs.lib.optionalAttrs (system != "i686-linux") {
+          default = pkgs.mkShell {
+            shellHook = lib.mkShellHook [ preCommit just ];
+            packages = tools.all;
+          };
         };
       }
     );
