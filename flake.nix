@@ -40,11 +40,12 @@
         # Create justfile
         justConfig = {
           tasks = {
-            "check" = [
+            check = [
+              "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
               "@nix flake check"
             ];
-            "fmt flags=''" = [
-              "@${tools.nixpkgs-fmt.exe} {{ flags }} flake.nix $(git ls-files '**/*.nix')"
+            fmt = [
+              "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
             ];
           };
         };
