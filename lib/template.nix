@@ -19,7 +19,7 @@ let
         inherit data files output shellHookExtra;
       }
     ];
-    specialArgs = ({ inherit (lib) nix-cue; inherit pkgs; } // flags);
+    specialArgs = ({ inherit pkgs; flakeLib = lib; } // flags);
   };
 in
 result.config

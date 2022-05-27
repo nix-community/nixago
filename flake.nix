@@ -2,12 +2,9 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
-    nix-cue.url = "github:jmgilman/nix-cue";
-    nix-cue.inputs.nixpkgs.follows = "nixpkgs";
-    nix-cue.inputs.flake-utils.follows = "flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, nix-cue }:
+  outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -52,7 +49,7 @@
       in
       {
         # Load lib functions
-        lib = (import ./lib { inherit pkgs lib; }) // { nix-cue = nix-cue.lib.${system}; };
+        lib = (import ./lib { inherit pkgs lib; });
 
         # Load plugins
         plugins = import ./plugins { inherit pkgs lib; };

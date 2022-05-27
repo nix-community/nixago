@@ -12,11 +12,11 @@
   option can be set to define extra shell commands to run when the configuration
   file is regenerated due to the underlying data changing.
 */
-{ config, lib, nix-cue, pkgs, ... }@args:
+{ config, lib, flakeLib, pkgs, ... }@args:
 with pkgs.lib;
 let
   inherit (lib) mkOption types;
-  flags = removeAttrs args [ "config" "lib" "nix-cue" "pkgs" "options" "specialArgs" ];
+  flags = removeAttrs args [ "config" "lib" "flakeLib" "pkgs" "options" "specialArgs" ];
   hook = ''
     # Check if the link is pointing to the existing derivation result
       if readlink ${config.output} >/dev/null \
@@ -41,9 +41,8 @@ in
     configFile = mkOption {
       type = types.package;
       description = "The generated configuration file";
-      default = nix-cue.eval
+      default = flakeLib.eval
         ({
-          inherit pkgs;
           inputFiles = config.files;
           outputFile = config.output;
           data = config.data;

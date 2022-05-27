@@ -15,29 +15,6 @@
         "type": "github"
       }
     },
-    "nix-cue": {
-      "inputs": {
-        "flake-utils": [
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1653602243,
-        "narHash": "sha256-eb8vR6XpF1/TEW4GNSvAYKvz4+hFM/FM4+euFP+1AFk=",
-        "owner": "jmgilman",
-        "repo": "nix-cue",
-        "rev": "3a1bd771b7bfab05ed6856a1b79485aaa8f47079",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jmgilman",
-        "repo": "nix-cue",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1653618409,
@@ -56,7 +33,6 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nix-cue": "nix-cue",
         "nixpkgs": "nixpkgs"
       }
     }
