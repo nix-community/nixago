@@ -3,6 +3,8 @@
     nixpkgs.url = "github:nixos/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
     nix-cue.url = "github:jmgilman/nix-cue";
+    nix-cue.inputs.nixpkgs.follows = "nixpkgs";
+    nix-cue.inputs.flake-utils.follows = "flake-utils";
   };
 
   outputs = { self, nixpkgs, flake-utils, nix-cue }:
@@ -39,6 +41,10 @@
         just = lib.mkJust { config = justConfig; };
       in
       {
+        checks = {
+          pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs lib; };
+        };
+
         lib = {
           nix-cue = nix-cue.lib.${system};
           common = import ./lib/common.nix { inherit pkgs lib; };

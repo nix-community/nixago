@@ -1,0 +1,5 @@
+repos:
+  - hooks:
+      - id: my-hook
+    repo: https://github.com/my/repo
+    rev: "1.0"
