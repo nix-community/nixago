@@ -2,7 +2,7 @@
   Evaluates the given input files and data and returns a derivation which builds the result.
 */
 { pkgs, lib }:
-{ inputFiles, outputFile, data ? { }, cue ? pkgs.cue, ... }@args:
+{ inputFiles, outputFile, postBuild ? "", data ? { }, cue ? pkgs.cue, ... }@args:
 with pkgs.lib;
 let
   json = optionalString (data != { }) (builtins.toJSON data);
@@ -10,7 +10,7 @@ let
   defaultFlags = {
     outfile = "$out";
   };
-  extraFlags = removeAttrs args [ "inputFiles" "outputFile" "data" "cue" ];
+  extraFlags = removeAttrs args [ "inputFiles" "outputFile" "postBuild" "data" "cue" ];
 
   allFlags = defaultFlags // extraFlags;
   allInputs = inputFiles ++ optionals (json != "") [ "json: $jsonPath" ];
@@ -29,6 +29,7 @@ let
     ''
       echo "nixago: Rendering output..."
       ${cueEvalCmd}
+      ${postBuild}
     '';
 in
 result

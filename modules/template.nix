@@ -46,6 +46,7 @@ in
           inputFiles = config.files;
           outputFile = config.output;
           data = config.data;
+          postBuild = config.postBuild;
         } // flags);
     };
     data = mkOption {
@@ -59,6 +60,11 @@ in
     output = mkOption {
       type = types.str;
       description = "The name of the file to generate";
+    };
+    postBuild = mkOption {
+      type = types.str;
+      description = "Commands to run after the configuration is built";
+      default = "";
     };
     shellHook = mkOption {
       type = types.str;
