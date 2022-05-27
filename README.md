@@ -1,6 +1,6 @@
-# nix-dev-template
+# Nixago
 
-> Automatically generate common configuration file for your development environment
+> Generate configuration files with Nix + CUE
 
 ## Usage
 
