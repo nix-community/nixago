@@ -76,7 +76,7 @@ nix flake check
 
 ## Contributing
 
-Check out the [issues][1] for items needing attention or submit your own and
+Check out the [issues][5] for items needing attention or submit your own and
 then:
 
 1. Fork the repo (<https://github.com/jmgilman/nix-dev-template/fork>)
@@ -88,4 +88,5 @@ then:
 [1]: https://nixos.org/
 [2]: https://cuelang.org/
 [3]: https://cuelang.org/docs/integrations/
-[1]: https://github.com/jmgilman/nix-dev-template/issues
+[4]: https://pre-commit.com/
+[5]: https://github.com/jmgilman/nix-dev-template/issues
