@@ -6,6 +6,7 @@ let
     files = [ ./template.cue ];
     output = ".justfile";
     postBuild = ''
+      cat $out
       ${pkgs.just}/bin/just --unstable --fmt -f $out
     '';
     flags = {

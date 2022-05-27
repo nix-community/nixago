@@ -1,5 +1,6 @@
 package just
 
+import "strings"
 import "text/template"
 
 #Config: {
@@ -9,15 +10,22 @@ import "text/template"
 
 data: #Config
 
+_final: {
+    head: data.head
+    tasks: {
+        for task, steps in data.tasks {
+            "\(task)": strings.Join(steps, "\n    ")
+        }
+    }
+}
+
 tmpl:
 """
 {{ .head -}}
-{{ range $name, $tasks := .tasks -}}
-    {{ $name -}}:
-    {{ range $tasks -}}
-        {{ . }}
-    {{ end }}
+{{ range $name, $steps := .tasks }}
+{{ $name }}:
+    {{ $steps }}
 {{- end }}
 """
 
-rendered: template.Execute(tmpl, data)
+rendered: template.Execute(tmpl, _final)
