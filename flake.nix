@@ -56,33 +56,33 @@
           pkgs.python39Packages.pymdown-extensions
         ];
 
-        # Create pre-commit configuration
-        preCommitConfig = {
-          nixpkgs-fmt = {
-            entry = tools.nixpkgs-fmt.exe;
-            language = "system";
-            files = "\\.nix";
+        # Define development tool configuration
+        configurations = {
+          # Pre-commit configuration
+          "pre-commit.mkLocalConfig" = {
+            nixpkgs-fmt = {
+              entry = tools.nixpkgs-fmt.exe;
+              language = "system";
+              files = "\\.nix";
+            };
+          };
+          # Just configuration
+          "just.mkConfig" = {
+            tasks = {
+              check = [
+                "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
+                "@nix flake check"
+                "@mkdocs build --strict && rm -rf site"
+              ];
+              deploy = [
+                "@mkdocs gh-deploy --force"
+              ];
+              fmt = [
+                "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
+              ];
+            };
           };
         };
-        preCommit = plugins.pre-commit.mkLocalConfig preCommitConfig;
-
-        # Create justfile
-        justConfig = {
-          tasks = {
-            check = [
-              "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
-              "@nix flake check"
-              "@mkdocs build --strict && rm -rf site"
-            ];
-            deploy = [
-              "@mkdocs gh-deploy --force"
-            ];
-            fmt = [
-              "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
-            ];
-          };
-        };
-        just = plugins.just.mkConfig justConfig;
       in
       {
         # Load lib functions
@@ -107,7 +107,7 @@
         # See: https://github.com/NixOS/nixpkgs/pull/171388
         devShells = nixpkgs.lib.optionalAttrs (!builtins.elem system [ "i686-linux" "x86_64-darwin" ]) {
           default = pkgs.mkShell {
-            shellHook = lib.mkShellHook [ preCommit just ];
+            shellHook = (lib.mkAll configurations).shellHook;
             packages = tools.all ++ deps;
           };
         };

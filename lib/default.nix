@@ -2,6 +2,8 @@
 {
   eval = import ./eval.nix { inherit pkgs lib; };
 
+  mkAll = import ./all.nix { inherit pkgs lib; };
+
   /* Combines the shellHook from multiple configurations into one.
   */
   mkShellHook = configs: builtins.concatStringsSep "\n" (pkgs.lib.catAttrs "shellHook" configs);
