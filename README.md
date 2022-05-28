@@ -84,7 +84,7 @@ nix flake check
 [Read this][6], check out the [issues][7] for items needing attention or submit
 your own and then:
 
-1. Fork the repo (<https://github.com/jmgilman/nix-dev-template/fork>)
+1. Fork the repo (<https://github.com/jmgilman/nixago/fork>)
 2. Create your feature branch (git checkout -b feature/fooBar)
 3. Commit your changes (git commit -am 'Add some fooBar')
 4. Push to the branch (git push origin feature/fooBar)
@@ -96,4 +96,4 @@ your own and then:
 [4]: https://pre-commit.com/
 [5]: https://jmgilman.github.io/nixago/
 [6]: https://jmgilman.github.io/nixago/contributing/
-[7]: https://github.com/jmgilman/nix-dev-template/issues
+[7]: https://github.com/jmgilman/nixago/issues
