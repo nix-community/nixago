@@ -71,7 +71,11 @@
           tasks = {
             check = [
               "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
-              "nix flake check"
+              "@nix flake check"
+              "@mkdocs build --strict && rm -rf site"
+            ];
+            deploy = [
+              "@mkdocs gh-deploy --force"
             ];
             fmt = [
               "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"

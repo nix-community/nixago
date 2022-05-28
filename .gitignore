@@ -1,3 +1,4 @@
 .direnv/
 .justfile
 .pre-commit-config.yaml
+site/
