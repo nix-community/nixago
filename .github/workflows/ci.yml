@@ -12,9 +12,7 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    env:
-      NIXPKGS_ALLOW_BROKEN: 1 # watchdog marked as broken: https://github.com/NixOS/nixpkgs/issues/175032
     steps:
     - uses: actions/checkout@v2
     - uses: cachix/install-nix-action@v17
-    - run: nix develop --impure -c just check
+    - run: nix develop -c just check

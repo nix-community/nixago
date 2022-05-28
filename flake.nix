@@ -71,7 +71,8 @@
           tasks = {
             check = [
               "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
-              "@nix flake check"
+              # watchdog marked as broken: https://github.com/NixOS/nixpkgs/issues/175032
+              "@NIXPKGS_ALLOW_BROKEN=1 nix flake check --impure"
             ];
             fmt = [
               "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
