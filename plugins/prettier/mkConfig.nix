@@ -1,12 +1,13 @@
 { pkgs, lib }:
-{ config }:
+data:
 with pkgs.lib;
 let
+  files = [ ./template.cue ];
+  output = ".prettierrc.json";
+
   # Generate the module
   result = lib.mkTemplate {
-    data = config;
-    files = [ ./template.cue ];
-    output = ".prettierrc.json";
+    inherit data files output;
   };
 in
 {

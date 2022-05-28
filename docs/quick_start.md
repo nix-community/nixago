@@ -25,7 +25,7 @@ Choose a plugin to use. The below example uses the plugin for [pre-commit][1]:
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig { config = preCommitConfig; };
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig preCommitConfig;
 # ...
 }
 ```

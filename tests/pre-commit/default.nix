@@ -1,19 +1,17 @@
 { pkgs, plugins }:
 let
   output = plugins.pre-commit.mkConfig {
-    config = {
-      repos = [
-        {
-          repo = "https://github.com/my/repo";
-          rev = "1.0";
-          hooks = [
-            {
-              id = "my-hook";
-            }
-          ];
-        }
-      ];
-    };
+    repos = [
+      {
+        repo = "https://github.com/my/repo";
+        rev = "1.0";
+        hooks = [
+          {
+            id = "my-hook";
+          }
+        ];
+      }
+    ];
   };
 
   result = pkgs.runCommand "test.pre-commit"

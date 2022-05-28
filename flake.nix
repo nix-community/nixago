@@ -64,7 +64,7 @@
             files = "\\.nix";
           };
         };
-        preCommit = plugins.pre-commit.mkLocalConfig { config = preCommitConfig; };
+        preCommit = plugins.pre-commit.mkLocalConfig preCommitConfig;
 
         # Create justfile
         justConfig = {
@@ -82,7 +82,7 @@
             ];
           };
         };
-        just = plugins.just.mkConfig { config = justConfig; };
+        just = plugins.just.mkConfig justConfig;
       in
       {
         # Load lib functions

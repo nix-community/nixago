@@ -50,7 +50,7 @@ development tools. For example, a [pre-commit][4] configuration:
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig { config = preCommitConfig; };
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig preCommitConfig;
 # ...
 }
 ```

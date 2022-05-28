@@ -1,19 +1,17 @@
 { pkgs, plugins }:
 let
   output = plugins.prettier.mkConfig {
-    config = {
-      arrowParens = "always";
-      bracketSpacing = true;
-      tabWidth = 80;
-      overrides = [
-        {
-          files = "*.js";
-          options = {
-            semi = true;
-          };
-        }
-      ];
-    };
+    arrowParens = "always";
+    bracketSpacing = true;
+    tabWidth = 80;
+    overrides = [
+      {
+        files = "*.js";
+        options = {
+          semi = true;
+        };
+      }
+    ];
   };
 
   result = pkgs.runCommand "test.prettier"
