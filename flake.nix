@@ -7,7 +7,28 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+          # Temp fix for: https://github.com/NixOS/nixpkgs/issues/175032
+          overlays = [
+            (
+              self: super: {
+                python39 = super.python39.override {
+                  packageOverrides = python-self: python-super: {
+                    watchdog = python-super.watchdog.overrideAttrs (oldAttrs: {
+                      disabledTestPaths = [
+                        "tests/test_inotify_buffer.py"
+                        "tests/test_emitter.py"
+                        "tests/test_0_watchmedo.py"
+                        "tests/test_fsevents.py"
+                      ];
+                    });
+                  };
+                };
+              }
+            )
+          ];
+        };
         lib = self.lib.${system};
         plugins = self.plugins.${system};
 
@@ -23,8 +44,16 @@
         tools = mkTools [
           pkgs.cue
           pkgs.just
+          pkgs.mkdocs
           pkgs.nixpkgs-fmt
           pkgs.pre-commit
+        ];
+
+        # Define development dependencies
+        deps = [
+          pkgs.python39Packages.mkdocs-material
+          pkgs.python39Packages.pygments
+          pkgs.python39Packages.pymdown-extensions
         ];
 
         # Create pre-commit configuration
@@ -71,7 +100,7 @@
         devShells = nixpkgs.lib.optionalAttrs (system != "i686-linux") {
           default = pkgs.mkShell {
             shellHook = lib.mkShellHook [ preCommit just ];
-            packages = tools.all;
+            packages = tools.all ++ deps;
           };
         };
       }

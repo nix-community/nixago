@@ -1,0 +1,25 @@
+site_name: Nixago Docs
+
+repo_name: "nixago"
+repo_url: "https://github.com/jmgilman/nixago"
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - 'Quick Start': quick_start.md
+  - Plugins:
+    - Overview: plugins/overview.md
+    - Just: plugins/just.md
+    - Pre-commit: plugins/pre-commit.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      auto_title: true
+      linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
