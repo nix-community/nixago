@@ -95,5 +95,5 @@ your own and then:
 [3]: https://cuelang.org/docs/integrations/
 [4]: https://pre-commit.com/
 [5]: https://jmgilman.github.io/nixago/
-[6]: https://jmgilman.github.io/nixago/contributing/
+[6]: https://jmgilman.github.io/nixago/contributing/design
 [7]: https://github.com/jmgilman/nixago/issues
