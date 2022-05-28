@@ -4,5 +4,5 @@
 
     See template.cue for the expected format of incoming data.
   */
-  mkConfig = import ./make.nix { inherit pkgs lib; };
+  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
 }

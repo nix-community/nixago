@@ -4,7 +4,7 @@
 
     See template.cue for the expected format of incoming data.
   */
-  mkConfig = import ./make.nix { inherit pkgs lib; };
+  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
 
   /* Like mkConfig except it takes a simplified data input for creating local hooks.
 
@@ -13,5 +13,5 @@
     manage them. This function is optimized for this use-case and takes a
     simplified data input. See the docs for more information.
   */
-  mkLocalConfig = import ./make_local.nix { inherit pkgs lib; };
+  mkLocalConfig = import ./mkLocalConfig.nix { inherit pkgs lib; };
 }

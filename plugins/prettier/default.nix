@@ -2,5 +2,5 @@
 {
   /* Creates a .prettierrc.json file for configuring prettier.
   */
-  mkConfig = import ./make.nix { inherit pkgs lib; };
+  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
 }
