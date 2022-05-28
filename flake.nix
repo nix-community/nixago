@@ -47,6 +47,7 @@
           pkgs.mkdocs
           pkgs.nixpkgs-fmt
           pkgs.pre-commit
+          pkgs.nodePackages.prettier
         ];
 
         # Define development dependencies
@@ -58,19 +59,12 @@
 
         # Define development tool configuration
         configurations = {
-          # Pre-commit configuration
-          "pre-commit.mkLocalConfig" = {
-            nixpkgs-fmt = {
-              entry = tools.nixpkgs-fmt.exe;
-              language = "system";
-              files = "\\.nix";
-            };
-          };
           # Just configuration
           "just.mkConfig" = {
             tasks = {
               check = [
                 "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
+                "@${tools.prettier.exe} -c ."
                 "@nix flake check"
                 "@mkdocs build --strict && rm -rf site"
               ];
@@ -79,9 +73,23 @@
               ];
               fmt = [
                 "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
+                "@${tools.prettier.exe} -w ."
               ];
             };
           };
+          # Pre-commit configuration
+          "pre-commit.mkLocalConfig" = {
+            nixpkgs-fmt = {
+              entry = tools.nixpkgs-fmt.exe;
+              language = "system";
+              files = "\\.nix";
+            };
+          };
+          # Prettier
+          "prettier.mkIgnoreConfig" = [
+            ".direnv"
+            "tests"
+          ];
         };
       in
       {

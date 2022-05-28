@@ -22,9 +22,9 @@ Produces the following `.prettierrc.json`:
 
 ```json
 {
-    "arrowParens": "always",
-    "bracketSpacing": true,
-    "tabWidth": 80
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "tabWidth": 80
 }
 ```
 
@@ -52,17 +52,17 @@ Produces:
 
 ```json
 {
-    "arrowParens": "always",
-    "bracketSpacing": true,
-    "overrides": [
-        {
-            "files": "*.js",
-            "options": {
-                "semi": true
-            }
-        }
-    ],
-    "tabWidth": 80
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "overrides": [
+    {
+      "files": "*.js",
+      "options": {
+        "semi": true
+      }
+    }
+  ],
+  "tabWidth": 80
 }
 ```
 

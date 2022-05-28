@@ -26,7 +26,7 @@ the format needed for the configuration file.
 ## Plugins
 
 The main interface that Nixago provides is through its [plugin][4]
-infrastructure.  A plugin is simply a small wrapper which generates a
+infrastructure. A plugin is simply a small wrapper which generates a
 configuration file for a specific tool. The structure of plugins is consistent
 in that they ingest data from the user and produce an instance of the
 [template module](#templates). This module provides a derivation which will

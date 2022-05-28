@@ -43,13 +43,13 @@ advanced cases may require multiple files. The file should be called
 When creating the CUE file, keep the following in mind:
 
 - The schema defined in the file should be sufficient enough to prevent most
-configuration mistakes.
+  configuration mistakes.
 
 - If the tool being supported has rich documentation around valid values for
-each configuration field, use constraints to improve the accuracy of the schema.
+  each configuration field, use constraints to improve the accuracy of the schema.
 
 - Don't be overly strict with the schema definition. The goal is to be helpful
-and not generate a large number of false negatives.
+  and not generate a large number of false negatives.
 
 Here is the `template.nix` file for our pre-commit plugin:
 

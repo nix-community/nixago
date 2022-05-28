@@ -4,20 +4,20 @@ on:
     branches:
       - master
     paths:
-      - 'docs/**'
+      - "docs/**"
   workflow_dispatch:
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: cachix/install-nix-action@v17
-    - uses: cachix/cachix-action@v10
-      with:
-        name: jmgilman
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - run: nix develop -c just check
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v17
+      - uses: cachix/cachix-action@v10
+        with:
+          name: jmgilman
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - run: nix develop -c just check
   docs:
     runs-on: ubuntu-latest
     needs: [check]
@@ -27,5 +27,5 @@ jobs:
       - uses: cachix/cachix-action@v10
         with:
           name: jmgilman
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
       - run: nix develop -c just deploy
