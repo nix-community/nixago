@@ -2,7 +2,10 @@
 
 <p align="center">
     <a href="https://github.com/jmgilman/nixago/actions/workflows/ci.yml">
-        <img src="https://github.com/jmgilman/nixago/actions/workflows/ci.yml/badge.svg"/>
+        <img src="https://img.shields.io/github/workflow/status/jmgilman/nixago/CI?label=CI"/>
+    </a>
+    <a href="https://jmgilman.github.io/nixago">
+        <img src="https://img.shields.io/github/workflow/status/jmgilman/nixago/CI?label=Docs"/>
     </a>
     <img src="https://img.shields.io/github/license/jmgilman/nixago"/>
     <a href="https://builtwithnix.org">
@@ -66,6 +69,8 @@ changes and re-link as necessary.
 }
 ```
 
+See [the docs][5] for more information.
+
 ## Testing
 
 Tests can be run with:
@@ -76,8 +81,8 @@ nix flake check
 
 ## Contributing
 
-Check out the [issues][5] for items needing attention or submit your own and
-then:
+[Read this][6], check out the [issues][7] for items needing attention or submit
+your own and then:
 
 1. Fork the repo (<https://github.com/jmgilman/nix-dev-template/fork>)
 2. Create your feature branch (git checkout -b feature/fooBar)
@@ -89,4 +94,6 @@ then:
 [2]: https://cuelang.org/
 [3]: https://cuelang.org/docs/integrations/
 [4]: https://pre-commit.com/
-[5]: https://github.com/jmgilman/nix-dev-template/issues
+[5]: https://jmgilman.github.io/nixago/
+[6]: https://jmgilman.github.io/nixago/contributing/
+[7]: https://github.com/jmgilman/nix-dev-template/issues
