@@ -13,6 +13,7 @@ nav:
     - Overview: plugins/overview.md
     - Just: plugins/just.md
     - Pre-commit: plugins/pre-commit.md
+    - Prettier: plugins/prettier.md
   - Contributing: contributing.md
 
 markdown_extensions:

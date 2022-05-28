@@ -1,0 +1,13 @@
+{
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "overrides": [
+        {
+            "files": "*.js",
+            "options": {
+                "semi": true
+            }
+        }
+    ],
+    "tabWidth": 80
+}

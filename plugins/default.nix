@@ -7,4 +7,8 @@
   /* https://github.com/pre-commit/pre-commit
   */
   pre-commit = import ./pre-commit { inherit pkgs lib; };
+
+  /* https://github.com/prettier/prettier
+  */
+  prettier = import ./prettier { inherit pkgs lib; };
 }

@@ -95,6 +95,7 @@
         checks = {
           just = pkgs.callPackage ./tests/just { inherit pkgs plugins; };
           pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
+          prettier = pkgs.callPackage ./tests/prettier { inherit pkgs plugins; };
         };
 
         # Local shell for development.
