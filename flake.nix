@@ -71,8 +71,7 @@
           tasks = {
             check = [
               "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
-              # watchdog marked as broken: https://github.com/NixOS/nixpkgs/issues/175032
-              "@NIXPKGS_ALLOW_BROKEN=1 nix flake check --impure"
+              "nix flake check"
             ];
             fmt = [
               "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
@@ -98,7 +97,10 @@
         # The shell does not currently build on i686-linux machines due to a
         # downstream dependency of pkgs.pre-commit.
         # See: https://github.com/NixOS/nixpkgs/issues/174847
-        devShells = nixpkgs.lib.optionalAttrs (system != "i686-linux") {
+        # The shell also does not currently work on x86_64-darwin due to a
+        # downstream dependency of mkdocs.
+        # See: https://github.com/NixOS/nixpkgs/pull/171388
+        devShells = nixpkgs.lib.optionalAttrs (!builtins.elem system [ "i686-linux" "x86_64-darwin" ]) {
           default = pkgs.mkShell {
             shellHook = lib.mkShellHook [ preCommit just ];
             packages = tools.all ++ deps;
