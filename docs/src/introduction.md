@@ -1,4 +1,4 @@
-# Nixago
+# Introduction
 
 Nixago is a [flake][1] library that provides functions for generating
 configuration files using [Nix][2] and [Cue][3]. It's primary use is for

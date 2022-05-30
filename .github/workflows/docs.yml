@@ -17,7 +17,7 @@ jobs:
         with:
           name: jmgilman
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-      - run: nix develop -c just check
+      - run: nix develop -c just check-docs
   docs:
     runs-on: ubuntu-latest
     needs: [check]
@@ -28,4 +28,8 @@ jobs:
         with:
           name: jmgilman
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-      - run: nix develop -c just deploy
+      - run: nix develop -c just make-docs
+      - uses: JamesIves/github-pages-deploy-action@4.3.3
+        with:
+          branch: gh-pages
+          folder: docs/book

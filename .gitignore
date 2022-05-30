@@ -1,5 +1,6 @@
 .direnv/
 .justfile
 .prettierignore
+docs/book
 site/
 lefthook.yml

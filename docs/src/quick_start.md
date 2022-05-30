@@ -58,4 +58,4 @@ repos:
     repo: local
 ```
 
-[1]: https://github.com/jmgilman/nix-dev-template/issues
+[1]: https://pre-commit.com/

@@ -9,25 +9,6 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          # Temp fix for: https://github.com/NixOS/nixpkgs/issues/175032
-          overlays = [
-            (
-              self: super: {
-                python39 = super.python39.override {
-                  packageOverrides = python-self: python-super: {
-                    watchdog = python-super.watchdog.overrideAttrs (oldAttrs: {
-                      disabledTestPaths = [
-                        "tests/test_inotify_buffer.py"
-                        "tests/test_emitter.py"
-                        "tests/test_0_watchmedo.py"
-                        "tests/test_fsevents.py"
-                      ];
-                    });
-                  };
-                };
-              }
-            )
-          ];
         };
         lib = self.lib.${system};
         plugins = self.plugins.${system};
@@ -45,16 +26,10 @@
           pkgs.cue
           pkgs.just
           pkgs.lefthook
-          pkgs.mkdocs
+          pkgs.mdbook
           pkgs.nixpkgs-fmt
           pkgs.nodePackages.prettier
-        ];
-
-        # Define development dependencies
-        deps = [
-          pkgs.python39Packages.mkdocs-material
-          pkgs.python39Packages.pygments
-          pkgs.python39Packages.pymdown-extensions
+          pkgs.typos
         ];
 
         # Define development tool configuration
@@ -65,11 +40,14 @@
               check = [
                 "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
                 "@${tools.prettier.exe} --check ."
+                "@${tools.typos.exe}"
                 "@nix flake check"
-                "@mkdocs build --strict && rm -rf site"
               ];
-              deploy = [
-                "@mkdocs gh-deploy --force"
+              check-docs = [
+                "@${tools.typos.exe}"
+              ];
+              make-docs = [
+                "@cd docs && mdbook build"
               ];
               fmt = [
                 "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
@@ -88,6 +66,9 @@
                 prettier = {
                   run = "${tools.prettier.exe} --check {staged_files}";
                   glob = "*.{yaml,yml,md}";
+                };
+                typos = {
+                  run = "${tools.typos.exe} {staged_files}";
                 };
               };
             };
@@ -115,13 +96,11 @@
           prettier = pkgs.callPackage ./tests/prettier { inherit pkgs plugins; };
         };
 
-        # The shell does not currently work on x86_64-darwin due to a
-        # downstream dependency of mkdocs.
-        # See: https://github.com/NixOS/nixpkgs/pull/171388
-        devShells = nixpkgs.lib.optionalAttrs (!builtins.elem system [ "x86_64-darwin" ]) {
+        # Local development shell
+        devShells = {
           default = pkgs.mkShell {
             shellHook = (lib.mkAll configurations).shellHook;
-            packages = tools.all ++ deps;
+            packages = tools.all;
           };
         };
       }

@@ -1,7 +1,7 @@
-# Nixago Design
+# Design
 
 When contributing to Nixago, it's important to understand the general design
-priciples that guide its development. This section provides details on how the
+principles that guide its development. This section provides details on how the
 library is structured and introduces the basic concepts required to effectively
 contribute to it.
 

@@ -1,4 +1,4 @@
-# Creating Plugins
+# Plugins
 
 Contributing plugins to Nixago is a multi-step process. Fortunately, the design
 of Nixago makes these steps relatively straightforward.
@@ -260,7 +260,7 @@ result
 The test is made up of two parts: a sample configuration is generated and then
 it is compared to a known expected output. The test will be provided an instance
 of `plugins` in order to access functions for testing. The usage of `runCommand`
-in the second part wil necessarily build the derivation which is returned from
+in the second part will necessarily build the derivation which is returned from
 the function.
 
 The second step is to create the expected output. In this case, the above

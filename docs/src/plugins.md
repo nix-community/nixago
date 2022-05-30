@@ -1,4 +1,4 @@
-# Overview
+# Plugins
 
 Nixago provides most functionality through plugins. Each plugin targets a
 specific configuration by providing a clean interface for end-users. While most
