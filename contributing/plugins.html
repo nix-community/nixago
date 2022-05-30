@@ -1,0 +1,421 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Plugins - Nixago</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html"><strong aria-hidden="true">2.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">2.1.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">2.2.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">2.3.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">2.4.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">3.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">3.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html" class="active"><strong aria-hidden="true">3.2.</strong> Plugins</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Nixago</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="plugins"><a class="header" href="#plugins">Plugins</a></h1>
+<p>Contributing plugins to Nixago is a multi-step process. Fortunately, the design
+of Nixago makes these steps relatively straightforward.</p>
+<h2 id="checklist"><a class="header" href="#checklist">Checklist</a></h2>
+<p>The following is a useful checklist to go over before submitting a PR:</p>
+<ol>
+<li>Is the plugin named after the tool it supports?</li>
+<li>Does the plugin have a dedicated directory under <a href="https://github.com/jmgilman/nixago/tree/master/plugins">plugins</a>?</li>
+<li>Was the plugin added to the main <a href="https://github.com/jmgilman/nixago/blob/master/plugins/default.nix">default.nix</a>?</li>
+<li>Does the plugin have tests written for it?</li>
+<li>Have the tests been added to the <a href="https://github.com/jmgilman/nixago/blob/master/flake.nix">flake.nix</a> <code>checks</code> output?</li>
+<li>Does the plugin have a dedicated page in the documentation?</li>
+</ol>
+<p>If you answered yes to all of the above questions you are ready to submit a PR!</p>
+<h2 id="creating-a-plugin"><a class="header" href="#creating-a-plugin">Creating a Plugin</a></h2>
+<p>Creating a plugin encompasses three primary tasks:</p>
+<ol>
+<li>Create a CUE file</li>
+<li>Create the Nix functions</li>
+<li>Write tests and documentation</li>
+</ol>
+<p>Each plugin should be isolated to a dedicated directory under <a href="https://github.com/jmgilman/nixago/tree/master/plugins">plugins</a>. The
+first step is to create a new directory with the name of the plugin. The name
+should ideally indicate the tool that it supports (i.e. the plugin for the
+Prettier formatter is simply called <code>prettier</code>).</p>
+<p>The remainder of this section will walk through creating a plugin for the
+<a href="https://pre-commit.com/">pre-commit</a> CLI tool. The plugin will generate a <code>.pre-commit-config.yaml</code>
+file which is used to configure the pre-commit tool.</p>
+<h3 id="creating-the-cue-file"><a class="header" href="#creating-the-cue-file">Creating the CUE file</a></h3>
+<p>Review the <a href="design.html#cue">CUE section</a> of the design page for more information
+about CUE. Each plugin typically utilizes a single CUE file, although more
+advanced cases may require multiple files. The file should be called
+<code>template.cue</code>.</p>
+<p>When creating the CUE file, keep the following in mind:</p>
+<ul>
+<li>
+<p>The schema defined in the file should be sufficient enough to prevent most
+configuration mistakes.</p>
+</li>
+<li>
+<p>If the tool being supported has rich documentation around valid values for
+each configuration field, use constraints to improve the accuracy of the schema.</p>
+</li>
+<li>
+<p>Don't be overly strict with the schema definition. The goal is to be helpful
+and not generate a large number of false negatives.</p>
+</li>
+</ul>
+<p>Here is the <code>template.nix</code> file for our pre-commit plugin:</p>
+<pre><code class="language-cue">#Config: {
+    default_install_hook_types?: [...string]
+    default_language_version?: [string]: string
+    default_stages?: [...string]
+    files?: string
+    exclude?: string
+    fail_fast?: bool
+    minimum_pre_commit_version?: string
+    repos: [...#Repo]
+}
+
+#Hook: {
+    additional_dependencies?: [...string]
+    alias?: string
+    always_run?: bool
+    args?: [...string]
+    entry?: string
+    exclude?: string
+    exclude_types?: [...string]
+    files?: string
+    id: string
+    language?: string
+    language_version?: string
+    log_file?: string
+    name?: string
+    stages?: [...string]
+    types?: [...string]
+    types_or?: [...string]
+    verbose?: bool
+}
+
+#Repo: {
+    repo: string
+    rev?: string
+    if repo != &quot;local&quot; {
+        rev: string
+    }
+    hooks: [...#Hook]
+}
+
+{
+    #Config
+}
+</code></pre>
+<p>This file defines three <a href="https://cuetorials.com/overview/types-and-values/#definitions">definitions</a>, notated by the <code>#</code> symbol. A
+definition can be thought of as a schema or contract. It defines the shape of
+valid data through various constraints. Let's break one down:</p>
+<pre><code class="language-cue">#Repo: {
+    repo: string
+    rev?: string
+    if repo != &quot;local&quot; {
+        rev: string
+    }
+    hooks: [...#Hook]
+}
+</code></pre>
+<p>The <code>pre-commit-config.yaml</code> file has a <code>repos</code> field which is a list of
+repositories that pre-commit should build from. The <code>#Repo</code> definition provides
+the schema for these entries. Each entry must have a <code>repo</code> field which is a
+string value. The <code>rev</code> field is an interesting one: it's only optional if the
+<code>repo</code> field is set to &quot;local&quot;. The above first sets the <code>rev</code> field to optional
+using the <code>?</code> symbol and then conditonally sets it to required based on the
+value of <code>repo</code>. Finally, each entry has a list of hooks, denoted by the
+<code>[...#Hooks]</code> syntax.</p>
+<pre><code class="language-cue">{
+    #Config
+}
+</code></pre>
+<p>This final bit is where we define the actual elements of the CUE file. This is
+what will appear when we evaluate the CUE file. In the above case, we're saying
+the input data should be a <a href="https://cuetorials.com/overview/types-and-values/#structs">struct</a> which conforms to the schema defined by
+<code>#Config</code>.</p>
+<p>In this case, we're doing no additional transformations to the incoming data.
+This is because we're expecting the input data to already be in the format
+expected in the <code>.pre-commit-config.yaml</code> file. Since YAML is a superset of
+JSON, we can easily ask CUE to evaluate the input and produce a YAML output.</p>
+<h3 id="creating-the-nix-functions"><a class="header" href="#creating-the-nix-functions">Creating the Nix Functions</a></h3>
+<p>With the CUE file created, the next step is to create our main Nix function. In
+this case, we're going to create a single function for generating our
+configuration file.</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+data:
+with pkgs.lib;
+let
+  files = [ ./template.cue ];
+  output = &quot;.pre-commit-config.yaml&quot;;
+  pre-commit = pkgs.pre-commit;
+
+  # Add an extra hook for reinstalling required stages whenever the file changes
+  stages = unique (flatten (builtins.map (repo: builtins.map (hook: optionals (hook ? stages) hook.stages) repo.hooks) data.repos) ++ [ &quot;pre-commit&quot; ]);
+  stagesStr = builtins.concatStringsSep &quot; &quot; stages;
+  shellHookExtra = (import ./common.nix { inherit pre-commit stagesStr; }).shellHookExtra;
+
+  # Generate the module
+  result = lib.mkTemplate {
+    inherit data files output shellHookExtra;
+  };
+in
+{
+  inherit (result) configFile shellHook;
+}
+</code></pre>
+<p>All functions maintain the same basic structure. At the top we accept an
+attribute set as the first argument which pulls in local copies of <code>nixpkgs</code>
+and the internal <code>lib</code> provided by the flake. The second argument should always
+be named <code>data</code> and will contain the data passed in by the end-user.</p>
+<p>The top of the function should declare the <code>files</code> and <code>output</code> variables. The
+<code>files</code> variable should point to the CUE file we previously created. The
+<code>output</code> variable should contain the name of the configuration file the plugin
+is generating. Note that the extension of the configuration file is important.
+CUE uses the file extension to determine what format to output when our CUE file
+is evaluated. <a href="https://cuelang.org/docs/integrations/">See here</a> for supported formats.</p>
+<p>The remainder of the function is specific to each plugin. In the case above,
+we gather all of the pre-commit <code>stages</code> settings to determine what stages of
+the pre-commit process should be installed when the configuration is generated.
+We then create <code>shellHookExtra</code> which contains the necessary logic for
+installing the stages.</p>
+<p>At the very end, the internal <code>mkTemplate</code> function is called. For more details
+about this function, <a href="design.html#templates">see here</a>.</p>
+<p>In order for our plugin to be picked up by the main flake, we must take two
+additional steps. The first is creating a <code>default.nix</code> in our plugin directory
+that exports our function:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+{
+  /* Creates a .pre-commit-config.yaml file for configuring pre-commit.
+  */
+  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
+}
+</code></pre>
+<p>This will allow the <code>mkConfig</code> function to be accessible under
+<code>nixago.plugins.{myPlugin}.mkConfig</code>. Finally, we must create an entry in the
+main <code>default.nix</code>:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+{
+  # ...
+
+  /* https://github.com/pre-commit/pre-commit
+  */
+  pre-commit = import ./pre-commit { inherit pkgs lib; };
+
+  # ....
+}
+</code></pre>
+<p>This registers the plugin to make it accessible from <code>nixago.plugins</code>.</p>
+<h3 id="writing-tests-and-documentation"><a class="header" href="#writing-tests-and-documentation">Writing Tests and Documentation</a></h3>
+<p>The final step is to write tests and documentation for the plugin. Tests are
+added in the <a href="https://github.com/jmgilman/nixago/tree/master/tests">tests</a> directory in a dedicated directory named after the
+plugin. Tests are fairly trivial to write.</p>
+<p>The first step is to create a <code>default.nix</code> which runs the test:</p>
+<pre><code class="language-nix">{ pkgs, plugins }:
+let
+  output = plugins.pre-commit.mkConfig {
+    repos = [
+      {
+        repo = &quot;https://github.com/my/repo&quot;;
+        rev = &quot;1.0&quot;;
+        hooks = [
+          {
+            id = &quot;my-hook&quot;;
+          }
+        ];
+      }
+    ];
+  };
+
+  result = pkgs.runCommand &quot;test.pre-commit&quot;
+    { }
+    ''
+      cmp &quot;${./expected.yml}&quot; &quot;${output.configFile}&quot;
+      touch $out
+    '';
+in
+result
+</code></pre>
+<p>The test is made up of two parts: a sample configuration is generated and then
+it is compared to a known expected output. The test will be provided an instance
+of <code>plugins</code> in order to access functions for testing. The usage of <code>runCommand</code>
+in the second part will necessarily build the derivation which is returned from
+the function.</p>
+<p>The second step is to create the expected output. In this case, the above
+invocation should create the following output:</p>
+<pre><code class="language-yaml">repos:
+  - hooks:
+      - id: my-hook
+    repo: https://github.com/my/repo
+    rev: &quot;1.0&quot;
+</code></pre>
+<p>The generateed output will be compared to this and the test will fail if a
+difference is found.</p>
+<p>The final step is to add the tests to the <code>checks</code> output in the main
+<code>flake.nix</code> file:</p>
+<pre><code class="language-nix">{
+    checks = {
+        #...
+        pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
+        #...
+    };
+}
+</code></pre>
+<p>Finally, before submitting a PR, documentation should be added under the
+<a href="https://github.com/jmgilman/nixago/tree/master/docs/plugins">plugins</a> section of the documentation. This should cover general usage
+information about the plugin including an example invocation.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../contributing/design.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../contributing/design.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
