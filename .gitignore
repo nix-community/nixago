@@ -1,5 +1,5 @@
 .direnv/
 .justfile
-.pre-commit-config.yaml
 .prettierignore
 site/
+lefthook.yml

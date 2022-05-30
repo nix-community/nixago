@@ -4,6 +4,10 @@
   */
   just = import ./just { inherit pkgs lib; };
 
+  /* https://github.com/evilmartians/lefthook
+  */
+  lefthook = import ./lefthook { inherit pkgs lib; };
+
   /* https://github.com/pre-commit/pre-commit
   */
   pre-commit = import ./pre-commit { inherit pkgs lib; };

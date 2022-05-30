@@ -44,9 +44,9 @@
         tools = mkTools [
           pkgs.cue
           pkgs.just
+          pkgs.lefthook
           pkgs.mkdocs
           pkgs.nixpkgs-fmt
-          pkgs.pre-commit
           pkgs.nodePackages.prettier
         ];
 
@@ -64,7 +64,7 @@
             tasks = {
               check = [
                 "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
-                "@${tools.prettier.exe} -c ."
+                "@${tools.prettier.exe} --check ."
                 "@nix flake check"
                 "@mkdocs build --strict && rm -rf site"
               ];
@@ -77,18 +77,26 @@
               ];
             };
           };
-          # Pre-commit configuration
-          "pre-commit.mkLocalConfig" = {
-            nixpkgs-fmt = {
-              entry = tools.nixpkgs-fmt.exe;
-              language = "system";
-              files = "\\.nix";
+          # Lefthook configuration
+          "lefthook.mkConfig" = {
+            pre-commit = {
+              commands = {
+                nixpkgs-fmt = {
+                  run = "${tools.nixpkgs-fmt.exe} --check {staged_files}";
+                  glob = "*.nix";
+                };
+                prettier = {
+                  run = "${tools.prettier.exe} --check {staged_files}";
+                  glob = "*.{yaml,yml,md}";
+                };
+              };
             };
           };
           # Prettier
           "prettier.mkIgnoreConfig" = [
             ".direnv"
             "tests"
+            "lefthook.yml"
           ];
         };
       in
@@ -102,18 +110,15 @@
         # Local tests
         checks = {
           just = pkgs.callPackage ./tests/just { inherit pkgs plugins; };
+          lefthook = pkgs.callPackage ./tests/lefthook { inherit pkgs plugins; };
           pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
           prettier = pkgs.callPackage ./tests/prettier { inherit pkgs plugins; };
         };
 
-        # Local shell for development.
-        # The shell does not currently build on i686-linux machines due to a
-        # downstream dependency of pkgs.pre-commit.
-        # See: https://github.com/NixOS/nixpkgs/issues/174847
-        # The shell also does not currently work on x86_64-darwin due to a
+        # The shell does not currently work on x86_64-darwin due to a
         # downstream dependency of mkdocs.
         # See: https://github.com/NixOS/nixpkgs/pull/171388
-        devShells = nixpkgs.lib.optionalAttrs (!builtins.elem system [ "i686-linux" "x86_64-darwin" ]) {
+        devShells = nixpkgs.lib.optionalAttrs (!builtins.elem system [ "x86_64-darwin" ]) {
           default = pkgs.mkShell {
             shellHook = (lib.mkAll configurations).shellHook;
             packages = tools.all ++ deps;
