@@ -58,4 +58,85 @@ repos:
     repo: local
 ```
 
+## Making Multiple Configurations
+
+A utility function is provided for generating multiple configurations. The
+following is an excerpt from the `flake.nix` that manages this project:
+
+```nix
+{
+# Define development tool configuration
+    configurations = {
+        # Just configuration
+        "just" = {
+            tasks = {
+                check = [
+                    "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
+                    "@${tools.prettier.exe} --check ."
+                    "@${tools.typos.exe}"
+                    "@nix flake check"
+                ];
+                check-docs = [
+                    "@${tools.typos.exe}"
+                ];
+                make-docs = [
+                    "@cd docs && mdbook build"
+                ];
+                fmt = [
+                    "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
+                    "@${tools.prettier.exe} -w ."
+                ];
+            };
+        };
+        # Lefthook configuration
+        "lefthook" = {
+        pre-commit = {
+            commands = {
+                nixpkgs-fmt = {
+                    run = "${tools.nixpkgs-fmt.exe} --check {staged_files}";
+                    glob = "*.nix";
+                };
+                prettier = {
+                    run = "${tools.prettier.exe} --check {staged_files}";
+                    glob = "*.{yaml,yml,md}";
+                };
+                typos = {
+                    run = "${tools.typos.exe} {staged_files}";
+                };
+            };
+        };
+        };
+        # Prettier
+        "prettier.mkIgnoreConfig" = [
+            ".direnv"
+            "tests"
+            "lefthook.yml"
+        ];
+    };
+
+    # ...
+
+    # Local development shell
+    devShells = {
+        default = pkgs.mkShell {
+            shellHook = (lib.mkAll configurations).shellHook;
+            packages = tools.all;
+        };
+    };
+}
+```
+
+The input to `mkAll` expects an attribute set where the name is one of the
+following:
+
+1. A path to the function to be called, relative to the `plugins` set (i.e. `prettier.mkIgnoreConfig`)
+2. The name of a plugin
+
+In the second case, the `default` function will be called from the plugin. See
+the individual plugins for which function this is. The second parameter is the
+configuration to be passed to the function. The result of the function is an
+attribute set which has a unified `shellHook` attribute that contains all of the
+logic for managing the configurations. This makes it seamless to add additional
+configurations to your existing projects.
+
 [1]: https://pre-commit.com/

@@ -12,7 +12,8 @@ let
   plugins = import ../plugins { inherit pkgs lib; };
   makeAll = name: data: (
     let
-      path = pkgs.lib.splitString "." name;
+      # If the input is not in the `plugin.function` format, assume we want `plugin.default`
+      path = let s = pkgs.lib.splitString "." name; in if (builtins.length (s) > 1) then s else [ name "default" ];
       make = pkgs.lib.getAttrFromPath path plugins;
     in
     make data

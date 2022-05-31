@@ -1,5 +1,7 @@
 { pkgs, lib }:
-{
+rec {
+  default = mkConfig;
+
   /* Creates a .pre-commit-config.yaml file for configuring pre-commit.
 
     See template.cue for the expected format of incoming data.

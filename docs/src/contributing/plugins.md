@@ -196,7 +196,9 @@ that exports our function:
 
 ```nix
 { pkgs, lib }:
-{
+rec {
+  default = mkConfig;
+
   /* Creates a .pre-commit-config.yaml file for configuring pre-commit.
   */
   mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
@@ -204,8 +206,11 @@ that exports our function:
 ```
 
 This will allow the `mkConfig` function to be accessible under
-`nixago.plugins.{myPlugin}.mkConfig`. Finally, we must create an entry in the
-main `default.nix`:
+`nixago.plugins.{myPlugin}.mkConfig`. Setting the `default` attribute is
+recommended, otherwise the plugin may not play well with the `mkAll` function.
+It should be set to most widely used function.
+
+Finally, we must create an entry in the main `default.nix`:
 
 ```nix
 { pkgs, lib }:

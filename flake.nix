@@ -35,7 +35,7 @@
         # Define development tool configuration
         configurations = {
           # Just configuration
-          "just.mkConfig" = {
+          "just" = {
             tasks = {
               check = [
                 "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
@@ -56,7 +56,7 @@
             };
           };
           # Lefthook configuration
-          "lefthook.mkConfig" = {
+          "lefthook" = {
             pre-commit = {
               commands = {
                 nixpkgs-fmt = {
