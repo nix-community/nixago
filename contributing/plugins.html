@@ -306,15 +306,19 @@ about this function, <a href="design.html#templates">see here</a>.</p>
 additional steps. The first is creating a <code>default.nix</code> in our plugin directory
 that exports our function:</p>
 <pre><code class="language-nix">{ pkgs, lib }:
-{
+rec {
+  default = mkConfig;
+
   /* Creates a .pre-commit-config.yaml file for configuring pre-commit.
   */
   mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
 }
 </code></pre>
 <p>This will allow the <code>mkConfig</code> function to be accessible under
-<code>nixago.plugins.{myPlugin}.mkConfig</code>. Finally, we must create an entry in the
-main <code>default.nix</code>:</p>
+<code>nixago.plugins.{myPlugin}.mkConfig</code>. Setting the <code>default</code> attribute is
+recommended, otherwise the plugin may not play well with the <code>mkAll</code> function.
+It should be set to most widely used function.</p>
+<p>Finally, we must create an entry in the main <code>default.nix</code>:</p>
 <pre><code class="language-nix">{ pkgs, lib }:
 {
   # ...

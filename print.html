@@ -188,6 +188,82 @@ file with the following contents:</p>
         name: nixpkgs-fmt
     repo: local
 </code></pre>
+<h2 id="making-multiple-configurations"><a class="header" href="#making-multiple-configurations">Making Multiple Configurations</a></h2>
+<p>A utility function is provided for generating multiple configurations. The
+following is an excerpt from the <code>flake.nix</code> that manages this project:</p>
+<pre><code class="language-nix">{
+# Define development tool configuration
+    configurations = {
+        # Just configuration
+        &quot;just&quot; = {
+            tasks = {
+                check = [
+                    &quot;@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')&quot;
+                    &quot;@${tools.prettier.exe} --check .&quot;
+                    &quot;@${tools.typos.exe}&quot;
+                    &quot;@nix flake check&quot;
+                ];
+                check-docs = [
+                    &quot;@${tools.typos.exe}&quot;
+                ];
+                make-docs = [
+                    &quot;@cd docs &amp;&amp; mdbook build&quot;
+                ];
+                fmt = [
+                    &quot;@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')&quot;
+                    &quot;@${tools.prettier.exe} -w .&quot;
+                ];
+            };
+        };
+        # Lefthook configuration
+        &quot;lefthook&quot; = {
+        pre-commit = {
+            commands = {
+                nixpkgs-fmt = {
+                    run = &quot;${tools.nixpkgs-fmt.exe} --check {staged_files}&quot;;
+                    glob = &quot;*.nix&quot;;
+                };
+                prettier = {
+                    run = &quot;${tools.prettier.exe} --check {staged_files}&quot;;
+                    glob = &quot;*.{yaml,yml,md}&quot;;
+                };
+                typos = {
+                    run = &quot;${tools.typos.exe} {staged_files}&quot;;
+                };
+            };
+        };
+        };
+        # Prettier
+        &quot;prettier.mkIgnoreConfig&quot; = [
+            &quot;.direnv&quot;
+            &quot;tests&quot;
+            &quot;lefthook.yml&quot;
+        ];
+    };
+
+    # ...
+
+    # Local development shell
+    devShells = {
+        default = pkgs.mkShell {
+            shellHook = (lib.mkAll configurations).shellHook;
+            packages = tools.all;
+        };
+    };
+}
+</code></pre>
+<p>The input to <code>mkAll</code> expects an attribute set where the name is one of the
+following:</p>
+<ol>
+<li>A path to the function to be called, relative to the <code>plugins</code> set (i.e. <code>prettier.mkIgnoreConfig</code>)</li>
+<li>The name of a plugin</li>
+</ol>
+<p>In the second case, the <code>default</code> function will be called from the plugin. See
+the individual plugins for which function this is. The second parameter is the
+configuration to be passed to the function. The result of the function is an
+attribute set which has a unified <code>shellHook</code> attribute that contains all of the
+logic for managing the configurations. This makes it seamless to add additional
+configurations to your existing projects.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="plugins"><a class="header" href="#plugins">Plugins</a></h1>
 <p>Nixago provides most functionality through plugins. Each plugin targets a
 specific configuration by providing a clean interface for end-users. While most
@@ -634,15 +710,19 @@ about this function, <a href="contributing/design.html#templates">see here</a>.<
 additional steps. The first is creating a <code>default.nix</code> in our plugin directory
 that exports our function:</p>
 <pre><code class="language-nix">{ pkgs, lib }:
-{
+rec {
+  default = mkConfig;
+
   /* Creates a .pre-commit-config.yaml file for configuring pre-commit.
   */
   mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
 }
 </code></pre>
 <p>This will allow the <code>mkConfig</code> function to be accessible under
-<code>nixago.plugins.{myPlugin}.mkConfig</code>. Finally, we must create an entry in the
-main <code>default.nix</code>:</p>
+<code>nixago.plugins.{myPlugin}.mkConfig</code>. Setting the <code>default</code> attribute is
+recommended, otherwise the plugin may not play well with the <code>mkAll</code> function.
+It should be set to most widely used function.</p>
+<p>Finally, we must create an entry in the main <code>default.nix</code>:</p>
 <pre><code class="language-nix">{ pkgs, lib }:
 {
   # ...
