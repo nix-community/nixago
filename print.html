@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="plugins/index.html"><strong aria-hidden="true">2.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="plugins/just.html"><strong aria-hidden="true">2.1.</strong> Just</a></li><li class="chapter-item expanded "><a href="plugins/lefthook.html"><strong aria-hidden="true">2.2.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="plugins/pre-commit.html"><strong aria-hidden="true">2.3.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="plugins/prettier.html"><strong aria-hidden="true">2.4.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="contributing/index.html"><strong aria-hidden="true">3.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="contributing/design.html"><strong aria-hidden="true">3.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="contributing/plugins.html"><strong aria-hidden="true">3.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="plugins/index.html"><strong aria-hidden="true">2.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="plugins/conform.html"><strong aria-hidden="true">2.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="plugins/just.html"><strong aria-hidden="true">2.2.</strong> Just</a></li><li class="chapter-item expanded "><a href="plugins/lefthook.html"><strong aria-hidden="true">2.3.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="plugins/pre-commit.html"><strong aria-hidden="true">2.4.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="plugins/prettier.html"><strong aria-hidden="true">2.5.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="contributing/index.html"><strong aria-hidden="true">3.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="contributing/design.html"><strong aria-hidden="true">3.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="contributing/plugins.html"><strong aria-hidden="true">3.2.</strong> Plugins</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -271,6 +271,75 @@ plugins follow a common schema, the varying requirements of configurations can
 require minor differences.</p>
 <p>Plugins can be accessed via <code>nixago.plugins.${pluginName}</code>. For what functions
 a plugin provides, see the relevant documentation page or check the source code.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="conform"><a class="header" href="#conform">Conform</a></h1>
+<p>This plugin generates the <code>.conform.yaml</code> file for configuring <a href="https://github.com/siderolabs/conform">Conform</a>.
+It provides a single function which takes a simplified version of the
+configuration file:</p>
+<ul>
+<li>The top-level <code>policies</code> entry is stripped off</li>
+<li>The <code>type</code> and <code>spec</code> sections of the policy are stripped off</li>
+</ul>
+<p>Instead, the function takes a set where the key is either <code>commit</code> or <code>license</code>
+(the two valid policy types) and then value is what would normally be placed
+under <code>spec</code>. This reduces the overall nesting of the input.</p>
+<p>Example input:</p>
+<pre><code class="language-nix">{
+  commit = {
+    header = {
+      length = 89;
+      imperative = true;
+      case = &quot;lower&quot;;
+      invalidLastCharacters = &quot;.&quot;;
+    };
+    gpg = {
+      required = false;
+      identity = {
+        gitHubOrganization = &quot;some-organization&quot;;
+      };
+    };
+    conventional = {
+      types = [
+        &quot;type&quot;
+      ];
+      scopes = [
+        &quot;scope&quot;
+      ];
+    };
+  };
+  license = {
+    skipPaths = [
+      &quot;.git/&quot;
+      &quot;build*/&quot;
+    ];
+    allowPrecedingComments = false;
+  };
+}
+</code></pre>
+<p>This would produce the following <code>.conform.yaml</code> file:</p>
+<pre><code class="language-yaml">policies:
+  - spec:
+      conventional:
+        scopes:
+          - scope
+        types:
+          - type
+      gpg:
+        identity:
+          gitHubOrganization: some-organization
+        required: false
+      header:
+        case: lower
+        imperative: true
+        invalidLastCharacters: .
+        length: 89
+    type: commit
+  - spec:
+      allowPrecedingComments: false
+      skipPaths:
+        - .git/
+        - build*/
+    type: license
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="just"><a class="header" href="#just">Just</a></h1>
 <p>This plugin generates the <code>.just</code> file used by the <a href="https://github.com/casey/just">Just</a> task runner. It
 provides a single function which allows you to declare a header section and
