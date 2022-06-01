@@ -144,6 +144,7 @@
             ".conform.yaml"
             ".prettierrc.json"
             "tests"
+            "CHANGELOG.md"
             "lefthook.yml"
           ];
         };
