@@ -181,7 +181,7 @@ CUE uses the file extension to determine what format to output when CUE
 evaluates the file. [See here][7] for supported formats.
 
 The remainder of the function is specific to each plugin. In the case above,
-we gather all pre-commit `stages`` to determine what stages of the pre-commit
+we gather all pre-commit `stages` to determine what stages of the pre-commit
 process will be installed when the configuration is generated. We then create
 `shellHookExtra`, which contains the necessary logic for installing the stages.
 
