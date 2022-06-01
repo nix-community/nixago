@@ -7,14 +7,21 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
+        version = "1.0.0"; # x-release-please-version
+
+        # Setup pkgs
         pkgs = import nixpkgs {
           inherit system;
         };
 
+        # Internal attributes
         lib = self.lib.${system};
         plugins = self.plugins.${system};
+
+        # Test runner
         runTest = import ./tests/common.nix { inherit pkgs plugins; };
 
+        # Helper for aggregating development tools
         mkTools = tools: (builtins.listToAttrs
           (
             builtins.map
