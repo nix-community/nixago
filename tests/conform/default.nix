@@ -1,42 +1,33 @@
 { runTest }:
-runTest "conform.mkConfig" ./expected.yml {
-  policies = [
-    {
-      type = "commit";
-      spec = {
-        header = {
-          length = 89;
-          imperative = true;
-          case = "lower";
-          invalidLastCharacters = ".";
-        };
-        gpg = {
-          required = false;
-          identity = {
-            gitHubOrganization = "some-organization";
-          };
-        };
-        conventional = {
-          types = [
-            "type"
-          ];
-          scopes = [
-            "scope"
-          ];
-        };
+runTest "conform.mkConfig" ./expected.yml
+{
+  commit = {
+    header = {
+      length = 89;
+      imperative = true;
+      case = "lower";
+      invalidLastCharacters = ".";
+    };
+    gpg = {
+      required = false;
+      identity = {
+        gitHubOrganization = "some-organization";
       };
-    }
-
-    {
-      type = "license";
-      spec = {
-        skipPaths = [
-          ".git/"
-          "build*/"
-        ];
-        allowPrecedingComments = false;
-      };
-    }
-  ];
+    };
+    conventional = {
+      types = [
+        "type"
+      ];
+      scopes = [
+        "scope"
+      ];
+    };
+  };
+  license = {
+    skipPaths = [
+      ".git/"
+      "build*/"
+    ];
+    allowPrecedingComments = false;
+  };
 }
-
