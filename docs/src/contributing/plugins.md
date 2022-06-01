@@ -5,7 +5,7 @@ of Nixago makes these steps relatively straightforward.
 
 ## Checklist
 
-The following is a useful checklist to go over before submitting a PR:
+The following is a helpful checklist to go over before submitting a PR:
 
 1. Is the plugin named after the tool it supports?
 2. Does the plugin have a dedicated directory under [plugins][1]?
@@ -14,7 +14,7 @@ The following is a useful checklist to go over before submitting a PR:
 5. Have the tests been added to the [flake.nix][3] `checks` output?
 6. Does the plugin have a dedicated page in the documentation?
 
-If you answered yes to all of the above questions you are ready to submit a PR!
+If you answered yes to all of the above questions, you are ready to submit a PR!
 
 ## Creating a Plugin
 
@@ -24,14 +24,14 @@ Creating a plugin encompasses three primary tasks:
 2. Create the Nix functions
 3. Write tests and documentation
 
-Each plugin should be isolated to a dedicated directory under [plugins][1]. The
-first step is to create a new directory with the name of the plugin. The name
-should ideally indicate the tool that it supports (i.e. the plugin for the
-Prettier formatter is simply called `prettier`).
+You should isolate each plugin to a dedicated directory under [plugins][1]. The
+first step is to create a new directory with the plugin's name. The name should
+ideally indicate the tool that it supports (i.e., the plugin for the Prettier
+formatter is called `prettier`).
 
 The remainder of this section will walk through creating a plugin for the
 [pre-commit][4] CLI tool. The plugin will generate a `.pre-commit-config.yaml`
-file which is used to configure the pre-commit tool.
+file to configure the pre-commit tool.
 
 ### Creating the CUE file
 
@@ -42,14 +42,14 @@ advanced cases may require multiple files. The file should be called
 
 When creating the CUE file, keep the following in mind:
 
-- The schema defined in the file should be sufficient enough to prevent most
+- The schema defined in the file should be sufficient to prevent most
   configuration mistakes.
 
-- If the tool being supported has rich documentation around valid values for
-  each configuration field, use constraints to improve the accuracy of the schema.
+- If the supported tool has rich documentation around valid values for each
+  configuration field, use constraints to improve the accuracy of the schema.
 
 - Don't be overly strict with the schema definition. The goal is to be helpful
-  and not generate a large number of false negatives.
+  and not generate many false negatives.
 
 Here is the `template.nix` file for our pre-commit plugin:
 
@@ -100,7 +100,7 @@ Here is the `template.nix` file for our pre-commit plugin:
 ```
 
 This file defines three [definitions][5], notated by the `#` symbol. A
-definition can be thought of as a schema or contract. It defines the shape of
+definition is synonymous with a schema or contract. It describes the shape of
 valid data through various constraints. Let's break one down:
 
 ```cue
@@ -117,8 +117,8 @@ valid data through various constraints. Let's break one down:
 The `pre-commit-config.yaml` file has a `repos` field which is a list of
 repositories that pre-commit should build from. The `#Repo` definition provides
 the schema for these entries. Each entry must have a `repo` field which is a
-string value. The `rev` field is an interesting one: it's only optional if the
-`repo` field is set to "local". The above first sets the `rev` field to optional
+string value. The `rev` field is interesting: it's only optional if the
+`repo` field is set to "local". The above sets the `rev` field to optional
 using the `?` symbol and then conditonally sets it to required based on the
 value of `repo`. Finally, each entry has a list of hooks, denoted by the
 `[...#Hooks]` syntax.
@@ -129,21 +129,20 @@ value of `repo`. Finally, each entry has a list of hooks, denoted by the
 }
 ```
 
-This final bit is where we define the actual elements of the CUE file. This is
-what will appear when we evaluate the CUE file. In the above case, we're saying
-the input data should be a [struct][6] which conforms to the schema defined by
+This final bit is where we define the elements of the CUE file. This is what
+will appear when we evaluate the CUE file. In the above case, we're saying
+the input data should be a [struct][6] that conforms to the schema defined by
 `#Config`.
 
-In this case, we're doing no additional transformations to the incoming data.
-This is because we're expecting the input data to already be in the format
-expected in the `.pre-commit-config.yaml` file. Since YAML is a superset of
-JSON, we can easily ask CUE to evaluate the input and produce a YAML output.
+We're doing no additional transformations to the incoming data in this case.
+We expect the input data to be in the format defined in the
+`.pre-commit-config.yaml` file. Since YAML is a superset of JSON, we can easily
+ask CUE to evaluate the input and produce a YAML output.
 
 ### Creating the Nix Functions
 
-With the CUE file created, the next step is to create our main Nix function. In
-this case, we're going to create a single function for generating our
-configuration file.
+With the CUE file created, the next step is to make our primary Nix function. We
+will create a single function for generating our configuration file:
 
 ```nix
 { pkgs, lib }:
@@ -169,30 +168,29 @@ in
 }
 ```
 
-All functions maintain the same basic structure. At the top we accept an
-attribute set as the first argument which pulls in local copies of `nixpkgs`
-and the internal `lib` provided by the flake. The second argument should always
-be named `data` and will contain the data passed in by the end-user.
+All functions maintain the same basic structure. At the top, we accept an
+attribute set as the first argument, which pulls in local copies of `nixpkgs`
+and the internal `lib` provided by the flake. The second argument should be
+named `data` and contain the data passed in by the end-user.
 
 The top of the function should declare the `files` and `output` variables. The
 `files` variable should point to the CUE file we previously created. The
 `output` variable should contain the name of the configuration file the plugin
-is generating. Note that the extension of the configuration file is important.
-CUE uses the file extension to determine what format to output when our CUE file
-is evaluated. [See here][7] for supported formats.
+is generating. Note that the extension of the configuration file is essential.
+CUE uses the file extension to determine what format to output when CUE
+evaluates the file. [See here][7] for supported formats.
 
 The remainder of the function is specific to each plugin. In the case above,
-we gather all of the pre-commit `stages` settings to determine what stages of
-the pre-commit process should be installed when the configuration is generated.
-We then create `shellHookExtra` which contains the necessary logic for
-installing the stages.
+we gather all pre-commit `stages`` to determine what stages of the pre-commit
+process will be installed when the configuration is generated. We then create
+`shellHookExtra`, which contains the necessary logic for installing the stages.
 
-At the very end, the internal `mkTemplate` function is called. For more details
+We call the internal `mkTemplate` at the very end. For more details
 about this function, [see here](design.md#templates).
 
-In order for our plugin to be picked up by the main flake, we must take two
-additional steps. The first is creating a `default.nix` in our plugin directory
-that exports our function:
+We must take two additional steps for our plugin to be picked up by the flake.
+The first is creating a `default.nix` in our plugin directory that exports our
+function:
 
 ```nix
 { pkgs, lib }:
@@ -207,8 +205,8 @@ rec {
 
 This will allow the `mkConfig` function to be accessible under
 `nixago.plugins.{myPlugin}.mkConfig`. Setting the `default` attribute is
-recommended, otherwise the plugin may not play well with the `mkAll` function.
-It should be set to most widely used function.
+recommended; otherwise, the plugin may not play well with the `mkAll` function.
+You should set it to the most widely used function.
 
 Finally, we must create an entry in the main `default.nix`:
 
@@ -225,51 +223,41 @@ Finally, we must create an entry in the main `default.nix`:
 }
 ```
 
-This registers the plugin to make it accessible from `nixago.plugins`.
+This function registers the plugin to make it accessible from `nixago.plugins`.
 
 ### Writing Tests and Documentation
 
-The final step is to write tests and documentation for the plugin. Tests are
-added in the [tests][8] directory in a dedicated directory named after the
-plugin. Tests are fairly trivial to write.
+The final step is to write tests and documentation for the plugin. Tests live in
+the [tests][8] directory in a dedicated directory named after the plugin.
+Tests are relatively trivial to write.
 
 The first step is to create a `default.nix` which runs the test:
 
 ```nix
-{ pkgs, plugins }:
-let
-  output = plugins.pre-commit.mkConfig {
-    repos = [
-      {
-        repo = "https://github.com/my/repo";
-        rev = "1.0";
-        hooks = [
-          {
-            id = "my-hook";
-          }
-        ];
-      }
-    ];
-  };
+{ runTest }:
+runTest "pre-commit.mkConfig" ./expected.yml {
+  repos = [
+    {
+      repo = "https://github.com/my/repo";
+      rev = "1.0";
+      hooks = [
+        {
+          id = "my-hook";
+        }
+      ];
+    }
+  ];
+}
 
-  result = pkgs.runCommand "test.pre-commit"
-    { }
-    ''
-      cmp "${./expected.yml}" "${output.configFile}"
-      touch $out
-    '';
-in
-result
 ```
 
-The test is made up of two parts: a sample configuration is generated and then
-it is compared to a known expected output. The test will be provided an instance
-of `plugins` in order to access functions for testing. The usage of `runCommand`
-in the second part will necessarily build the derivation which is returned from
-the function.
+The `runTest` helper function provided performs most of the underlying work
+required to test the plugin. It takes three arguments: the function to call for
+the test, the location of the expected test output, and the data to pass to the
+specified function.
 
 The second step is to create the expected output. In this case, the above
-invocation should create the following output:
+invocation should produce the following result:
 
 ```yaml
 repos:
@@ -279,25 +267,23 @@ repos:
     rev: "1.0"
 ```
 
-The generateed output will be compared to this and the test will fail if a
-difference is found.
+The expected result is compared to the generated output, and the test will fail
+if there is a difference.
 
-The final step is to add the tests to the `checks` output in the main
-`flake.nix` file:
+The final step is to add the test to the `checks` output in the `default.nix`
+file located at the root of the tests directory:
 
 ```nix
 {
-    checks = {
-        #...
-        pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
-        #...
-    };
+  # ...
+  pre-commit = pkgs.callPackage ./pre-commit { inherit runTest; };
+  # ...
 }
 ```
 
-Finally, before submitting a PR, documentation should be added under the
-[plugins][9] section of the documentation. This should cover general usage
-information about the plugin including an example invocation.
+Finally, before submitting a PR, add documentation under the
+[plugins][9] section of the documentation. Ensure you cover general usage
+information about the plugin, including an example invocation.
 
 [1]: https://github.com/jmgilman/nixago/tree/master/plugins
 [2]: https://github.com/jmgilman/nixago/blob/master/plugins/default.nix

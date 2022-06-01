@@ -1,7 +1,7 @@
 # Lefthook
 
 This plugin generates the `lefthook.yml` file for configuring [Lefthook][1].
-It provides a single function which allows configuring any of the
+It provides a single function that allows configuring any of the
 [valid options][2].
 
 ## Using mkConfig

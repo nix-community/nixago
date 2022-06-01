@@ -60,7 +60,7 @@ repos:
 
 ## Making Multiple Configurations
 
-A utility function is provided for generating multiple configurations. The
+A utility function is available for generating multiple configurations. The
 following is an excerpt from the `flake.nix` that manages this project:
 
 ```nix
@@ -129,14 +129,14 @@ following is an excerpt from the `flake.nix` that manages this project:
 The input to `mkAll` expects an attribute set where the name is one of the
 following:
 
-1. A path to the function to be called, relative to the `plugins` set (i.e. `prettier.mkIgnoreConfig`)
+1. A path to the function to be called, relative to the `plugins` set (i.e., `prettier.`mkIgnoreConfig`)
 2. The name of a plugin
 
-In the second case, the `default` function will be called from the plugin. See
+The `default` function will be called from the plugin in the second case. See
 the individual plugins for which function this is. The second parameter is the
-configuration to be passed to the function. The result of the function is an
-attribute set which has a unified `shellHook` attribute that contains all of the
-logic for managing the configurations. This makes it seamless to add additional
-configurations to your existing projects.
+configuration to be passed. The result is an attribute set with a unified
+`shellHook` attribute that contains all of the logic for managing the
+configurations. This result makes it seamless to add additional configurations
+to your existing projects.
 
 [1]: https://pre-commit.com/

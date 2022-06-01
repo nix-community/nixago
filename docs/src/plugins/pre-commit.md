@@ -27,8 +27,8 @@ The first function follows the [structure described in the docs][2]:
 }
 ```
 
-The structure is validated by Cue and the derivation will fail to build if a
-mistake is made. The above configuration will create the following file
+Cue validates the structure, and the derivation will fail to build if any
+mistakes are found. The above configuration will create the following file
 contents:
 
 ```yaml
@@ -41,11 +41,11 @@ repos:
 
 ## Using mkLocalConfig
 
-The second function accepts a simplified configuration format the greatly
-reduces the verbosity. When managing pre-commit with Nix, it's often desirable
-to create a single "local" repo entry and then add system hooks which call out
-to binaries in the Nix store. The benefit of this approach is that Nix manages
-the versioning of the binaries and you have greater control over how the hook
+The second function accepts a simplified configuration format that significantly
+reduces the verbosity. When managing pre-commit with Nix, creating a single
+"local" repo entry and adding system hooks that call out to binaries in the Nix
+store is often desirable. The benefit of this approach is that Nix manages the
+versioning of the binaries, and you have greater control over how the hook
 operates.
 
 The accepted format is as follows:
@@ -62,11 +62,11 @@ The accepted format is as follows:
 
 The format is a set consisting of hook names as the keys and their configuration
 properties as values. The `id` and `name` fields of the hook configuration are
-automatically set to the hook name (i.e., `nixpkgs-fmt`). The `entry` should
-point to the binary which will be called by pre-commit. Setting `language` to
-system ensures that the `entry` is called with the default shell. Finally,
-setting `files` ensures that pre-commit only passes Nix files to this hook. The
-above configuration would produce the following `pre-commit-config.yaml` file:
+set to the hook name (i.e., `nixpkgs-fmt`). The `entry` should point to the
+binary called by pre-commit. Setting `language` to "system" ensures that the
+`entry` is called with the default shell. Finally, setting `files` ensures that
+pre-commit only passes Nix files to this hook. The above configuration would
+produce the following `pre-commit-config.yaml` file:
 
 ```yaml
 repos:
@@ -79,7 +79,7 @@ repos:
     repo: local
 ```
 
-Notice how the `repos` and `repo` properties are already set.
+Notice how the `repos` and `repo` properties are set.
 
 [1]: https://pre-commit.com/
 [2]: https://pre-commit.com/#adding-pre-commit-plugins-to-your-project

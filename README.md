@@ -20,8 +20,8 @@
 - Specify configuration data using native Nix syntax
 - Validate configuration data using the language features from [Cue][2]
 - Generate configuration files in any of the [supported formats][3]
-- All artifacts are placed in the Nix store
-- Plugins available for generating common development configuration files
+- Places all artifacts in the Nix store
+- Provides plugins for generating several types of development configuration files
 
 ## Usage
 
@@ -36,8 +36,8 @@ Add the flake as an input:
 }
 ```
 
-Plugins are available for quickly generating configuration files for common
-development tools. For example, a [pre-commit][4] configuration:
+Plugins are available for quickly generating configuration files. For example, a
+[pre-commit][4] configuration:
 
 ```nix
 {
@@ -55,9 +55,9 @@ development tools. For example, a [pre-commit][4] configuration:
 }
 ```
 
-A shell hook is automatically generated for linking the configuration file to
-the root of the current working directory. The hook will automatically pick up
-changes and re-link as necessary.
+The flake generates a shell hook for linking the configuration file to the root
+of the current working directory. The hook will automatically pick up changes
+and re-link as necessary.
 
 ```nix
 {
@@ -73,7 +73,7 @@ See [the docs][5] for more information.
 
 ## Testing
 
-Tests can be run with:
+Tests are run with:
 
 ```shell
 nix flake check
@@ -82,7 +82,7 @@ nix flake check
 ## Contributing
 
 [Read this][6], check out the [issues][7] for items needing attention or submit
-your own and then:
+your own, and then:
 
 1. Fork the repo (<https://github.com/jmgilman/nixago/fork>)
 2. Create your feature branch (git checkout -b feature/fooBar)
