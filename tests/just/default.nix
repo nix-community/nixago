@@ -1,22 +1,12 @@
-{ pkgs, plugins }:
-let
-  output = plugins.just.mkConfig {
-    head = ''
-      var := "value"
-    '';
-    tasks = {
-      task1 = [
-        ''echo "Doing the thing"''
-        "@doThing"
-      ];
-    };
+{ runTest }:
+runTest "just.mkConfig" ./expected.txt {
+  head = ''
+    var := "value"
+  '';
+  tasks = {
+    task1 = [
+      ''echo "Doing the thing"''
+      "@doThing"
+    ];
   };
-
-  result = pkgs.runCommand "test.just"
-    { }
-    ''
-      cmp "${./expected.txt}" "${output.configFile}"
-      touch $out
-    '';
-in
-result
+}

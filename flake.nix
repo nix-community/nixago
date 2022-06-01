@@ -10,8 +10,10 @@
         pkgs = import nixpkgs {
           inherit system;
         };
+
         lib = self.lib.${system};
         plugins = self.plugins.${system};
+        runTest = import ./tests/common.nix { inherit pkgs plugins; };
 
         mkTools = tools: (builtins.listToAttrs
           (
@@ -89,12 +91,7 @@
         plugins = import ./plugins { inherit pkgs lib; };
 
         # Local tests
-        checks = {
-          just = pkgs.callPackage ./tests/just { inherit pkgs plugins; };
-          lefthook = pkgs.callPackage ./tests/lefthook { inherit pkgs plugins; };
-          pre-commit = pkgs.callPackage ./tests/pre-commit { inherit pkgs plugins; };
-          prettier = pkgs.callPackage ./tests/prettier { inherit pkgs plugins; };
-        };
+        checks = import ./tests { inherit pkgs runTest; };
 
         # Local development shell
         devShells = {
