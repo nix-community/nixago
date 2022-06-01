@@ -1,0 +1,23 @@
+policies:
+  - spec:
+      conventional:
+        scopes:
+          - scope
+        types:
+          - type
+      gpg:
+        identity:
+          gitHubOrganization: some-organization
+        required: false
+      header:
+        case: lower
+        imperative: true
+        invalidLastCharacters: .
+        length: 89
+    type: commit
+  - spec:
+      allowPrecedingComments: false
+      skipPaths:
+        - .git/
+        - build*/
+    type: license

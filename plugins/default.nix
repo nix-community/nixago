@@ -1,5 +1,9 @@
 { pkgs, lib }:
 {
+  /* https://github.com/siderolabs/conform
+  */
+  conform = import ./conform { inherit pkgs lib; };
+
   /* https://github.com/casey/just
   */
   just = import ./just { inherit pkgs lib; };

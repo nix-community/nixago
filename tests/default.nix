@@ -1,5 +1,6 @@
 { pkgs, runTest }:
 {
+  conform = pkgs.callPackage ./conform { inherit runTest; };
   just = pkgs.callPackage ./just { inherit runTest; };
   lefthook = pkgs.callPackage ./lefthook { inherit runTest; };
   pre-commit = pkgs.callPackage ./pre-commit { inherit runTest; };
