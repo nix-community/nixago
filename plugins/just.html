@@ -136,8 +136,8 @@
                     <main>
                         <h1 id="just"><a class="header" href="#just">Just</a></h1>
 <p>This plugin generates the <code>.just</code> file used by the <a href="https://github.com/casey/just">Just</a> task runner. It
-provides a single function which allows you to declare a header section and
-then subsequent tasks/steps.</p>
+provides a single function that allows you to declare a header section and
+subsequent tasks/steps.</p>
 <h2 id="using-mkconfig"><a class="header" href="#using-mkconfig">Using mkConfig</a></h2>
 <pre><code class="language-nix">{
   just = plugins.just.mkConfig {
@@ -155,12 +155,12 @@ then subsequent tasks/steps.</p>
   };
 }
 </code></pre>
-<p>The configuration has two major sections. The first is the <code>header</code> field which
-is a raw string that will be prepended to the top of the file. This is typically
-where global settings and variables are defined in the Justfile. The second is
-the <code>tasks</code> field which is a map of task names to a list of their respective
-steps. Each step in the list should ideally encompass a single action (this is
-idiomatic for Justfiles), however, multiline strings will also work.</p>
+<p>The configuration has two major sections. The first is the <code>header</code> field, a raw
+string prepended to the top of the file. This section is typically where global
+settings and variables are defined in the Justfile. The second is the <code>tasks</code>
+field, a map of task names to a list of their respective steps. Each step in the
+list should ideally encompass a single action (this is idiomatic for Justfiles);
+however, multiline strings will also work.</p>
 <p>The above example will produce the following file contents:</p>
 <pre><code class="language-just">var := &quot;value&quot;
 

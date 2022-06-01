@@ -182,7 +182,7 @@ file with the following contents:</p>
     repo: local
 </code></pre>
 <h2 id="making-multiple-configurations"><a class="header" href="#making-multiple-configurations">Making Multiple Configurations</a></h2>
-<p>A utility function is provided for generating multiple configurations. The
+<p>A utility function is available for generating multiple configurations. The
 following is an excerpt from the <code>flake.nix</code> that manages this project:</p>
 <pre><code class="language-nix">{
 # Define development tool configuration
@@ -248,15 +248,16 @@ following is an excerpt from the <code>flake.nix</code> that manages this projec
 <p>The input to <code>mkAll</code> expects an attribute set where the name is one of the
 following:</p>
 <ol>
-<li>A path to the function to be called, relative to the <code>plugins</code> set (i.e. <code>prettier.mkIgnoreConfig</code>)</li>
+<li>A path to the function to be called, relative to the <code>plugins</code> set (i.e.,
+<code>prettier.</code>mkIgnoreConfig`)</li>
 <li>The name of a plugin</li>
 </ol>
-<p>In the second case, the <code>default</code> function will be called from the plugin. See
+<p>The <code>default</code> function will be called from the plugin in the second case. See
 the individual plugins for which function this is. The second parameter is the
-configuration to be passed to the function. The result of the function is an
-attribute set which has a unified <code>shellHook</code> attribute that contains all of the
-logic for managing the configurations. This makes it seamless to add additional
-configurations to your existing projects.</p>
+configuration to be passed. The result is an attribute set with a unified
+<code>shellHook</code> attribute that contains all of the logic for managing the
+configurations. This result makes it seamless to add additional configurations
+to your existing projects.</p>
 
                     </main>
 

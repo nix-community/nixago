@@ -135,61 +135,62 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="design"><a class="header" href="#design">Design</a></h1>
-<p>When contributing to Nixago, it's important to understand the general design
+<p>When contributing to Nixago, it's essential to understand the general design
 principles that guide its development. This section provides details on how the
-library is structured and introduces the basic concepts required to effectively
-contribute to it.</p>
+library is structured and introduces the basic concepts required to contribute
+effectively.</p>
 <h2 id="cue"><a class="header" href="#cue">CUE</a></h2>
 <p>The primary tool underlying Nixago is <a href="https://cuelang.org/">CUE</a>. CUE stands for Configure, Unify,
 and Execute. It's a general-purpose language for defining, generating, and
-validating data. CUE was chosen for its strengths in the areas of configuration
+validating data. This flake chose CUE for its strengths in configuration
 validation and generation. It's also a young project with a rapidly growing
 platform.</p>
 <p>Learning the CUE language is necessary for contributing plugins. Don't worry,
-though, it's much easier to pickup than Nix. It's recommended to review the
-<a href="https://cuetorials.com/introduction/">Cuetorials website</a> to get an overview of the CUE language. The
-<a href="https://cuelang.org/docs/concepts/logic/">Logic of CUE</a> is also recommended.</p>
+though. It's much easier to pick up than Nix. Please review the <a href="https://cuetorials.com/introduction/">Cuetorials
+website</a> and the <a href="https://cuelang.org/docs/concepts/logic/">Logic of CUE</a> to get an overview of the CUE language.</p>
 <p>When creating a plugin, you'll need to write a CUE schema that can validate the
-incoming configuration data. The schema not only ensures that configuration data
-is accurate, but it also creates the foundation for transforming that data into
-the format needed for the configuration file.</p>
+incoming configuration data. The schema ensures that configuration data is
+accurate, and it also creates the foundation for transforming that data into the
+format needed for the configuration file.</p>
 <h2 id="plugins"><a class="header" href="#plugins">Plugins</a></h2>
 <p>The main interface that Nixago provides is through its <a href="https://github.com/jmgilman/nixago/tree/master/plugins">plugin</a>
-infrastructure. A plugin is simply a small wrapper which generates a
-configuration file for a specific tool. The structure of plugins is consistent
-in that they ingest data from the user and produce an instance of the
-<a href="#templates">template module</a>. This module provides a derivation which will
-build the desired configuration file as well as a shell hook which will manage
-linking the file locally.</p>
-<p>Plugins are the main source of contribution to Nixago. Individuals are
+infrastructure. A plugin is simply a tiny wrapper that generates a configuration
+file for a specific tool. The structure of plugins is consistent in that they
+ingest data from the user and produce an instance of the
+<a href="#templates">template module</a>. This module provides a derivation to build the
+desired configuration file and a shell hook that will manage a symlink to the
+file locally.</p>
+<p>Plugins are the primary source of contribution to Nixago. Individuals are
 encouraged to contribute plugins for their tools of choice so that the wider
 community may benefit from the plugin.</p>
 <p><a href="plugins.html">See here</a> for detailed steps for adding plugins.</p>
 <h2 id="templates"><a class="header" href="#templates">Templates</a></h2>
 <p>The <a href="https://github.com/jmgilman/nixago/blob/master/modules/template.nix">template module</a> is the basic building block of Nixago. It's responsible
 for creating the derivation that ultimately generates the configuration file. It
-also creates the shell hook which manages the configuration file.</p>
+also manages the shell hook for managing the configuration file.</p>
 <p>The internal library provides a <a href="https://github.com/jmgilman/nixago/blob/master/lib/template.nix">single function</a> for creating new instances
 of the template module. It accepts the following arguments:</p>
 <ul>
-<li><strong>data</strong>: The raw data provided from the end-user</li>
+<li><strong>data</strong>: The raw data provided by the end-user</li>
 <li><strong>files</strong>: The files to pass to <code>cue eval</code> (typically .cue files)</li>
 <li><strong>output</strong>: The filename to output</li>
-<li><strong>postBuild</strong>: Shell code to run after <code>cue eval</code> is invoked</li>
-<li><strong>shellHookExtra</strong>: Additional shell code to run when the file is regenered by the shell hook</li>
+<li><strong>postBuild</strong>: Shellcode to run after the invocation of <code>cue</code> eval`</li>
+<li><strong>shellHookExtra</strong>: Additional shellcode to run when the shell hook
+regenerates the file</li>
 <li><strong>flags</strong>: Additional flags to pass to <code>cue eval</code></li>
 </ul>
 <p>The function will return the module's <code>config</code> attribute.</p>
 <p>The template module provides two primary outputs:</p>
 <ul>
 <li><strong>configFile</strong>: A derivation that will build the configuration file</li>
-<li><strong>shellHook</strong>: A shell hook which will link the configuration file locally and update it when it changes</li>
+<li><strong>shellHook</strong>: A shell hook that will link the configuration file locally and
+update it when it changes</li>
 </ul>
 <h2 id="evaluation"><a class="header" href="#evaluation">Evaluation</a></h2>
-<p>The foundational function provided by the internal library is the
-<a href="https://github.com/jmgilman/nixago/blob/master/lib/eval.nix">eval function</a>. It interacts with the <code>cue</code> CLI tool via a call to
-<a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/trivial-builders.nix#L27">runCommand</a>. This, in turn, creates a derivation which will produce the
-output of invoking the <code>cue eval</code> command.</p>
+<p>The foundational function provided by the internal library is the <a href="https://github.com/jmgilman/nixago/blob/master/lib/eval.nix">eval
+function</a>. It interacts with the <code>cue</code> CLI tool via a call to
+<a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/trivial-builders.nix#L27">runCommand</a>. This interaction, in turn, creates a derivation that will
+produce the output of invoking the <code>cue eval</code> command.</p>
 
                     </main>
 

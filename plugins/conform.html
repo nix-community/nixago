@@ -135,16 +135,16 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="conform"><a class="header" href="#conform">Conform</a></h1>
-<p>This plugin generates the <code>.conform.yaml</code> file for configuring <a href="https://github.com/siderolabs/conform">Conform</a>.
-It provides a single function which takes a simplified version of the
-configuration file:</p>
+<p>This plugin generates the <code>.conform.yaml</code> file for configuring <a href="https://github.com/siderolabs/conform">Conform</a>. It
+provides a single function that takes a simplified version of the configuration
+file:</p>
 <ul>
-<li>The top-level <code>policies</code> entry is stripped off</li>
-<li>The <code>type</code> and <code>spec</code> sections of the policy are stripped off</li>
+<li>The top-level <code>policies</code> entry is removed</li>
+<li>The <code>type</code> and <code>spec</code> sections of the policy are removed</li>
 </ul>
 <p>Instead, the function takes a set where the key is either <code>commit</code> or <code>license</code>
-(the two valid policy types) and then value is what would normally be placed
-under <code>spec</code>. This reduces the overall nesting of the input.</p>
+(the two valid policy types), and the value is what would typically get placed
+under <code>spec</code>. This change reduces the overall nesting of the input.</p>
 <p>Example input:</p>
 <pre><code class="language-nix">{
   commit = {

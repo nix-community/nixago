@@ -157,8 +157,8 @@
   };
 }
 </code></pre>
-<p>The structure is validated by Cue and the derivation will fail to build if a
-mistake is made. The above configuration will create the following file
+<p>Cue validates the structure, and the derivation will fail to build if any
+mistakes are found. The above configuration will create the following file
 contents:</p>
 <pre><code class="language-yaml">repos:
   - hooks:
@@ -167,11 +167,11 @@ contents:</p>
     rev: &quot;1.0&quot;
 </code></pre>
 <h2 id="using-mklocalconfig"><a class="header" href="#using-mklocalconfig">Using mkLocalConfig</a></h2>
-<p>The second function accepts a simplified configuration format the greatly
-reduces the verbosity. When managing pre-commit with Nix, it's often desirable
-to create a single &quot;local&quot; repo entry and then add system hooks which call out
-to binaries in the Nix store. The benefit of this approach is that Nix manages
-the versioning of the binaries and you have greater control over how the hook
+<p>The second function accepts a simplified configuration format that significantly
+reduces the verbosity. When managing pre-commit with Nix, creating a single
+&quot;local&quot; repo entry and adding system hooks that call out to binaries in the Nix
+store is often desirable. The benefit of this approach is that Nix manages the
+versioning of the binaries, and you have greater control over how the hook
 operates.</p>
 <p>The accepted format is as follows:</p>
 <pre><code class="language-nix">{
@@ -184,11 +184,11 @@ operates.</p>
 </code></pre>
 <p>The format is a set consisting of hook names as the keys and their configuration
 properties as values. The <code>id</code> and <code>name</code> fields of the hook configuration are
-automatically set to the hook name (i.e., <code>nixpkgs-fmt</code>). The <code>entry</code> should
-point to the binary which will be called by pre-commit. Setting <code>language</code> to
-system ensures that the <code>entry</code> is called with the default shell. Finally,
-setting <code>files</code> ensures that pre-commit only passes Nix files to this hook. The
-above configuration would produce the following <code>pre-commit-config.yaml</code> file:</p>
+set to the hook name (i.e., <code>nixpkgs-fmt</code>). The <code>entry</code> should point to the
+binary called by pre-commit. Setting <code>language</code> to &quot;system&quot; ensures that the
+<code>entry</code> is called with the default shell. Finally, setting <code>files</code> ensures that
+pre-commit only passes Nix files to this hook. The above configuration would
+produce the following <code>pre-commit-config.yaml</code> file:</p>
 <pre><code class="language-yaml">repos:
   - hooks:
       - entry: /nix/store/pmfl7q4fqqibkfz71lsrkcdi04m0mclf-nixpkgs-fmt-1.2.0/bin/nixpkgs-fmt
@@ -198,7 +198,7 @@ above configuration would produce the following <code>pre-commit-config.yaml</co
         name: nixpkgs-fmt
     repo: local
 </code></pre>
-<p>Notice how the <code>repos</code> and <code>repo</code> properties are already set.</p>
+<p>Notice how the <code>repos</code> and <code>repo</code> properties are set.</p>
 
                     </main>
 
