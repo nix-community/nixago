@@ -117,11 +117,11 @@ valid data through various constraints. Let's break one down:
 The `pre-commit-config.yaml` file has a `repos` field which is a list of
 repositories that pre-commit should build from. The `#Repo` definition provides
 the schema for these entries. Each entry must have a `repo` field which is a
-string value. The `rev` field is interesting: it's only optional if the
-`repo` field is set to "local". The above sets the `rev` field to optional
-using the `?` symbol and then conditonally sets it to required based on the
-value of `repo`. Finally, each entry has a list of hooks, denoted by the
-`[...#Hooks]` syntax.
+string value. The `rev` field is interesting: it's only optional if the `repo`
+field is set to "local". The above sets the `rev` field to optional using the
+`?` symbol and then conditonally sets it to required based on the value of
+`repo`. Finally, each entry has a list of hooks, denoted by the `[...#Hooks]`
+syntax.
 
 ```cue
 {
@@ -130,12 +130,12 @@ value of `repo`. Finally, each entry has a list of hooks, denoted by the
 ```
 
 This final bit is where we define the elements of the CUE file. This is what
-will appear when we evaluate the CUE file. In the above case, we're saying
-the input data should be a [struct][6] that conforms to the schema defined by
+will appear when we evaluate the CUE file. In the above case, we're saying the
+input data should be a [struct][6] that conforms to the schema defined by
 `#Config`.
 
-We're doing no additional transformations to the incoming data in this case.
-We expect the input data to be in the format defined in the
+We're doing no additional transformations to the incoming data in this case. We
+expect the input data to be in the format defined in the
 `.pre-commit-config.yaml` file. Since YAML is a superset of JSON, we can easily
 ask CUE to evaluate the input and produce a YAML output.
 
@@ -180,13 +180,13 @@ is generating. Note that the extension of the configuration file is essential.
 CUE uses the file extension to determine what format to output when CUE
 evaluates the file. [See here][7] for supported formats.
 
-The remainder of the function is specific to each plugin. In the case above,
-we gather all pre-commit `stages` to determine what stages of the pre-commit
+The remainder of the function is specific to each plugin. In the case above, we
+gather all pre-commit `stages` to determine what stages of the pre-commit
 process will be installed when the configuration is generated. We then create
 `shellHookExtra`, which contains the necessary logic for installing the stages.
 
-We call the internal `mkTemplate` at the very end. For more details
-about this function, [see here](design.md#templates).
+We call the internal `mkTemplate` at the very end. For more details about this
+function, [see here](design.md#templates).
 
 We must take two additional steps for our plugin to be picked up by the flake.
 The first is creating a `default.nix` in our plugin directory that exports our
@@ -228,8 +228,8 @@ This function registers the plugin to make it accessible from `nixago.plugins`.
 ### Writing Tests and Documentation
 
 The final step is to write tests and documentation for the plugin. Tests live in
-the [tests][8] directory in a dedicated directory named after the plugin.
-Tests are relatively trivial to write.
+the [tests][8] directory in a dedicated directory named after the plugin. Tests
+are relatively trivial to write.
 
 The first step is to create a `default.nix` which runs the test:
 
@@ -281,9 +281,9 @@ file located at the root of the tests directory:
 }
 ```
 
-Finally, before submitting a PR, add documentation under the
-[plugins][9] section of the documentation. Ensure you cover general usage
-information about the plugin, including an example invocation.
+Finally, before submitting a PR, add documentation under the [plugins][9]
+section of the documentation. Ensure you cover general usage information about
+the plugin, including an example invocation.
 
 [1]: https://github.com/jmgilman/nixago/tree/master/plugins
 [2]: https://github.com/jmgilman/nixago/blob/master/plugins/default.nix

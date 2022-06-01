@@ -1,6 +1,8 @@
 .direnv/
+.conform.yaml
 .justfile
 .prettierignore
+.prettierrc.json
 docs/book
 site/
 lefthook.yml

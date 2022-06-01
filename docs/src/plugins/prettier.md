@@ -1,8 +1,8 @@
 # Prettier
 
 This plugin generates the `.prettierrc.json` file for configuring [Prettier][1].
-It provides a single function that allows you to configure any valid
-API options][2].
+It provides a single function that allows you to configure any valid API
+options][2].
 
 ## Using mkConfig
 

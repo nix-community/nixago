@@ -129,7 +129,8 @@ following is an excerpt from the `flake.nix` that manages this project:
 The input to `mkAll` expects an attribute set where the name is one of the
 following:
 
-1. A path to the function to be called, relative to the `plugins` set (i.e., `prettier.`mkIgnoreConfig`)
+1. A path to the function to be called, relative to the `plugins` set (i.e.,
+   `prettier.`mkIgnoreConfig`)
 2. The name of a plugin
 
 The `default` function will be called from the plugin in the second case. See

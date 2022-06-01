@@ -21,7 +21,8 @@
 - Validate configuration data using the language features from [Cue][2]
 - Generate configuration files in any of the [supported formats][3]
 - Places all artifacts in the Nix store
-- Provides plugins for generating several types of development configuration files
+- Provides plugins for generating several types of development configuration
+  files
 
 ## Usage
 

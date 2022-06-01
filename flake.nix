@@ -136,8 +136,13 @@
             };
           };
           # Prettier
+          "prettier" = {
+            proseWrap = "always";
+          };
           "prettier.mkIgnoreConfig" = [
             ".direnv"
+            ".conform.yaml"
+            ".prettierrc.json"
             "tests"
             "lefthook.yml"
           ];

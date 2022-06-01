@@ -1,8 +1,8 @@
 # Conform
 
-This plugin generates the `.conform.yaml` file for configuring [Conform][1].
-It provides a single function that takes a simplified version of the
-configuration file:
+This plugin generates the `.conform.yaml` file for configuring [Conform][1]. It
+provides a single function that takes a simplified version of the configuration
+file:
 
 - The top-level `policies` entry is removed
 - The `type` and `spec` sections of the policy are removed

@@ -6,4 +6,5 @@ plugins follow a standard schema, the varying requirements of formats can
 require minor differences.
 
 Plugins can be accessed via `nixago.plugins.${pluginName}`. See the relevant
-documentation page or check the source code for what functions a plugin provides.
+documentation page or check the source code for what functions a plugin
+provides.
