@@ -1,9 +1,19 @@
 { pre-commit, stagesStr }:
+let
+  hooksStr = builtins.concatStringsSep " " [
+    "pre-commit"
+    "pre-merge-commit"
+    "pre-push"
+    "prepare-commit-msg"
+    "commit-msg"
+    "post-checkout"
+    "post-commit"
+  ];
+in
 {
   shellHookExtra = ''
     # Uninstall all existing hooks
-    hooks="pre-commit pre-merge-commit pre-push prepare-commit-msg commit-msg post-checkout post-commit"
-    for hook in $hooks; do
+    for hook in ${hooksStr}; do
       ${pre-commit}/bin/pre-commit uninstall -t $hook
     done
 

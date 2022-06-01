@@ -8,20 +8,26 @@
 */
 { pkgs, lib }:
 all:
+with pkgs.lib;
 let
   plugins = import ../plugins { inherit pkgs lib; };
   makeAll = name: data: (
     let
-      # If the input is not in the `plugin.function` format, assume we want `plugin.default`
-      path = let s = pkgs.lib.splitString "." name; in if (builtins.length (s) > 1) then s else [ name "default" ];
-      make = pkgs.lib.getAttrFromPath path plugins;
+      # If the input is not in the `plugin.function` format, assume we want
+      # `plugin.default`
+      path =
+        let s = splitString "." name;
+        in
+        if (builtins.length (s) > 1) then s else [ name "default" ];
+
+      make = getAttrFromPath path plugins;
     in
     make data
   );
 
-  result = pkgs.lib.mapAttrsToList makeAll all;
+  result = mapAttrsToList makeAll all;
 in
 {
-  configs = pkgs.lib.catAttrs "configFile" result;
-  shellHook = pkgs.lib.concatStringsSep "\n" (pkgs.lib.catAttrs "shellHook" result);
+  configs = catAttrs "configFile" result;
+  shellHook = concatStringsSep "\n" (pkgs.lib.catAttrs "shellHook" result);
 }

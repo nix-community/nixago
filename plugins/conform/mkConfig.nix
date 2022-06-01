@@ -12,7 +12,8 @@ let
   };
 
   dataFinal = {
-    policies = (optional (data ? commit) { type = "commit"; spec = data.commit; }) ++
+    policies =
+      (optional (data ? commit) { type = "commit"; spec = data.commit; }) ++
       (optional (data ? license) { type = "license"; spec = data.license; });
   };
 

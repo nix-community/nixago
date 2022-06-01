@@ -8,7 +8,7 @@ rec {
   */
   mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
 
-  /* Like mkConfig except it takes a simplified data input for creating local hooks.
+  /* Takes a simplified data input for creating local hooks.
 
     It's common for pre-commit hooks to be defined locally when using Nix. This
     allows using binaries from the Nix store rather than having pre-commit

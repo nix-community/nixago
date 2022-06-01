@@ -16,13 +16,21 @@
 with pkgs.lib;
 let
   inherit (lib) mkOption types;
-  flags = removeAttrs args [ "config" "lib" "flakeLib" "pkgs" "options" "specialArgs" ];
+  flags = removeAttrs args [
+    "config"
+    "lib"
+    "flakeLib"
+    "pkgs"
+    "options"
+    "specialArgs"
+  ];
   hook = ''
     # Check if the link is pointing to the existing derivation result
       if readlink ${config.output} >/dev/null \
         && [[ $(readlink ${config.output}) == ${config.configFile} ]]; then
         echo 1>&2 "nixago: ${config.output} is up to date"
-      elif [[ -L ${config.output} || ! -f ${config.output} ]]; then # otherwise we need to update
+      elif [[ -L ${config.output} || ! -f ${config.output} ]]; then
+        # otherwise we need to update
         echo 1>&2 "nixago: updating ${config.output}"
 
         # Relink to the new result
@@ -32,7 +40,7 @@ let
         # Run extra shell hook
         ${config.shellHookExtra}
       else # this was an existing file
-        echo 1>&2 "nixago: ERROR refusing to overwrite existing ${config.output}"
+        echo 1>&2 "nixago: ERROR refusing to overwrite ${config.output}"
       fi
   '';
 in
@@ -73,7 +81,7 @@ in
     };
     shellHookExtra = mkOption {
       type = types.str;
-      description = "Extra shell hook which is run when the generated configuration file changes";
+      description = "Extra shell hook executed when the config file changes";
       default = "";
     };
   };
