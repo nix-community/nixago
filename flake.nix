@@ -23,8 +23,26 @@
               tools
           ) // { all = tools; });
 
+        # TODO: Remove when https://github.com/NixOS/nixpkgs/pull/175771 is merged
+        conform = pkgs.buildGoModule rec {
+          pname = "conform";
+          version = "0.1.0-alpha.25";
+
+          src = pkgs.fetchFromGitHub {
+            rev = "v${version}";
+            owner = "siderolabs";
+            repo = "conform";
+            sha256 = "sha256-WgWgigpqPoEBY4tLjbzK02WFwrCWPGQWJ5eakLv5IWw=";
+          };
+
+          vendorSha256 = "sha256-Oigt7tAK4jhBQtfG1wdLHqi11NWu6uJn5fmuqTmR76E=";
+
+          doCheck = false;
+        };
+
         # Define development tools
         tools = mkTools [
+          conform
           pkgs.cue
           pkgs.just
           pkgs.lefthook
@@ -36,6 +54,34 @@
 
         # Define development tool configuration
         configurations = {
+          # Conform configuration
+          "conform" = {
+            commit = {
+              header = { length = 89; };
+              conventional = {
+                types = [
+                  "build"
+                  "ci"
+                  "docs"
+                  "feat"
+                  "fix"
+                  "perf"
+                  "refactor"
+                  "style"
+                  "test"
+                ];
+                scopes = [
+                  "conform"
+                  "just"
+                  "lefthook"
+                  "pre-commit"
+                  "prettier"
+                  "core"
+                  "flake"
+                ];
+              };
+            };
+          };
           # Just configuration
           "just" = {
             tasks = {
@@ -59,6 +105,13 @@
           };
           # Lefthook configuration
           "lefthook" = {
+            commit-msg = {
+              commands = {
+                conform = {
+                  run = "${tools.conform.exe} enforce --commit-msg-file {1}";
+                };
+              };
+            };
             pre-commit = {
               commands = {
                 nixpkgs-fmt = {
