@@ -261,13 +261,14 @@ runTest "pre-commit.mkConfig" ./expected.yml {
     }
   ];
 }
+{ }
 
 ```
 
 The `runTest` helper function provided performs most of the underlying work
-required to test the plugin. It takes three arguments: the function to call for
-the test, the location of the expected test output, and the data to pass to the
-specified function.
+required to test the plugin. It takes four arguments: the function to call for
+the test, the location of the expected test output, the data to pass to the
+specified function, and any additional arguments to pass to the plugin function.
 
 The second step is to create the expected output. In this case, the above
 invocation should produce the following result:

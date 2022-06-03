@@ -1,5 +1,6 @@
 { runTest }:
-runTest "pre-commit.mkConfig" ./expected.yml {
+runTest "pre-commit.mkConfig" ./expected.yml
+{
   repos = [
     {
       repo = "https://github.com/my/repo";
@@ -12,3 +13,4 @@ runTest "pre-commit.mkConfig" ./expected.yml {
     }
   ];
 }
+{ }

@@ -1,5 +1,6 @@
 { runTest }:
-runTest "prettier.mkConfig" ./expected.json {
+runTest "prettier.mkConfig" ./expected.json
+{
   arrowParens = "always";
   bracketSpacing = true;
   tabWidth = 80;
@@ -12,3 +13,4 @@ runTest "prettier.mkConfig" ./expected.json {
     }
   ];
 }
+{ }

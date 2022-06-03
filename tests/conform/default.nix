@@ -31,3 +31,4 @@ runTest "conform.mkConfig" ./expected.yml
     allowPrecedingComments = false;
   };
 }
+{ }
