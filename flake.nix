@@ -68,6 +68,7 @@
               conventional = {
                 types = [
                   "build"
+                  "chore"
                   "ci"
                   "docs"
                   "feat"
