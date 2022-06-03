@@ -155,7 +155,9 @@
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig preCommitConfig;
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+        configData = preCommitConfig;
+    };
 # ...
 }
 </code></pre>
@@ -249,9 +251,20 @@ following is an excerpt from the <code>flake.nix</code> that manages this projec
 following:</p>
 <ol>
 <li>A path to the function to be called, relative to the <code>plugins</code> set (i.e.,
-<code>prettier.</code>mkIgnoreConfig`)</li>
-<li>The name of a plugin</li>
+<code>prettier.mkIgnoreConfig</code>)</li>
+<li>The name of a plugin with <code>.opts</code> appended (i.e., <code>prettier.opts</code>)</li>
 </ol>
+<p>Appending the function name after the plugin name is optional. In this case, the
+<code>mkAll</code> function will call the <code>default</code> function. This function is specific to
+each plugin; refer to the source code for what is called.</p>
+<p>The value of the attribute should be the raw configuration data that will be
+passed to the function. All plugin functions take a <code>configData</code> argument which
+contains the configuration data. This argument is supplied with the value of the
+attribute.</p>
+<p>Some plugin functions accept additional arguments beyond <code>configData</code>. To pass
+other arguments using the <code>mkAll</code> function, you must add an extra attribute in
+the format of <code>pluginName.opts</code>. The value of this attribute should be a set
+that will be merged into the final call to the plugin function.</p>
 <p>The <code>default</code> function will be called from the plugin in the second case. See
 the individual plugins for which function this is. The second parameter is the
 configuration to be passed. The result is an attribute set with a unified

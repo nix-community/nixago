@@ -162,7 +162,9 @@ your Nix file and then call out to Nixago to generate it.</p>
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig preCommitConfig;
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+        configData = preCommitConfig;
+    };
 # ...
 }
 </code></pre>
@@ -256,9 +258,20 @@ following is an excerpt from the <code>flake.nix</code> that manages this projec
 following:</p>
 <ol>
 <li>A path to the function to be called, relative to the <code>plugins</code> set (i.e.,
-<code>prettier.</code>mkIgnoreConfig`)</li>
-<li>The name of a plugin</li>
+<code>prettier.mkIgnoreConfig</code>)</li>
+<li>The name of a plugin with <code>.opts</code> appended (i.e., <code>prettier.opts</code>)</li>
 </ol>
+<p>Appending the function name after the plugin name is optional. In this case, the
+<code>mkAll</code> function will call the <code>default</code> function. This function is specific to
+each plugin; refer to the source code for what is called.</p>
+<p>The value of the attribute should be the raw configuration data that will be
+passed to the function. All plugin functions take a <code>configData</code> argument which
+contains the configuration data. This argument is supplied with the value of the
+attribute.</p>
+<p>Some plugin functions accept additional arguments beyond <code>configData</code>. To pass
+other arguments using the <code>mkAll</code> function, you must add an extra attribute in
+the format of <code>pluginName.opts</code>. The value of this attribute should be a set
+that will be merged into the final call to the plugin function.</p>
 <p>The <code>default</code> function will be called from the plugin in the second case. See
 the individual plugins for which function this is. The second parameter is the
 configuration to be passed. The result is an attribute set with a unified
@@ -739,7 +752,7 @@ ask CUE to evaluate the input and produce a YAML output.</p>
 <p>With the CUE file created, the next step is to make our primary Nix function. We
 will create a single function for generating our configuration file:</p>
 <pre><code class="language-nix">{ pkgs, lib }:
-data:
+{ configData }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
@@ -747,13 +760,19 @@ let
   pre-commit = pkgs.pre-commit;
 
   # Add an extra hook for reinstalling required stages whenever the file changes
-  stages = unique (flatten (builtins.map (repo: builtins.map (hook: optionals (hook ? stages) hook.stages) repo.hooks) data.repos) ++ [ &quot;pre-commit&quot; ]);
+  stages = unique (flatten
+    (builtins.map
+      (repo: builtins.map
+        (hook: optionals (hook ? stages) hook.stages)
+        repo.hooks)
+      configData.repos) ++ [ &quot;pre-commit&quot; ]);
   stagesStr = builtins.concatStringsSep &quot; &quot; stages;
-  shellHookExtra = (import ./common.nix { inherit pre-commit stagesStr; }).shellHookExtra;
+  shellHookExtra =
+    (import ./common.nix { inherit pre-commit stagesStr; }).shellHookExtra;
 
   # Generate the module
   result = lib.mkTemplate {
-    inherit data files output shellHookExtra;
+    inherit configData files output shellHookExtra;
   };
 in
 {
@@ -762,8 +781,14 @@ in
 </code></pre>
 <p>All functions maintain the same basic structure. At the top, we accept an
 attribute set as the first argument, which pulls in local copies of <code>nixpkgs</code>
-and the internal <code>lib</code> provided by the flake. The second argument should be
-named <code>data</code> and contain the data passed in by the end-user.</p>
+and the internal <code>lib</code> provided by the flake. The second argument should also be
+an attribute set that must contain the <code>configData</code> attribute. Nixago expects
+all plugin functions to take a single attribute set as an argument that, at the
+very least, contains the <code>configData</code> attribute. The <code>configData</code> attribute is
+where the raw incoming data from the end user is placed.</p>
+<p>It's possible to add additional arguments to the attribute set if your plugin
+requires extra configuration. Ensure that you provide ample documentation for
+each of these additional arguments to the end user.</p>
 <p>The top of the function should declare the <code>files</code> and <code>output</code> variables. The
 <code>files</code> variable should point to the CUE file we previously created. The
 <code>output</code> variable should contain the name of the configuration file the plugin
@@ -824,12 +849,13 @@ runTest &quot;pre-commit.mkConfig&quot; ./expected.yml {
     }
   ];
 }
+{ }
 
 </code></pre>
 <p>The <code>runTest</code> helper function provided performs most of the underlying work
-required to test the plugin. It takes three arguments: the function to call for
-the test, the location of the expected test output, and the data to pass to the
-specified function.</p>
+required to test the plugin. It takes four arguments: the function to call for
+the test, the location of the expected test output, the data to pass to the
+specified function, and any additional arguments to pass to the plugin function.</p>
 <p>The second step is to create the expected output. In this case, the above
 invocation should produce the following result:</p>
 <pre><code class="language-yaml">repos:
