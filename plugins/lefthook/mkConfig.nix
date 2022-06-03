@@ -1,5 +1,5 @@
 { pkgs, lib }:
-{ data }:
+{ configData }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
@@ -14,7 +14,7 @@ let
     "source_dir"
     "source_dir_local"
   ];
-  stages = builtins.attrNames (builtins.removeAttrs data skip_attrs);
+  stages = builtins.attrNames (builtins.removeAttrs configData skip_attrs);
   stagesStr = builtins.concatStringsSep " " stages;
   shellHookExtra = ''
     # Install configured hooks
@@ -25,7 +25,7 @@ let
 
   # Generate the module
   result = lib.mkTemplate {
-    inherit data files output shellHookExtra;
+    inherit configData files output shellHookExtra;
   };
 in
 {

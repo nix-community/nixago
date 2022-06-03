@@ -1,5 +1,5 @@
 { pkgs, lib }:
-{ data }:
+{ configData }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
@@ -12,14 +12,14 @@ let
       (repo: builtins.map
         (hook: optionals (hook ? stages) hook.stages)
         repo.hooks)
-      data.repos) ++ [ "pre-commit" ]);
+      configData.repos) ++ [ "pre-commit" ]);
   stagesStr = builtins.concatStringsSep " " stages;
   shellHookExtra =
     (import ./common.nix { inherit pre-commit stagesStr; }).shellHookExtra;
 
   # Generate the module
   result = lib.mkTemplate {
-    inherit data files output shellHookExtra;
+    inherit configData files output shellHookExtra;
   };
 in
 {

@@ -11,7 +11,7 @@ all:
 with pkgs.lib;
 let
   plugins = import ../plugins { inherit pkgs lib; };
-  makeAll = name: data: (
+  makeAll = name: configData: (
     let
       # If the input is not in the `plugin.function` format, assume we want
       # `plugin.default`
@@ -22,7 +22,7 @@ let
 
       make = getAttrFromPath path plugins;
     in
-    make { inherit data; }
+    make { inherit configData; }
   );
 
   result = mapAttrsToList makeAll all;

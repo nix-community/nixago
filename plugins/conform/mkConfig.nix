@@ -1,26 +1,30 @@
 { pkgs, lib }:
-{ data, ... }:
+{ configData, ... }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
   output = ".conform.yaml";
 
-  # Expand out the data
+  # Expand out the configData
   test = {
     commit = { };
     license = { };
   };
 
-  dataFinal = {
+  configDataFinal = {
     policies =
-      (optional (data ? commit) { type = "commit"; spec = data.commit; }) ++
-      (optional (data ? license) { type = "license"; spec = data.license; });
+      (optional
+        (configData ? commit)
+        { type = "commit"; spec = configData.commit; }) ++
+      (optional
+        (configData ? license)
+        { type = "license"; spec = configData.license; });
   };
 
   # Generate the module
   result = lib.mkTemplate {
     inherit files output;
-    data = dataFinal;
+    configData = configDataFinal;
   };
 in
 {

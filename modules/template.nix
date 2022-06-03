@@ -51,15 +51,15 @@ in
       description = "The generated configuration file";
       default = flakeLib.eval
         ({
+          inherit (config) configData;
           inputFiles = config.files;
           outputFile = config.output;
-          data = config.data;
           postBuild = config.postBuild;
         } // flags);
     };
-    data = mkOption {
+    configData = mkOption {
       type = types.attrs;
-      description = "The configuration data";
+      description = "The raw configuration data";
     };
     files = mkOption {
       type = types.listOf types.path;
