@@ -146,7 +146,7 @@ will create a single function for generating our configuration file:
 
 ```nix
 { pkgs, lib }:
-data:
+{ configData }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
@@ -154,13 +154,19 @@ let
   pre-commit = pkgs.pre-commit;
 
   # Add an extra hook for reinstalling required stages whenever the file changes
-  stages = unique (flatten (builtins.map (repo: builtins.map (hook: optionals (hook ? stages) hook.stages) repo.hooks) data.repos) ++ [ "pre-commit" ]);
+  stages = unique (flatten
+    (builtins.map
+      (repo: builtins.map
+        (hook: optionals (hook ? stages) hook.stages)
+        repo.hooks)
+      configData.repos) ++ [ "pre-commit" ]);
   stagesStr = builtins.concatStringsSep " " stages;
-  shellHookExtra = (import ./common.nix { inherit pre-commit stagesStr; }).shellHookExtra;
+  shellHookExtra =
+    (import ./common.nix { inherit pre-commit stagesStr; }).shellHookExtra;
 
   # Generate the module
   result = lib.mkTemplate {
-    inherit data files output shellHookExtra;
+    inherit configData files output shellHookExtra;
   };
 in
 {
@@ -170,8 +176,15 @@ in
 
 All functions maintain the same basic structure. At the top, we accept an
 attribute set as the first argument, which pulls in local copies of `nixpkgs`
-and the internal `lib` provided by the flake. The second argument should be
-named `data` and contain the data passed in by the end-user.
+and the internal `lib` provided by the flake. The second argument should also be
+an attribute set that must contain the `configData` attribute. Nixago expects
+all plugin functions to take a single attribute set as an argument that, at the
+very least, contains the `configData` attribute. The `configData` attribute is
+where the raw incoming data from the end user is placed.
+
+It's possible to add additional arguments to the attribute set if your plugin
+requires extra configuration. Ensure that you provide ample documentation for
+each of these additional arguments to the end user.
 
 The top of the function should declare the `files` and `output` variables. The
 `files` variable should point to the CUE file we previously created. The
