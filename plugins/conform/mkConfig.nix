@@ -1,5 +1,5 @@
 { pkgs, lib }:
-data:
+{ data, ... }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];

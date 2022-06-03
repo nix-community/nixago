@@ -9,7 +9,7 @@
   the module.
 */
 { pkgs, lib }:
-{ data, files, output, postBuild ? "", shellHookExtra ? "", flags ? { } }:
+{ data, files, output, postBuild ? "", shellHookExtra ? "", flags ? { }, ... }:
 with pkgs.lib;
 let
   result = evalModules {

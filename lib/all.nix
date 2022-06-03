@@ -22,7 +22,7 @@ let
 
       make = getAttrFromPath path plugins;
     in
-    make data
+    make { inherit data; }
   );
 
   result = mapAttrsToList makeAll all;

@@ -1,5 +1,5 @@
 { pkgs, lib }:
-data:
+{ data }:
 let
   files = [ ./template.cue ];
   output = ".justfile";
