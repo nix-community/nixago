@@ -1,5 +1,5 @@
 { pkgs, lib }:
-data:
+{ configData }:
 with pkgs.lib;
 let
   files = [ ./template_ignore.cue ];
@@ -12,7 +12,7 @@ let
   # Generate the module
   result = lib.mkTemplate {
     inherit files output flags;
-    data = { inherit data; };
+    configData = { data = configData; };
   };
 in
 {

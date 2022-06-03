@@ -51,7 +51,9 @@ Plugins are available for quickly generating configuration files. For example, a
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig preCommitConfig;
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+        configData = preCommitConfig;
+    };
 # ...
 }
 ```

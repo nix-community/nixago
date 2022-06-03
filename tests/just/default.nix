@@ -1,5 +1,6 @@
 { runTest }:
-runTest "just.mkConfig" ./expected.txt {
+runTest "just.mkConfig" ./expected.txt
+{
   head = ''
     var := "value"
   '';
@@ -10,3 +11,4 @@ runTest "just.mkConfig" ./expected.txt {
     ];
   };
 }
+{ }

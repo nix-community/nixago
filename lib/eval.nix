@@ -1,18 +1,19 @@
 /*
-  Evaluates the given input files and data and returns a derivation which builds the result.
+  Evaluates the given input files and configData and returns a derivation which
+  builds the result.
 */
 { pkgs, lib }:
 { inputFiles
 , outputFile
 , postBuild ? ""
-, data ? { }
+, configData ? { }
 , cue ? pkgs.cue
 , ...
 }@args:
 
 with pkgs.lib;
 let
-  json = optionalString (data != { }) (builtins.toJSON data);
+  json = optionalString (configData != { }) (builtins.toJSON configData);
 
   defaultFlags = {
     outfile = "$out"; # Output the evaluation result to the derivation output
@@ -23,7 +24,7 @@ let
     "inputFiles"
     "outputFile"
     "postBuild"
-    "data"
+    "configData"
     "cue"
   ];
 

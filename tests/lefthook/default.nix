@@ -1,5 +1,6 @@
 { runTest }:
-runTest "lefthook.mkConfig" ./expected.yml {
+runTest "lefthook.mkConfig" ./expected.yml
+{
   commit-msg = {
     scripts = {
       template_checker = { runner = "bash"; };
@@ -24,3 +25,4 @@ runTest "lefthook.mkConfig" ./expected.yml {
     };
   };
 }
+{ }

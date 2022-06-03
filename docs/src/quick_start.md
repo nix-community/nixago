@@ -25,7 +25,9 @@ Choose a plugin to use. The below example uses the plugin for [pre-commit][1]:
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig preCommitConfig;
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+        configData = preCommitConfig;
+    };
 # ...
 }
 ```
@@ -130,8 +132,22 @@ The input to `mkAll` expects an attribute set where the name is one of the
 following:
 
 1. A path to the function to be called, relative to the `plugins` set (i.e.,
-   `prettier.`mkIgnoreConfig`)
-2. The name of a plugin
+   `prettier.mkIgnoreConfig`)
+2. The name of a plugin with `.opts` appended (i.e., `prettier.opts`)
+
+Appending the function name after the plugin name is optional. In this case, the
+`mkAll` function will call the `default` function. This function is specific to
+each plugin; refer to the source code for what is called.
+
+The value of the attribute should be the raw configuration data that will be
+passed to the function. All plugin functions take a `configData` argument which
+contains the configuration data. This argument is supplied with the value of the
+attribute.
+
+Some plugin functions accept additional arguments beyond `configData`. To pass
+other arguments using the `mkAll` function, you must add an extra attribute in
+the format of `pluginName.opts`. The value of this attribute should be a set
+that will be merged into the final call to the plugin function.
 
 The `default` function will be called from the plugin in the second case. See
 the individual plugins for which function this is. The second parameter is the
