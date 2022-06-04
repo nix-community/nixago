@@ -1,9 +1,8 @@
 { pkgs, lib }:
-{ configData }:
+{ configData, output ? "lefthook.yml", mode ? "link" }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
-  output = "lefthook.yml";
   lefthook = pkgs.lefthook;
 
   # Add an extra hook for adding required stages whenever the file changes
@@ -25,7 +24,7 @@ let
 
   # Generate the module
   result = lib.mkTemplate {
-    inherit configData files output shellHookExtra;
+    inherit configData files mode output shellHookExtra;
   };
 in
 {

@@ -61,7 +61,7 @@ let
       pluginName = builtins.elemAt parts 0;
     in
     make ({ inherit configData; }
-      // (optionalAttrs (opts ? pluginName) opts.${pluginName}))
+      // (optionalAttrs (opts ? "${pluginName}") opts.${pluginName}))
   );
 
   result = mapAttrsToList makeAll funcs;

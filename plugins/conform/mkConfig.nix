@@ -1,9 +1,8 @@
 { pkgs, lib }:
-{ configData, ... }:
+{ configData, output ? ".conform.yaml", mode ? "link" }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
-  output = ".conform.yaml";
 
   # Expand out the configData
   test = {
@@ -23,7 +22,7 @@ let
 
   # Generate the module
   result = lib.mkTemplate {
-    inherit files output;
+    inherit files mode output;
     configData = configDataFinal;
   };
 in

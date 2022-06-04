@@ -1,16 +1,29 @@
 # Quick Start
 
-Add the flake as an input:
+Nixago provides support for generating configurations for many different
+development tools. Refer to the plugins section for a list of currently
+supported tools or open up a new issue to request a tool be added.
+
+## Add Nixago as an Input
+
+The first step is adding Nixago as an input to your current `flake.nix`:
 
 ```nix
 {
   inputs = {
     # ...
+    nixpkgs.url = "github:nixos/nixpkgs";
     nixago.url = "github:jmgilman/nixago";
+    nixago.inputs.nixpkgs.follows = "nixpkgs";
     # ...
   };
 }
 ```
+
+To maintain consistency in the packages being used across your `flake.nix`, it's
+recommended to force Nixago's copy to follow the one declared in your flake.
+
+## Generate a Configuration
 
 Choose a plugin to use. The below example uses the plugin for [pre-commit][1]:
 
@@ -58,6 +71,64 @@ repos:
         language: system
         name: nixpkgs-fmt
     repo: local
+```
+
+## Changing Output Path
+
+By default, the shell hook for each plugin will generate the configuration file
+at the root of your repository (i.e., the location where `flake.nix` resides).
+The file name and relative location can be modified:
+
+```nix
+{
+# ...
+    preCommitConfig = {
+        nixpkgs-fmt = {
+            entry = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
+            language = "system";
+            files = "\\.nix";
+        };
+    };
+
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+        configData = preCommitConfig;
+        output = ".config/pre-commit-config.yaml";
+    };
+# ...
+}
+```
+
+The above example would place the configuration file in
+`.config/pre-commit-config.yaml`.
+
+## Changing Generation Mode
+
+By default, the shell hook manages a symbolic link from the Nix store to the
+output path. It automatically synchronizes any changes by updating the link if
+the generated configuration file changes. This mode can be altered to instead
+maintain a local copy of the generated configuration file. In this mode, the
+shell hook compares the contents of the local copy to the one in the Nix store
+and updates it accordingly. The primary benefit of this change is that it allows
+the file to be checked into git, and if your Nix store is read-only, it can be
+edited locally.
+
+```nix
+{
+# ...
+    preCommitConfig = {
+        nixpkgs-fmt = {
+            entry = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
+            language = "system";
+            files = "\\.nix";
+        };
+    };
+
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+        configData = preCommitConfig;
+        mode = "copy";
+    };
+# ...
+}
 ```
 
 ## Making Multiple Configurations
@@ -144,16 +215,27 @@ passed to the function. All plugin functions take a `configData` argument which
 contains the configuration data. This argument is supplied with the value of the
 attribute.
 
-Some plugin functions accept additional arguments beyond `configData`. To pass
-other arguments using the `mkAll` function, you must add an extra attribute in
-the format of `pluginName.opts`. The value of this attribute should be a set
-that will be merged into the final call to the plugin function.
+The `default` function will be called from the plugin if none is provided. See
+the individual plugins for which function this is. Most plugin functions accept
+additional arguments beyond `configData`. To pass other arguments using the
+`mkAll` function, you must add an extra attribute in the format of
+`pluginName.opts`. The value of this attribute should be a set that will be
+merged into the final call to the plugin function. The below example changes the
+mode of the Prettier plugin:
 
-The `default` function will be called from the plugin in the second case. See
-the individual plugins for which function this is. The second parameter is the
-configuration to be passed. The result is an attribute set with a unified
-`shellHook` attribute that contains all of the logic for managing the
-configurations. This result makes it seamless to add additional configurations
-to your existing projects.
+```nix
+{
+  # ...
+  "prettier.opts" = {
+    mode = "copy";
+  };
+  # ...
+}
+```
+
+The second parameter is the configuration to be passed. The result is an
+attribute set with a unified `shellHook` attribute that contains all of the
+logic for managing the configurations. This result makes adding additional
+configuration files to your existing projects seamless.
 
 [1]: https://pre-commit.com/

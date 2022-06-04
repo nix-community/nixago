@@ -24,25 +24,55 @@ let
     "options"
     "specialArgs"
   ];
-  hook = ''
-    # Check if the link is pointing to the existing derivation result
-      if readlink ${config.output} >/dev/null \
-        && [[ $(readlink ${config.output}) == ${config.configFile} ]]; then
-        echo 1>&2 "nixago: ${config.output} is up to date"
-      elif [[ -L ${config.output} || ! -f ${config.output} ]]; then
-        # otherwise we need to update
-        echo 1>&2 "nixago: updating ${config.output}"
 
-        # Relink to the new result
-        unlink ${config.output}
-        ln -s ${config.configFile} ${config.output}
+  # This hook creates a local symlink to the file in the Nix store
+  linkHook = ''
+    # Check if the link is pointing to the existing derivation result
+    if readlink ${config.output} >/dev/null \
+      && [[ $(readlink ${config.output}) == ${config.configFile} ]]; then
+      echo 1>&2 "nixago: ${config.output} link is up to date"
+    elif [[ -L ${config.output} || ! -f ${config.output} ]]; then
+      # otherwise we need to update
+      echo 1>&2 "nixago: ${config.output} link updated"
+
+      # Relink to the new result
+      unlink ${config.output} &>/dev/null
+      ln -s ${config.configFile} ${config.output}
+
+      # Run extra shell hook
+      ${config.shellHookExtra}
+    else # this was an existing file
+      echo 1>&2 "nixago: ERROR refusing to overwrite ${config.output}"
+    fi
+  '';
+
+  # This hook creates a local copy of the file in the Nix store
+  copyHook = ''
+    # Check if the file exists
+    if [[ -f ${config.output} ]]; then
+      # Check if we need to update the local copy
+      cmp ${config.configFile} ${config.output} >/dev/null
+      if [[ $? -gt 0 ]]; then
+        # We need to update the local copy
+        echo "nixago: ${config.output} copy updated"
+        install -m 644 ${config.configFile} ${config.output}
 
         # Run extra shell hook
         ${config.shellHookExtra}
-      else # this was an existing file
-        echo 1>&2 "nixago: ERROR refusing to overwrite ${config.output}"
+      else
+        echo "nixago: ${config.output} copy is up to date"
       fi
+    else
+      # We need to create the first iteration of the file
+      echo "nixago: ${config.output} copy created"
+      install -m 644 ${config.configFile} ${config.output}
+
+      # Run extra shell hook
+      ${config.shellHookExtra}
+    fi
   '';
+
+  hook = if config.mode == "copy" then copyHook else linkHook;
 in
 {
   options = {
@@ -64,6 +94,10 @@ in
     files = mkOption {
       type = types.listOf types.path;
       description = "The CUE files";
+    };
+    mode = mkOption {
+      type = types.str;
+      description = "The file mode to use (copy or link)";
     };
     output = mkOption {
       type = types.str;

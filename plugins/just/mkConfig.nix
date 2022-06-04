@@ -1,8 +1,7 @@
 { pkgs, lib }:
-{ configData }:
+{ configData, output ? ".justfile", mode ? "link" }:
 let
   files = [ ./template.cue ];
-  output = ".justfile";
 
   # Run the formatter since the output from the Go template engine is ugly
   postBuild = ''
@@ -17,7 +16,7 @@ let
   };
 
   result = lib.mkTemplate {
-    inherit files output postBuild flags;
+    inherit files mode output postBuild flags;
     configData = { data = configData; };
   };
 in
