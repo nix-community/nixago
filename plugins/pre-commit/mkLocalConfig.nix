@@ -1,9 +1,8 @@
 { pkgs, lib }:
-{ configData, mode ? "link" }:
+{ configData, output ? ".pre-commit-config.yaml", mode ? "link" }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
-  output = ".pre-commit-config.yaml";
   pre-commit = pkgs.pre-commit;
 
   # Add an extra hook for reinstalling required stages whenever the file changes

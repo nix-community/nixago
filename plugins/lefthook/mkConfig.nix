@@ -1,9 +1,8 @@
 { pkgs, lib }:
-{ configData, mode ? "link" }:
+{ configData, output ? "lefthook.yml", mode ? "link" }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
-  output = "lefthook.yml";
   lefthook = pkgs.lefthook;
 
   # Add an extra hook for adding required stages whenever the file changes

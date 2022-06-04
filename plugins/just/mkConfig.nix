@@ -1,8 +1,7 @@
 { pkgs, lib }:
-{ configData, mode ? "link" }:
+{ configData, output ? ".justfile", mode ? "link" }:
 let
   files = [ ./template.cue ];
-  output = ".justfile";
 
   # Run the formatter since the output from the Go template engine is ugly
   postBuild = ''

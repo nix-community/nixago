@@ -1,9 +1,8 @@
 { pkgs, lib }:
-{ configData, mode ? "link" }:
+{ configData, output ? ".prettierignore", mode ? "link" }:
 with pkgs.lib;
 let
   files = [ ./template_ignore.cue ];
-  output = ".prettierignore";
   flags = {
     expression = "rendered";
     out = "text";

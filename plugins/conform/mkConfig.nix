@@ -1,9 +1,8 @@
 { pkgs, lib }:
-{ configData, mode ? "link" }:
+{ configData, output ? ".conform.yaml", mode ? "link" }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
-  output = ".conform.yaml";
 
   # Expand out the configData
   test = {
