@@ -1,5 +1,5 @@
 { pkgs, lib }:
-{ configData }:
+{ configData, mode ? "link" }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
@@ -19,7 +19,7 @@ let
 
   # Generate the module
   result = lib.mkTemplate {
-    inherit configData files output shellHookExtra;
+    inherit configData files mode output shellHookExtra;
   };
 in
 {

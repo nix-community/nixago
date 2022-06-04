@@ -1,5 +1,5 @@
 { pkgs, lib }:
-{ configData }:
+{ configData, mode ? "link" }:
 let
   files = [ ./template.cue ];
   output = ".justfile";
@@ -17,7 +17,7 @@ let
   };
 
   result = lib.mkTemplate {
-    inherit files output postBuild flags;
+    inherit files mode output postBuild flags;
     configData = { data = configData; };
   };
 in

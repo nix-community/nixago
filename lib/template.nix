@@ -9,14 +9,21 @@
   the module.
 */
 { pkgs, lib }:
-{ configData, files, output, postBuild ? "", shellHookExtra ? "", flags ? { }, ... }:
+{ configData
+, files
+, output
+, mode ? "link"
+, postBuild ? ""
+, shellHookExtra ? ""
+, flags ? { }
+}:
 with pkgs.lib;
 let
   result = evalModules {
     modules = [
       ../modules/template.nix
       {
-        inherit configData files output postBuild shellHookExtra;
+        inherit configData files output mode postBuild shellHookExtra;
       }
     ];
     specialArgs = ({ inherit pkgs; flakeLib = lib; } // flags);
