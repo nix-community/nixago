@@ -13,66 +13,26 @@
     </a>
 </p>
 
-> Generate configuration files with [Nix][1] + [CUE][2]
+> The central source of truth for your development tools
+
+Are you tired of having multiple configuration files for your development tools
+littering the root of your repositories? Nixago aims to allow your local
+`flake.nix` to act as the central source of truth for configuring your
+development tools. You can declare the configuration for all of your development
+tools in your flake file and Nixago will do the work of generating and
+maintaining the configuration files for you.
 
 ## Features
 
-- Specify configuration data using native Nix syntax
+- Specify configuration data using native [Nix][1] syntax
 - Validate configuration data using the language features from [Cue][2]
 - Generate configuration files in any of the [supported formats][3]
 - Places all artifacts in the Nix store
-- Provides plugins for generating several types of development configuration
-  files
+- Provides [plugins][4] for generating several types of configuration files
 
 ## Usage
 
-Add the flake as an input:
-
-```nix
-{ #....
-  inputs = {
-    # ...
-    nixago.url = "github:jmgilman/nixago";
-  };
-}
-```
-
-Plugins are available for quickly generating configuration files. For example, a
-[pre-commit][4] configuration:
-
-```nix
-{
-# ...
-    preCommitConfig = {
-        nixpkgs-fmt = {
-            entry = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
-            language = "system";
-            files = "\\.nix";
-        };
-    };
-
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
-        configData = preCommitConfig;
-    };
-# ...
-}
-```
-
-The flake generates a shell hook for linking the configuration file to the root
-of the current working directory. The hook will automatically pick up changes
-and re-link as necessary.
-
-```nix
-{
-# ...
-    devShell = pkgs.mkShell {
-        shellHook = nixago.lib.mkShellHook [ preCommit ];
-    };
-# ...
-}
-```
-
-See [the docs][5] for more information.
+See the [quick start][5] for how to get started.
 
 ## Testing
 
@@ -96,7 +56,7 @@ your own, and then:
 [1]: https://nixos.org/
 [2]: https://cuelang.org/
 [3]: https://cuelang.org/docs/integrations/
-[4]: https://pre-commit.com/
-[5]: https://jmgilman.github.io/nixago/
+[4]: https://jmgilman.github.io/nixago/plugins/index.html
+[5]: https://jmgilman.github.io/nixago/quick_start.html
 [6]: https://jmgilman.github.io/nixago/contributing/design
 [7]: https://github.com/jmgilman/nixago/issues
