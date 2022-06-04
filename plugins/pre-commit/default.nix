@@ -1,19 +1,20 @@
 { pkgs, lib }:
-rec {
-  default = mkConfig;
+config:
+with pkgs.lib;
+let
+  inherit (config) configData;
+  files = [ ./template.cue ];
+  defaultOutput = ".pre-commit-config.yaml";
+  pre-commit = pkgs.pre-commit;
 
-  /* Creates a .pre-commit-config.yaml file for configuring pre-commit.
-
-    See template.cue for the expected format of incoming data.
-  */
-  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
-
-  /* Takes a simplified data input for creating local hooks.
-
-    It's common for pre-commit hooks to be defined locally when using Nix. This
-    allows using binaries from the Nix store rather than having pre-commit
-    manage them. This function is optimized for this use-case and takes a
-    simplified data input. See the docs for more information.
-  */
-  mkLocalConfig = import ./mkLocalConfig.nix { inherit pkgs lib; };
+  # Build configData and shellHookExtra
+  common = import ./common.nix {
+    inherit pkgs pre-commit; inherit (config) type; data = config.configData;
+  };
+in
+lib.genConfig
+{
+  inherit defaultOutput files;
+  inherit (common) shellHookExtra;
+  config = lib.overrideData config common.configData;
 }

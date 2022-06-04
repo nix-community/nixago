@@ -2,6 +2,8 @@
 {
   eval = import ./eval.nix { inherit pkgs lib plugins; };
 
+  genConfig = import ./generate.nix { inherit pkgs lib plugins; };
+
   make = import ./make.nix { inherit pkgs lib plugins; };
 
   mkAll = import ./all.nix { inherit pkgs lib plugins; };
@@ -11,5 +13,9 @@
   mkShellHook = configs:
     builtins.concatStringsSep "\n" (pkgs.lib.catAttrs "shellHook" configs);
 
-  mkTemplate = import ./template.nix { inherit pkgs lib plugins; };
+  overrideData = config: newData:
+    pkgs.lib.recursiveUpdateUntil
+      (p: l: r: p == [ "configData" ])
+      config
+      { configData = newData; };
 }

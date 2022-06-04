@@ -1,8 +1,24 @@
 { pkgs, lib }:
-rec {
-  default = mkConfig;
+config:
+with pkgs.lib;
+let
+  inherit (config) configData;
+  files = [ ./template.cue ];
+  defaultOutput = ".conform.yaml";
 
-  /* Creates a .conform.yaml file for configuring conform.
-  */
-  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
+  # Expand out the configData
+  configDataFinal = {
+    policies =
+      (optional
+        (configData ? commit)
+        { type = "commit"; spec = configData.commit; }) ++
+      (optional
+        (configData ? license)
+        { type = "license"; spec = configData.license; });
+  };
+in
+lib.genConfig
+{
+  inherit defaultOutput files;
+  config = lib.overrideData config configDataFinal;
 }

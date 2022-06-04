@@ -10,59 +10,7 @@
 all:
 with pkgs.lib;
 let
-  # Create separate sets of plugin calls and plugin options
-  filteredOpts = filterAttrs
-    (path: data: (
-      let
-        parts = splitString "." path;
-        partsLength = builtins.length parts;
-      in
-      if partsLength > 1 then (builtins.elemAt parts 1) == "opts" else false
-    ))
-    all;
-  filteredFuncs = filterAttrs
-    (path: data: (
-      let
-        parts = splitString "." path;
-        partsLength = builtins.length parts;
-      in
-      if partsLength > 1 then (builtins.elemAt parts 1) != "opts" else true
-    ))
-    all;
-
-  # Convert option keys to `pluginName` instead of `pluginName.opts`
-  opts = mapAttrs'
-    (name: data: (
-      let
-        parts = splitString "." name;
-        pluginName = builtins.elemAt parts 0;
-      in
-      nameValuePair pluginName data
-    ))
-    filteredOpts;
-
-  # Convert function keys to `pluginName.default` if name was omitted
-  funcs = mapAttrs'
-    (path: data: (
-      let
-        parts = splitString "." path;
-        partsLength = builtins.length parts;
-      in
-      nameValuePair (if partsLength > 1 then path else "${path}.default") data
-    ))
-    filteredFuncs;
-
-  makeAll = path: configData: (
-    let
-      parts = splitString "." path;
-      make = getAttrFromPath parts plugins;
-      pluginName = builtins.elemAt parts 0;
-    in
-    make ({ inherit configData; }
-      // (optionalAttrs (opts ? "${pluginName}") opts.${pluginName}))
-  );
-
-  result = mapAttrsToList makeAll funcs;
+  result = builtins.map lib.make all;
 in
 {
   configs = catAttrs "configFile" result;

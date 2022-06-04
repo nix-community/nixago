@@ -1,10 +1,26 @@
 { pkgs, lib }:
-rec {
-  default = mkConfig;
+config:
+let
+  inherit (config) configData;
+  files = [ ./template.cue ];
+  defaultOutput = ".justfile";
 
-  /* Creates a .justfile for configuring the just task runner.
+  # Run the formatter since the output from the Go template engine is ugly
+  postBuild = ''
+    cat $out
+    ${pkgs.just}/bin/just --unstable --fmt -f $out
+  '';
 
-    See template.cue for the expected format of incoming data.
-  */
-  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
+  # Need to explicitly tell cue what expression to render as text output
+  flags = {
+    expression = "rendered";
+    out = "text";
+  };
+
+  # Wrap data for cue to pick it up
+  configDataFinal = { data = config.configData; };
+in
+lib.genConfig {
+  inherit defaultOutput files postBuild flags;
+  config = lib.overrideData config configDataFinal;
 }

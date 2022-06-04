@@ -1,9 +1,9 @@
-{ config, lib, flakeLib, pkgs, ... }:
-with pkgs.lib;
+{ config, lib, ... }:
+with lib;
 {
   options = {
     configData = mkOption {
-      type = types.attrs;
+      type = types.anything;
       description = "The raw configuration data";
     };
     mode = mkOption {

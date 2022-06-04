@@ -1,19 +1,20 @@
 { pkgs, lib, plugins }:
-{ name, config, type ? "", output ? "", mode ? "", options ? { } }:
+{ name, configData, type ? "", output ? "", mode ? "", options ? { } }:
 with pkgs.lib;
 let
+  # Build the plugin configuration
   plugin = plugins.${name};
-  options = ({ configData = config; }
+  allOptions = ({ inherit configData; }
     // optionalAttrs (type != "") { inherit type; }
     // optionalAttrs (output != "") { inherit output; }
     // optionalAttrs (mode != "") { inherit mode; }
     // optionalAttrs (options != { }) { inherit options; });
 
-  config = (evalModules {
+  pluginConfig = (evalModules {
     modules = [
       ../modules/plugin.nix
-      options
+      allOptions
     ];
   }).config;
 in
-plugin config
+plugin pluginConfig

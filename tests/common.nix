@@ -1,16 +1,14 @@
-{ pkgs, plugins }:
-path: expected: configData: opts:
+{ pkgs, lib, plugins }:
+{ name, configData, expected, type ? "", output ? "", mode ? "" }:
 let
-  parts = pkgs.lib.splitString "." path;
-  plugin = builtins.elemAt parts 0;
-  make = pkgs.lib.getAttrFromPath parts plugins;
-  output = make ({ inherit configData; } // opts);
-
-  result = pkgs.runCommand "test.${plugin}"
+  result = lib.make {
+    inherit configData mode name output type;
+  };
+  der = pkgs.runCommand "test.${name}"
     { }
     ''
-      cmp "${expected}" "${output.configFile}"
+      cmp "${expected}" "${result.configFile}"
       touch $out
     '';
 in
-result
+der
