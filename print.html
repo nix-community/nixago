@@ -142,15 +142,24 @@ generating configuration files for development tools when using a <a href="https
 for setting up the development environment. You define the configuration data in
 your Nix file and then call out to Nixago to generate it.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h1>
-<p>Add the flake as an input:</p>
+<p>Nixago provides support for generating configurations for many different
+development tools. Refer to the plugins section for a list of currently
+supported tools or open up a new issue to request a tool be added.</p>
+<h2 id="add-nixago-as-an-input"><a class="header" href="#add-nixago-as-an-input">Add Nixago as an Input</a></h2>
+<p>The first step is adding Nixago as an input to your current <code>flake.nix</code>:</p>
 <pre><code class="language-nix">{
   inputs = {
     # ...
+    nixpkgs.url = &quot;github:nixos/nixpkgs&quot;;
     nixago.url = &quot;github:jmgilman/nixago&quot;;
+    nixago.inputs.nixpkgs.follows = &quot;nixpkgs&quot;;
     # ...
   };
 }
 </code></pre>
+<p>To maintain consistency in the packages being used across your <code>flake.nix</code>, it's
+recommended to force Nixago's copy to follow the one declared in your flake.</p>
+<h2 id="generate-a-configuration"><a class="header" href="#generate-a-configuration">Generate a Configuration</a></h2>
 <p>Choose a plugin to use. The below example uses the plugin for <a href="https://pre-commit.com/">pre-commit</a>:</p>
 <pre><code class="language-nix">{
 # ...
@@ -189,6 +198,55 @@ file with the following contents:</p>
         language: system
         name: nixpkgs-fmt
     repo: local
+</code></pre>
+<h2 id="changing-output-path"><a class="header" href="#changing-output-path">Changing Output Path</a></h2>
+<p>By default, the shell hook for each plugin will generate the configuration file
+at the root of your repository (i.e., the location where <code>flake.nix</code> resides).
+The file name and relative location can be modified:</p>
+<pre><code class="language-nix">{
+# ...
+    preCommitConfig = {
+        nixpkgs-fmt = {
+            entry = &quot;${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt&quot;;
+            language = &quot;system&quot;;
+            files = &quot;\\.nix&quot;;
+        };
+    };
+
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+        configData = preCommitConfig;
+        output = &quot;.config/pre-commit-config.yaml&quot;;
+    };
+# ...
+}
+</code></pre>
+<p>The above example would place the configuration file in
+<code>.config/pre-commit-config.yaml</code>.</p>
+<h2 id="changing-generation-mode"><a class="header" href="#changing-generation-mode">Changing Generation Mode</a></h2>
+<p>By default, the shell hook manages a symbolic link from the Nix store to the
+output path. It automatically synchronizes any changes by updating the link if
+the generated configuration file changes. This mode can be altered to instead
+maintain a local copy of the generated configuration file. In this mode, the
+shell hook compares the contents of the local copy to the one in the Nix store
+and updates it accordingly. The primary benefit of this change is that it allows
+the file to be checked into git, and if your Nix store is read-only, it can be
+edited locally.</p>
+<pre><code class="language-nix">{
+# ...
+    preCommitConfig = {
+        nixpkgs-fmt = {
+            entry = &quot;${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt&quot;;
+            language = &quot;system&quot;;
+            files = &quot;\\.nix&quot;;
+        };
+    };
+
+    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+        configData = preCommitConfig;
+        mode = &quot;copy&quot;;
+    };
+# ...
+}
 </code></pre>
 <h2 id="making-multiple-configurations"><a class="header" href="#making-multiple-configurations">Making Multiple Configurations</a></h2>
 <p>A utility function is available for generating multiple configurations. The
@@ -268,16 +326,25 @@ each plugin; refer to the source code for what is called.</p>
 passed to the function. All plugin functions take a <code>configData</code> argument which
 contains the configuration data. This argument is supplied with the value of the
 attribute.</p>
-<p>Some plugin functions accept additional arguments beyond <code>configData</code>. To pass
-other arguments using the <code>mkAll</code> function, you must add an extra attribute in
-the format of <code>pluginName.opts</code>. The value of this attribute should be a set
-that will be merged into the final call to the plugin function.</p>
-<p>The <code>default</code> function will be called from the plugin in the second case. See
-the individual plugins for which function this is. The second parameter is the
-configuration to be passed. The result is an attribute set with a unified
-<code>shellHook</code> attribute that contains all of the logic for managing the
-configurations. This result makes it seamless to add additional configurations
-to your existing projects.</p>
+<p>The <code>default</code> function will be called from the plugin if none is provided. See
+the individual plugins for which function this is. Most plugin functions accept
+additional arguments beyond <code>configData</code>. To pass other arguments using the
+<code>mkAll</code> function, you must add an extra attribute in the format of
+<code>pluginName.opts</code>. The value of this attribute should be a set that will be
+merged into the final call to the plugin function. The below example changes the
+mode of the Prettier plugin:</p>
+<pre><code class="language-nix">{
+  # ...
+  &quot;prettier.opts&quot; = {
+    mode = &quot;copy&quot;;
+  };
+  # ...
+}
+</code></pre>
+<p>The second parameter is the configuration to be passed. The result is an
+attribute set with a unified <code>shellHook</code> attribute that contains all of the
+logic for managing the configurations. This result makes adding additional
+configuration files to your existing projects seamless.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="plugins"><a class="header" href="#plugins">Plugins</a></h1>
 <p>Nixago provides most functionality through plugins. Each plugin targets a
 specific configuration by providing a clean interface for end-users. While most
@@ -750,13 +817,66 @@ expect the input data to be in the format defined in the
 ask CUE to evaluate the input and produce a YAML output.</p>
 <h3 id="creating-the-nix-functions"><a class="header" href="#creating-the-nix-functions">Creating the Nix Functions</a></h3>
 <p>With the CUE file created, the next step is to make our primary Nix function. We
-will create a single function for generating our configuration file:</p>
+will create a single function for generating our configuration file. First,
+let's examine the basic structure of a plugin function:</p>
 <pre><code class="language-nix">{ pkgs, lib }:
-{ configData }:
+{ configData, output ? &quot;file.json&quot;, mode ? &quot;link&quot; }:
+with pkgs.lib;
+let
+  # Define input files
+  files = [ ./template.cue ];
+
+  # Add ddditional logic here
+
+  # Generate the module
+  result = lib.mkTemplate {
+    inherit configData files mode output;
+  };
+in
+{
+  inherit (result) configFile shellHook;
+}
+</code></pre>
+<p>It's assumed that all plugin functions are defined in this way. You must use
+this as a template to start with and then add logic as needed. Let's break down
+this structure to better understand each component.</p>
+<p>The function takes two arguments, both of them being attribute sets. The first
+attribute set is invisible to the end-user and is instead passed by the internal
+flake so that the plugin has access to a copy of <code>nixpkgs</code> and the internal
+flake <code>lib</code> output. The second attribute set is standardized and should contain
+the attributes shown. They are explained below:</p>
+<ul>
+<li><strong>configData</strong>: This is the raw configuration data provided by the end user</li>
+<li><strong>output</strong>: This is the file path where the generated file will be managed</li>
+<li><strong>mode</strong>: This determines how the file is managed: the default is <code>link</code> that
+instructs the file to be symlinked. However, it can also be changed to <code>copy</code>
+instead to maintain a local copy of the generated configuration file.</li>
+</ul>
+<p>You should change the default values of the last two attributes as needed. It
+makes more sense to maintain a copy of a file rather than a symlink in some
+cases. The output path is relative to the current working directory of the user.
+Most configuration files reside at the root; however, it's possible to nest the
+configuration deeper (i.e., <code>configs/file.json</code>).</p>
+<p>You are not restricted from adding additional attributes to the second argument.
+The only requirement is you keep the three listed above. It's recommended you
+document the additional attributes added, including what they do, so that the
+end user understands what options are available for controlling the plugin.</p>
+<p>The remainder of the function is fairly self-explanatory. We declare the input
+files to be passed to <code>cue eval</code> in the <code>files</code> variable. We conclude with a
+call to <code>lib.mkTemplate</code>, which contains all of the necessary logic for
+generating the output the end user is expecting. This function has additional
+arguments that can be passed to customize the result; namely, <code>shellHookExtra</code>
+for adding additional logic to the generated shell hook and <code>postBuild</code> for
+adding additional logic after <code>cue eval</code> is run. You can also pass other flags
+to <code>cue eval</code> via the <code>flags</code> argument. For more details about this function,
+<a href="contributing/design.html#templates">see here</a>.</p>
+<p>The returned output is standardized and should not be changed. Here is the final
+result of our function for the pre-commit plugin:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+{ configData, output ? &quot;.pre-commit-config.yaml&quot;, mode ? &quot;link&quot; }:
 with pkgs.lib;
 let
   files = [ ./template.cue ];
-  output = &quot;.pre-commit-config.yaml&quot;;
   pre-commit = pkgs.pre-commit;
 
   # Add an extra hook for reinstalling required stages whenever the file changes
@@ -772,35 +892,13 @@ let
 
   # Generate the module
   result = lib.mkTemplate {
-    inherit configData files output shellHookExtra;
+    inherit configData files mode output shellHookExtra;
   };
 in
 {
   inherit (result) configFile shellHook;
 }
 </code></pre>
-<p>All functions maintain the same basic structure. At the top, we accept an
-attribute set as the first argument, which pulls in local copies of <code>nixpkgs</code>
-and the internal <code>lib</code> provided by the flake. The second argument should also be
-an attribute set that must contain the <code>configData</code> attribute. Nixago expects
-all plugin functions to take a single attribute set as an argument that, at the
-very least, contains the <code>configData</code> attribute. The <code>configData</code> attribute is
-where the raw incoming data from the end user is placed.</p>
-<p>It's possible to add additional arguments to the attribute set if your plugin
-requires extra configuration. Ensure that you provide ample documentation for
-each of these additional arguments to the end user.</p>
-<p>The top of the function should declare the <code>files</code> and <code>output</code> variables. The
-<code>files</code> variable should point to the CUE file we previously created. The
-<code>output</code> variable should contain the name of the configuration file the plugin
-is generating. Note that the extension of the configuration file is essential.
-CUE uses the file extension to determine what format to output when CUE
-evaluates the file. <a href="https://cuelang.org/docs/integrations/">See here</a> for supported formats.</p>
-<p>The remainder of the function is specific to each plugin. In the case above, we
-gather all pre-commit <code>stages</code> to determine what stages of the pre-commit
-process will be installed when the configuration is generated. We then create
-<code>shellHookExtra</code>, which contains the necessary logic for installing the stages.</p>
-<p>We call the internal <code>mkTemplate</code> at the very end. For more details about this
-function, <a href="contributing/design.html#templates">see here</a>.</p>
 <p>We must take two additional steps for our plugin to be picked up by the flake.
 The first is creating a <code>default.nix</code> in our plugin directory that exports our
 function:</p>
