@@ -150,9 +150,9 @@
           ];
         };
       in
-      {
+      rec {
         # Load lib functions
-        lib = (import ./lib { inherit pkgs lib; });
+        lib = (import ./lib { inherit pkgs lib plugins; });
 
         # Load plugins
         plugins = import ./plugins { inherit pkgs lib; };

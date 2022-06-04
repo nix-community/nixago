@@ -6,12 +6,10 @@
   configuration derivations and shellHook is a concatenated version of all
   configuration shellHooks.
 */
-{ pkgs, lib }:
+{ pkgs, lib, plugins }:
 all:
 with pkgs.lib;
 let
-  plugins = import ../plugins { inherit pkgs lib; };
-
   # Create separate sets of plugin calls and plugin options
   filteredOpts = filterAttrs
     (path: data: (

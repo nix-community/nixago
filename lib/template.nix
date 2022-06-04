@@ -8,7 +8,7 @@
   underlying `cue eval` command. The function returns the evaluated config from
   the module.
 */
-{ pkgs, lib }:
+{ pkgs, lib, plugins }:
 { configData
 , files
 , output

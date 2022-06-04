@@ -2,7 +2,7 @@
   Evaluates the given input files and configData and returns a derivation which
   builds the result.
 */
-{ pkgs, lib }:
+{ pkgs, lib, plugins }:
 { inputFiles
 , outputFile
 , postBuild ? ""
