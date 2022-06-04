@@ -135,11 +135,19 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>Nixago is a <a href="https://nixos.wiki/wiki/Flakes">flake</a> library that provides functions for generating
-configuration files using <a href="https://nixos.org/">Nix</a> and <a href="https://cuelang.org/">Cue</a>. Its primary use is for
-generating configuration files for development tools when using a <a href="https://nixos.org/manual/nix/stable/command-ref/nix-shell.html">nix shell</a>
-for setting up the development environment. You define the configuration data in
-your Nix file and then call out to Nixago to generate it.</p>
+<p>Nixago is a <a href="https://nixos.wiki/wiki/Flakes">flake</a> library that aims to simplify managing the various
+configuration files built up at the root of your repositories. Its plugin-based
+approach makes it easy to extend to cover any development tool you may use
+across your projects. It allows your <code>flake.nix</code> to serve as the central source
+of truth for configuring your development tools.</p>
+<p>Underneath the hood, Nixago uses <a href="https://nixos.org/">Nix</a> and <a href="https://cuelang.org/">Cue</a> for generating
+configuration files. It's designed to be used in tandem with a <a href="https://nixos.org/manual/nix/stable/command-ref/nix-shell.html">nix shell</a> to
+dynamically create and manage configuration files in your existing development
+environments. All that's required is defining the configurations in the
+<code>flake.nix</code> file at the root of your repository, and Nixago will automatically
+generate shell hooks that can be used to create and manage the files.</p>
+<p>Don't see a plugin for your development tool? <a href="https://github.com/jmgilman/nixago/issues/new">Submit a new feature request</a>
+or consider <a href="https://jmgilman.github.io/nixago/contributing/index.html">adding your own</a>.</p>
 
                     </main>
 
