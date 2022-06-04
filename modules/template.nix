@@ -36,7 +36,7 @@ let
       echo 1>&2 "nixago: ${config.output} link updated"
 
       # Relink to the new result
-      unlink ${config.output}
+      unlink ${config.output} &>/dev/null
       ln -s ${config.configFile} ${config.output}
 
       # Run extra shell hook
