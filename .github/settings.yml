@@ -14,7 +14,7 @@
 
 repository:
   name: nixago
-  description: description of repoGenerate configuration files with Nix + CUE
+  description: The central source of truth for your development tools
   homepage: https://jmgilman.github.io/nixago/
   topics: nix, cuelang, development, developer-tools, development-environment
   default_branch: master
