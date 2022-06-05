@@ -1,5 +1,8 @@
 { pkgs, lib, plugins }:
 {
+  inherit (import ../modules { inherit pkgs; })
+    mkConfigResult mkEvalRequest mkPluginRequest;
+
   eval = import ./eval.nix { inherit pkgs lib plugins; };
 
   genConfig = import ./generate.nix { inherit pkgs lib plugins; };
