@@ -7,11 +7,13 @@ with pkgs.lib;
 let
   output = request.output;
   shellHookExtra = request.shellHookExtra;
+  path = ../plugins/${request.name}/templates;
 
   # Build the configuration file derivation
   configFile = lib.eval
     {
-      inherit (request) configData files flags output postBuild;
+      inherit path;
+      inherit (request) configData flags output package postBuild;
     };
 
   # Build shell hook

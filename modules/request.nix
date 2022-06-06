@@ -14,11 +14,6 @@ with lib;
       type = types.anything;
       description = "The raw configuration data";
     };
-    files = mkOption {
-      type = types.listOf types.path;
-      description = "The list of input files for cue to evaluate";
-      default = [ ];
-    };
     flags = mkOption {
       type = types.attrs;
       description = "An optional list of flags to pass to cue";
@@ -28,6 +23,11 @@ with lib;
       type = types.str;
       description = "The output mode to use";
       default = "link";
+    };
+    package = mkOption {
+      type = types.str;
+      description = "The name of the cue package to evaluate";
+      default = "";
     };
     pluginOpts = mkOption {
       type = types.attrs;

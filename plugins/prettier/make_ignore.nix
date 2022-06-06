@@ -1,7 +1,6 @@
 { pkgs, lib }:
 userData:
 let
-  files = [ ./templates/ignore.cue ];
   flags = {
     expression = "rendered";
     out = "text";
@@ -9,5 +8,5 @@ let
   configData = { data = userData.configData; };
 in
 {
-  inherit configData files flags;
+  inherit configData flags;
 }

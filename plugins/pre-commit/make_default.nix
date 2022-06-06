@@ -3,7 +3,6 @@ userData:
 with pkgs.lib;
 let
   inherit (userData) configData type;
-  files = [ ./templates/default.cue ];
   pre-commit = pkgs.pre-commit;
 
   # Build configData and shellHookExtra
@@ -12,6 +11,5 @@ let
   };
 in
 {
-  inherit files;
   inherit (common) configData shellHookExtra;
 }

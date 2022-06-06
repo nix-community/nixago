@@ -2,7 +2,6 @@
 userData:
 let
   inherit (userData) configData;
-  files = [ ./templates/default.cue ];
 
   # Run the formatter since the output from the Go template engine is ugly
   postBuild = ''
@@ -20,6 +19,6 @@ let
   configDataFinal = { data = configData; };
 in
 {
-  inherit files postBuild flags;
+  inherit postBuild flags;
   configData = configDataFinal;
 }

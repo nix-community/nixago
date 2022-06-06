@@ -3,8 +3,7 @@ config:
 with pkgs.lib;
 let
   inherit (config) configData;
-  files = [ ./template.cue ];
-  defaultOutput = ".pre-commit-config.yaml";
+  package = "default";
   pre-commit = pkgs.pre-commit;
 
   # Build configData and shellHookExtra
@@ -14,7 +13,7 @@ let
 in
 lib.genConfig
 {
-  inherit defaultOutput files;
+  inherit defaultOutput package;
   inherit (common) shellHookExtra;
   config = lib.overrideData config common.configData;
 }

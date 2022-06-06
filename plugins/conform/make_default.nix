@@ -3,7 +3,6 @@ userData:
 with pkgs.lib;
 let
   inherit (userData) configData;
-  files = [ ./templates/default.cue ];
 
   # Expand out the configData
   configDataFinal = {
@@ -23,6 +22,5 @@ let
   };
 in
 {
-  inherit files;
   configData = configDataFinal;
 }

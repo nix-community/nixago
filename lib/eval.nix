@@ -1,9 +1,10 @@
 /*
-  Evaluates the given input files and configData and returns a derivation which
+  Evaluates the given cue files and configData and returns a derivation which
   builds the result.
 */
 { pkgs, lib, plugins }:
-{ files
+{ path
+, package
 , output
 , postBuild ? ""
 , configData ? { }
@@ -20,7 +21,7 @@ let
   };
 
   allFlags = defaultFlags // flags;
-  allInputs = files ++ optionals (json != "") [ "json: $jsonPath" ];
+  allInputs = [ ".:${package}" ] ++ optionals (json != "") [ "json: $jsonPath" ];
 
   # Converts {flagName = "string"; } to --flagName "string" (or empty for bool)
   flagsToString = name: value:
@@ -40,7 +41,8 @@ let
     } // optionalAttrs (json != "") { inherit json; passAsFile = [ "json" ]; })
     ''
       echo "nixago: Rendering output..."
-      ${cueEvalCmd}
+      echo ${cueEvalCmd}
+      cd ${path} && ${cueEvalCmd}
       ${postBuild}
     '';
 in

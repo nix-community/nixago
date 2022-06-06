@@ -25,6 +25,7 @@ let
       output =
         if output == "" then
           plugin.types.${userRequest.type}.output else output;
+      package = userRequest.type;
     }
   ];
 

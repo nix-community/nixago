@@ -1,3 +1,5 @@
+package default
+
 #Config: {
     [string]: #Hook
     colors?: bool | *true
