@@ -1,22 +1,17 @@
 { pkgs, lib, plugins }:
-{ config
-, files
-, defaultOutput
-, postBuild ? ""
-, shellHookExtra ? ""
-, flags ? { }
-}:
+genRequest:
 with pkgs.lib;
 let
+  output = genRequest.output;
+  shellHookExtra = genRequest.shellHookExtra;
+
   # Build the configuration file derivation
-  output = if config.output == "" then defaultOutput else config.output;
   configFile = lib.eval
     ({
-      inherit (config) configData;
-      inherit postBuild;
-      inputFiles = files;
-      outputFile = output;
-    } // flags);
+      inherit (genRequest) configData postBuild;
+      inputFiles = genRequest.files;
+      outputFile = genRequest.output;
+    } // genRequest.flags);
 
   # Build shell hook
   # This hook creates a local symlink to the file in the Nix store
@@ -52,7 +47,7 @@ let
         install -m 644 ${configFile} ${output}
 
         # Run extra shell hook
-        ${config.shellHookExtra}
+        ${shellHookExtra}
       else
         echo "nixago: ${output} copy is up to date"
       fi
@@ -62,11 +57,11 @@ let
       install -m 644 ${configFile} ${output}
 
       # Run extra shell hook
-      ${config.shellHookExtra}
+      ${shellHookExtra}
     fi
   '';
 
-  shellHook = if config.mode == "copy" then copyHook else linkHook;
+  shellHook = if genRequest.mode == "copy" then copyHook else linkHook;
 in
 {
   inherit configFile shellHook;

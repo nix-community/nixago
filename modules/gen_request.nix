@@ -1,0 +1,54 @@
+{ config, lib, ... }:
+with lib;
+{
+  options = {
+    name = mkOption {
+      type = types.str;
+      description = "The plugin being used";
+    };
+    configData = mkOption {
+      type = types.anything;
+      description = "The raw configuration data";
+    };
+    files = mkOption {
+      type = types.listOf types.path;
+      description = "The list of input files for cue to evaluate";
+      default = [ ];
+    };
+    flags = mkOption {
+      type = types.attrs;
+      description = "An optional list of flags to pass to cue";
+      default = { };
+    };
+    mode = mkOption {
+      type = types.str;
+      description = "The output mode to use";
+      default = "link";
+    };
+    # options = mkOption {
+    #   type = types.attrs;
+    #   description = "Additional options to pass to the plugin";
+    #   default = { };
+    # };
+    output = mkOption {
+      type = types.str;
+      description = "The output path of the generated configuration file";
+      default = "";
+    };
+    postBuild = mkOption {
+      type = types.str;
+      description = "Shell code to run after executing cue eval";
+      default = "";
+    };
+    shellHookExtra = mkOption {
+      type = types.str;
+      description = "Shell code to run after configuration file is updated";
+      default = "";
+    };
+    type = mkOption {
+      type = types.str;
+      description = "The type of configuration to generate";
+      default = "default";
+    };
+  };
+}
