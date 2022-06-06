@@ -47,6 +47,9 @@
           "@${tools.typos.exe}"
         ];
         make-docs = [
+          "@rm -rf docs/book"
+          "@rm -rf docs/*.js"
+          "@cd docs && mdbook-mermaid install"
           "@cd docs && mdbook build"
         ];
         fmt = [

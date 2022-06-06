@@ -4,5 +4,6 @@
 .prettierignore
 .prettierrc.json
 docs/book
+docs/*.js
 site/
 lefthook.yml

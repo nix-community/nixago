@@ -54,6 +54,7 @@
           pkgs.just
           pkgs.lefthook
           pkgs.mdbook
+          pkgs.mdbook-mermaid
           pkgs.nixpkgs-fmt
           pkgs.nodePackages.prettier
           pkgs.typos
