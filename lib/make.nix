@@ -1,18 +1,23 @@
+/* The main function of Nixago. Makes a configuration file by invoking the
+  given plugin and combining all resulting data into a request which ultimately
+  is used to generate the resulting configuration and shell hook.
+*/
 { pkgs, lib, plugins }:
-{ name, configData, type ? "", output ? "", mode ? "", options ? { } }:
+{ name, configData, type ? "", output ? "", mode ? "", pluginOpts ? { } }:
 with pkgs.lib;
 let
   plugin = plugins.${name};
 
   # Build user config
-  userConfig = lib.filterEmpty { inherit name configData type output mode; };
-  userRequest = lib.mkGenRequest [ userConfig ];
+  userConfig = lib.filterEmpty
+    { inherit name configData type output mode pluginOpts; };
+  userRequest = lib.mkRequest [ userConfig ];
 
   # Build plugin config
   pluginConfig = plugin.types.${userRequest.type}.make userRequest;
 
-  # Build the generate request
-  genRequest = lib.mkGenRequest [
+  # Build the request
+  request = lib.mkRequest [
     userConfig
     pluginConfig
     {
@@ -30,4 +35,4 @@ let
     if pluginConfig ? configData then
       pluginConfig.configData else configData;
 in
-lib.genConfig (lib.updateValue genRequest "configData" configDataFinal)
+lib.generate (lib.updateValue request "configData" configDataFinal)

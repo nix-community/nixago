@@ -1,8 +1,8 @@
 { pkgs, lib }:
 with pkgs.lib;
 {
-  mkGenRequest = modules:
+  mkRequest = modules:
     (evalModules {
-      modules = [ ./gen_request.nix ] ++ modules;
+      modules = [ ./request.nix ] ++ modules;
     }).config;
 }

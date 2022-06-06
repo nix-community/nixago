@@ -1,18 +1,31 @@
 { pkgs, lib, plugins }:
 with pkgs.lib;
 rec {
-  inherit (import ../modules/default.nix { inherit pkgs lib; }) mkGenRequest;
+  inherit (import ../modules/default.nix { inherit pkgs lib; }) mkRequest;
 
   eval = import ./eval.nix { inherit pkgs lib plugins; };
 
+  /* Filters out "empty" values from an attribute set
+  */
   filterEmpty = attrs:
     filterAttrs (n: v: v != null && v != "" && v != [ ] && v != { }) attrs;
 
-  genConfig = import ./generate.nix { inherit pkgs lib plugins; };
+  generate = import ./generate.nix { inherit pkgs lib plugins; };
 
   make = import ./make.nix { inherit pkgs lib plugins; };
 
-  mkAll = import ./all.nix { inherit pkgs lib plugins; };
+  /** Recursively makes a list of configurations
+  */
+  makeAll = all:
+    (
+      let
+        result = builtins.map lib.make all;
+      in
+      {
+        configs = catAttrs "configFile" result;
+        shellHook = concatStringsSep "\n" (pkgs.lib.catAttrs "shellHook" result);
+      }
+    );
 
   /* Updates the the attribute at `path` in `attrs` with `value`.
   */

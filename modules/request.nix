@@ -1,3 +1,7 @@
+/* This module holds the main data structure that's used when handling a
+  "request" from the user to generate a configuration file. It's ultimately
+  processed by the `eval` function to create the derivation.
+*/
 { config, lib, ... }:
 with lib;
 {
@@ -25,11 +29,11 @@ with lib;
       description = "The output mode to use";
       default = "link";
     };
-    # options = mkOption {
-    #   type = types.attrs;
-    #   description = "Additional options to pass to the plugin";
-    #   default = { };
-    # };
+    pluginOpts = mkOption {
+      type = types.attrs;
+      description = "Additional options to pass to the plugin";
+      default = { };
+    };
     output = mkOption {
       type = types.str;
       description = "The output path of the generated configuration file";

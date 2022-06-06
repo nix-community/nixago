@@ -3,13 +3,13 @@
   builds the result.
 */
 { pkgs, lib, plugins }:
-{ inputFiles
-, outputFile
+{ files
+, output
 , postBuild ? ""
 , configData ? { }
+, flags ? { }
 , cue ? pkgs.cue
-, ...
-}@args:
+}:
 
 with pkgs.lib;
 let
@@ -19,17 +19,8 @@ let
     outfile = "$out"; # Output the evaluation result to the derivation output
   };
 
-  # Extra flags are passed via ...
-  extraFlags = removeAttrs args [
-    "inputFiles"
-    "outputFile"
-    "postBuild"
-    "configData"
-    "cue"
-  ];
-
-  allFlags = defaultFlags // extraFlags;
-  allInputs = inputFiles ++ optionals (json != "") [ "json: $jsonPath" ];
+  allFlags = defaultFlags // flags;
+  allInputs = files ++ optionals (json != "") [ "json: $jsonPath" ];
 
   # Converts {flagName = "string"; } to --flagName "string" (or empty for bool)
   flagsToString = name: value:
@@ -41,7 +32,7 @@ let
   cueEvalCmd = "cue eval ${flagStr} ${inputStr}";
 
   # runCommand does the work of producing the derivation
-  result = pkgs.runCommand outputFile
+  result = pkgs.runCommand output
     ({
       inherit json;
       buildInputs = [ cue ];
