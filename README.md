@@ -13,26 +13,25 @@
     </a>
 </p>
 
-> The central source of truth for your development tools
+> Generate configuration files using [Nix][1].
 
-Are you tired of having multiple configuration files for your development tools
-littering the root of your repositories? Nixago aims to allow your local
-`flake.nix` to act as the central source of truth for configuring your
-development tools. You can declare the configuration for all of your development
-tools in your flake file and Nixago will do the work of generating and
-maintaining the configuration files for you.
+Ready to dynamically generate configuration files in your flake-based setup?
+Nixago is a flake library for easily generating configuration files using Nix
+expressions as the data source. It provides a rich [plugin system][2] for
+quickly generating configuration files for common development tools but can also
+be easily [customized][3] to fit any scenario.
 
 ## Features
 
 - Specify configuration data using native [Nix][1] syntax
-- Validate configuration data using the language features from [Cue][2]
-- Generate configuration files in any of the [supported formats][3]
+- Validate configuration data using the language features from [Cue][4]
+- Generate configuration files in any of the [supported formats][5]
 - Places all artifacts in the Nix store
-- Provides [plugins][4] for generating several types of configuration files
+- Provides [plugins][2] for generating several types of configuration files
 
 ## Usage
 
-See the [quick start][5] for how to get started.
+See the [quick start][6] for how to get started.
 
 ## Testing
 
@@ -44,7 +43,7 @@ nix flake check
 
 ## Contributing
 
-[Read this][6], check out the [issues][7] for items needing attention or submit
+[Read this][7], check out the [issues][8] for items needing attention or submit
 your own, and then:
 
 1. Fork the repo (<https://github.com/jmgilman/nixago/fork>)
@@ -54,9 +53,10 @@ your own, and then:
 5. Create a new Pull Request
 
 [1]: https://nixos.org/
-[2]: https://cuelang.org/
-[3]: https://cuelang.org/docs/integrations/
-[4]: https://jmgilman.github.io/nixago/plugins/index.html
-[5]: https://jmgilman.github.io/nixago/quick_start.html
-[6]: https://jmgilman.github.io/nixago/contributing/design
-[7]: https://github.com/jmgilman/nixago/issues
+[2]: https://jmgilman.github.io/nixago/plugins/index.html
+[3]: https://jmgilman.github.io/nixago/usage/customizing.html
+[4]: https://cuelang.org/
+[5]: https://cuelang.org/docs/integrations/
+[6]: https://jmgilman.github.io/nixago/usage/quick_start.html
+[7]: https://jmgilman.github.io/nixago/contributing
+[8]: https://github.com/jmgilman/nixago/issues
