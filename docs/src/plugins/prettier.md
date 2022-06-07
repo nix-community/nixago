@@ -1,10 +1,12 @@
 # Prettier
 
 This plugin generates the `.prettierrc.json` file for configuring [Prettier][1].
-It provides a single function that allows you to configure any valid API
-options][2].
+It provides two types: one that allows you to configure any valid API
+options][2] and another for generating an ignore file.
 
-## Using mkConfig
+## Usage
+
+### Default type
 
 The schema for the configuration file is [detailed here][3]. For example:
 
@@ -48,7 +50,7 @@ It's possible to add [overrides][4] tied to specific file formats:
 }
 ```
 
-Produces:
+The above produces:
 
 ```json
 {
@@ -63,6 +65,24 @@ Produces:
     }
   ],
   "tabWidth": 80
+}
+```
+
+### Ignore type
+
+The second type accepts a list of glob patterns used to determine which files
+are excluded when `prettier` is run:
+
+```nix
+{
+  [
+    ".direnv"
+    ".conform.yaml"
+    ".prettierrc.json"
+    "tests"
+    "CHANGELOG.md"
+    "lefthook.yml"
+  ]
 }
 ```
 

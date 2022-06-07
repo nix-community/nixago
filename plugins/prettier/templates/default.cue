@@ -1,5 +1,7 @@
 // Generated from http://json.schemastore.org/prettierrc
 
+package default
+
 #Config: {
 	// Schema for .prettierrc
 	@jsonschema(schema="http://json-schema.org/draft-04/schema#")

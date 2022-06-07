@@ -1,8 +1,10 @@
 { pkgs, lib }:
-rec {
-  default = mkConfig;
-
-  /* Creates a lefthook.yml file for configuring lefthook.
-  */
-  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
+{
+  name = "lefthook";
+  types = {
+    default = {
+      output = "lefthook.yml";
+      make = import ./make_default.nix { inherit pkgs lib; };
+    };
+  };
 }

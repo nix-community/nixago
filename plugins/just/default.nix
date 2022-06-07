@@ -1,10 +1,10 @@
 { pkgs, lib }:
-rec {
-  default = mkConfig;
-
-  /* Creates a .justfile for configuring the just task runner.
-
-    See template.cue for the expected format of incoming data.
-  */
-  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
+{
+  name = "just";
+  types = {
+    default = {
+      output = ".justfile";
+      make = import ./make_default.nix { inherit pkgs lib; };
+    };
+  };
 }

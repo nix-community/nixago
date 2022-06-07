@@ -1,22 +1,18 @@
 { pkgs, lib }:
-{
-  /* https://github.com/siderolabs/conform
-  */
-  conform = import ./conform { inherit pkgs lib; };
+with pkgs.lib;
+let
+  # Build a list of all local directory names (same as plugin name)
+  plugins = builtins.attrNames
+    (filterAttrs (n: v: v == "directory") (builtins.readDir ./.));
 
-  /* https://github.com/casey/just
-  */
-  just = import ./just { inherit pkgs lib; };
+  # Create a list of pluginName => import for each plugin
+  pluginsList = builtins.map
+    (p: {
+      "${p}" = import (builtins.toPath ./. + "/${p}") { inherit pkgs lib; };
+    })
+    plugins;
 
-  /* https://github.com/evilmartians/lefthook
-  */
-  lefthook = import ./lefthook { inherit pkgs lib; };
-
-  /* https://github.com/pre-commit/pre-commit
-  */
-  pre-commit = import ./pre-commit { inherit pkgs lib; };
-
-  /* https://github.com/prettier/prettier
-  */
-  prettier = import ./prettier { inherit pkgs lib; };
-}
+  # Fold the list back into a single set
+  pluginsAttrs = fold (x: y: pkgs.lib.recursiveUpdate x y) { } pluginsList;
+in
+pluginsAttrs

@@ -1,3 +1,5 @@
+package ignore
+
 import "strings"
 
 data: [...string]

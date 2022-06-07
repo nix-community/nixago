@@ -1,34 +1,39 @@
 { runTest }:
-runTest "conform.mkConfig" ./expected.yml
-{
-  commit = {
-    header = {
-      length = 89;
-      imperative = true;
-      case = "lower";
-      invalidLastCharacters = ".";
-    };
-    gpg = {
-      required = false;
-      identity = {
-        gitHubOrganization = "some-organization";
+let
+  name = "conform";
+  expected = ./expected.yml;
+  configData = {
+    commit = {
+      header = {
+        length = 89;
+        imperative = true;
+        case = "lower";
+        invalidLastCharacters = ".";
+      };
+      gpg = {
+        required = false;
+        identity = {
+          gitHubOrganization = "some-organization";
+        };
+      };
+      conventional = {
+        types = [
+          "type"
+        ];
+        scopes = [
+          "scope"
+        ];
       };
     };
-    conventional = {
-      types = [
-        "type"
+    license = {
+      skipPaths = [
+        ".git/"
+        "build*/"
       ];
-      scopes = [
-        "scope"
-      ];
+      allowPrecedingComments = false;
     };
   };
-  license = {
-    skipPaths = [
-      ".git/"
-      "build*/"
-    ];
-    allowPrecedingComments = false;
-  };
+in
+runTest {
+  inherit configData expected name;
 }
-{ }

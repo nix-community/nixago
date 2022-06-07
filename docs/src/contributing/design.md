@@ -5,6 +5,75 @@ principles that guide its development. This section provides details on how the
 library is structured and introduces the basic concepts required to contribute
 effectively.
 
+## Overview
+
+```mermaid
+%%{ init : { "theme" : "dark", "flowchart" : { "curve" : "linear" }}}%%
+%%
+flowchart TD
+    flake{{User's flake.nix}}
+    make(Call to make)
+    plugin(Plugin is called)
+    generate(Call to generate)
+    eval(Call to eval)
+    flake -- request ---> make
+    make <-- request ---> plugin
+    make <-- user + plugin request ---> generate
+    generate --> eval
+    make -- result --> flake
+```
+
+Nixago uses a [plugin-based][1] infrastructure to enable easily extending its
+support for various configuration files. Plugins act as a middle-man by taking
+input from the end-user, applying any potential modifications or additions, and
+then sending it off to be generated into the resulting configuration file.
+
+The flow chart above demonstrates the basic data flow from when the user calls
+into Nixago to when they receive the resulting configuration. Nixago utilizes
+three primary functions to accomplish this.
+
+### Make
+
+The [make][2] function is the main entry point into Nixago. The end-user calls
+this function and specifies the plugin to interact with and the configuration
+data used to generate the resulting configuration file. The `make` function uses
+this data to build the first [request][3]. The request module serves as the
+primary data container and is passed around internally when performing
+generation.
+
+One of the primary functions of `make` is to call the plugin specified by the
+end-user. The plugin will receive a copy of the current request and return its
+version. The plugin version may opt to override any of the details included in
+the user request; however, it typically only adds additional components, for
+example, other flags and files to pass to `eval`.
+
+The `make` function then merges the user request and plugin request modules into
+a final unified version passed to the `generate` function.
+
+### Generate
+
+The [generate][4] function is responsible for building the final result returned
+to the user. The result includes a derivation that produces the specified
+configuration file and a shell hook for managing it. The primary function of
+`generate` is to pull the necessary contextual information out of the request
+and call `eval` to create the derivation. Secondary to this is building the
+correct shell hook and packaging all of this in an attribute set that is
+eventually returned to the end-user.
+
+### Eval
+
+The [eval][5] function is at the lowest level and is responsible for interacting
+with [CUE][6] via its command-line interface. It takes the necessary contextual
+information from `generate` and uses it to create a derivation using the
+[runCommand][7] function.
+
+### Result
+
+The result returned to the end-user is an attribute set containing a derivation
+and a shell hook. The shell hook has a dependency on the derivation through
+interpolation. The derivation is eventually built once the user includes the
+shell hook into their environment.
+
 ## CUE
 
 The primary tool underlying Nixago is [CUE][1]. CUE stands for Configure, Unify,
@@ -22,60 +91,11 @@ incoming configuration data. The schema ensures that configuration data is
 accurate, and it also creates the foundation for transforming that data into the
 format needed for the configuration file.
 
-## Plugins
-
-The main interface that Nixago provides is through its [plugin][4]
-infrastructure. A plugin is simply a tiny wrapper that generates a configuration
-file for a specific tool. The structure of plugins is consistent in that they
-ingest data from the user and produce an instance of the
-[template module](#templates). This module provides a derivation to build the
-desired configuration file and a shell hook that will manage a symlink to the
-file locally.
-
-Plugins are the primary source of contribution to Nixago. Individuals are
-encouraged to contribute plugins for their tools of choice so that the wider
-community may benefit from the plugin.
-
-[See here](plugins.md) for detailed steps for adding plugins.
-
-## Templates
-
-The [template module][5] is the basic building block of Nixago. It's responsible
-for creating the derivation that ultimately generates the configuration file. It
-also manages the shell hook for managing the configuration file.
-
-The internal library provides a [single function][6] for creating new instances
-of the template module. It accepts the following arguments:
-
-- **data**: The raw data provided by the end-user
-- **files**: The files to pass to `cue eval` (typically .cue files)
-- **output**: The filename to output
-- **postBuild**: Shellcode to run after the invocation of `cue` eval`
-- **shellHookExtra**: Additional shellcode to run when the shell hook
-  regenerates the file
-- **flags**: Additional flags to pass to `cue eval`
-
-The function will return the module's `config` attribute.
-
-The template module provides two primary outputs:
-
-- **configFile**: A derivation that will build the configuration file
-- **shellHook**: A shell hook that will link the configuration file locally and
-  update it when it changes
-
-## Evaluation
-
-The foundational function provided by the internal library is the [eval
-function][7]. It interacts with the `cue` CLI tool via a call to
-[runCommand][8]. This interaction, in turn, creates a derivation that will
-produce the output of invoking the `cue eval` command.
-
-[1]: https://cuelang.org/
-[2]: https://cuetorials.com/introduction/
-[3]: https://cuelang.org/docs/concepts/logic/
-[4]: https://github.com/jmgilman/nixago/tree/master/plugins
-[5]: https://github.com/jmgilman/nixago/blob/master/modules/template.nix
-[6]: https://github.com/jmgilman/nixago/blob/master/lib/template.nix
-[7]: https://github.com/jmgilman/nixago/blob/master/lib/eval.nix
-[8]:
-  https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/trivial-builders.nix#L27
+[1]: https://github.com/jmgilman/nixago/tree/master/plugins
+[2]: https://github.com/jmgilman/nixago/blob/master/lib/make.nix
+[3]: https://github.com/jmgilman/nixago/blob/issues/9/modules/request.nix
+[4]: https://github.com/jmgilman/nixago/blob/master/lib/generate.nix
+[5]: https://github.com/jmgilman/nixago/blob/master/lib/eval.nix
+[6]: https://cuelang.org/
+[7]:
+  https://github.com/NixOS/nixpkgs/blob/1d44ac176ce6de74ac912a5b043e948a87a6d2f5/pkgs/build-support/trivial-builders.nix#L27

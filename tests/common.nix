@@ -1,16 +1,19 @@
-{ pkgs, plugins }:
-path: expected: configData: opts:
+/* Common test runner used across all tests
+*/
+{ pkgs, lib, plugins }:
+{ name, configData, expected, type ? "", output ? "", mode ? "" }:
 let
-  parts = pkgs.lib.splitString "." path;
-  plugin = builtins.elemAt parts 0;
-  make = pkgs.lib.getAttrFromPath parts plugins;
-  output = make ({ inherit configData; } // opts);
+  # Call make
+  result = lib.make {
+    inherit configData mode name output type;
+  };
 
-  result = pkgs.runCommand "test.${plugin}"
+  # Compare the result from make with the expected result
+  der = pkgs.runCommand "test.${name}"
     { }
     ''
-      cmp "${expected}" "${output.configFile}"
+      cmp "${expected}" "${result.configFile}"
       touch $out
     '';
 in
-result
+der

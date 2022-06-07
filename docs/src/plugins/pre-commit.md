@@ -1,11 +1,13 @@
 # Pre-commit
 
 This plugin generates the `.pre-commit-config.yaml` file used to configure
-[pre-commit][1]. It provides two functions for generating the configuration.
+[pre-commit][1]. It provides two types for generating the configuration.
 
-## Using mkConfig
+## Usage
 
-The first function follows the [structure described in the docs][2]:
+### Default type
+
+The default type follows the [structure described in the docs][2]:
 
 ```nix
 {
@@ -27,9 +29,7 @@ The first function follows the [structure described in the docs][2]:
 }
 ```
 
-Cue validates the structure, and the derivation will fail to build if any
-mistakes are found. The above configuration will create the following file
-contents:
+The above configuration will create the following file contents:
 
 ```yaml
 repos:
@@ -39,9 +39,9 @@ repos:
     rev: "1.0"
 ```
 
-## Using mkLocalConfig
+### Simple type
 
-The second function accepts a simplified configuration format that significantly
+The second type accepts a simplified configuration format that significantly
 reduces the verbosity. When managing pre-commit with Nix, creating a single
 "local" repo entry and adding system hooks that call out to binaries in the Nix
 store is often desirable. The benefit of this approach is that Nix manages the

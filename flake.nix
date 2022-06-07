@@ -16,10 +16,10 @@
 
         # Internal attributes
         lib = self.lib.${system};
-        plugins = self.plugins.${system};
+        plugins = import ./plugins { inherit pkgs lib; };
 
         # Test runner
-        runTest = import ./tests/common.nix { inherit pkgs plugins; };
+        runTest = import ./tests/common.nix { inherit pkgs lib plugins; };
 
         # Helper for aggregating development tools
         mkTools = tools: (builtins.listToAttrs
@@ -54,108 +54,18 @@
           pkgs.just
           pkgs.lefthook
           pkgs.mdbook
+          pkgs.mdbook-mermaid
           pkgs.nixpkgs-fmt
           pkgs.nodePackages.prettier
           pkgs.typos
         ];
 
-        # Define development tool configuration
-        configurations = {
-          # Conform configuration
-          "conform" = {
-            commit = {
-              header = { length = 89; };
-              conventional = {
-                types = [
-                  "build"
-                  "chore"
-                  "ci"
-                  "docs"
-                  "feat"
-                  "fix"
-                  "perf"
-                  "refactor"
-                  "style"
-                  "test"
-                ];
-                scopes = [
-                  "conform"
-                  "just"
-                  "lefthook"
-                  "pre-commit"
-                  "prettier"
-                  "core"
-                  "flake"
-                ];
-              };
-            };
-          };
-          # Just configuration
-          "just" = {
-            tasks = {
-              check = [
-                "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
-                "@${tools.prettier.exe} --check ."
-                "@${tools.typos.exe}"
-                "@nix flake check"
-              ];
-              check-docs = [
-                "@${tools.typos.exe}"
-              ];
-              make-docs = [
-                "@cd docs && mdbook build"
-              ];
-              fmt = [
-                "@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')"
-                "@${tools.prettier.exe} -w ."
-              ];
-            };
-          };
-          # Lefthook configuration
-          "lefthook" = {
-            commit-msg = {
-              commands = {
-                conform = {
-                  run = "${tools.conform.exe} enforce --commit-msg-file {1}";
-                };
-              };
-            };
-            pre-commit = {
-              commands = {
-                nixpkgs-fmt = {
-                  run = "${tools.nixpkgs-fmt.exe} --check {staged_files}";
-                  glob = "*.nix";
-                };
-                prettier = {
-                  run = "${tools.prettier.exe} --check {staged_files}";
-                  glob = "*.{yaml,yml,md}";
-                };
-                typos = {
-                  run = "${tools.typos.exe} {staged_files}";
-                };
-              };
-            };
-          };
-          # Prettier
-          "prettier" = {
-            proseWrap = "always";
-          };
-          "prettier.mkIgnoreConfig" = [
-            ".direnv"
-            ".conform.yaml"
-            ".prettierrc.json"
-            "tests"
-            "CHANGELOG.md"
-            "lefthook.yml"
-          ];
-        };
+        # Define development tool configuration (with Nixago!)
+        configs = import ./.config.nix { inherit tools; };
       in
-      {
+      rec {
         # Load lib functions
-        lib = (import ./lib { inherit pkgs lib; });
-
-        # Load plugins
-        plugins = import ./plugins { inherit pkgs lib; };
+        lib = (import ./lib { inherit pkgs lib plugins; });
 
         # Local tests
         checks = import ./tests { inherit pkgs runTest; };
@@ -163,7 +73,7 @@
         # Local development shell
         devShells = {
           default = pkgs.mkShell {
-            shellHook = (lib.mkAll configurations).shellHook;
+            shellHook = (lib.makeAll configs).shellHook;
             packages = tools.all;
           };
         };

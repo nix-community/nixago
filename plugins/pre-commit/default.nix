@@ -1,19 +1,14 @@
 { pkgs, lib }:
-rec {
-  default = mkConfig;
-
-  /* Creates a .pre-commit-config.yaml file for configuring pre-commit.
-
-    See template.cue for the expected format of incoming data.
-  */
-  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
-
-  /* Takes a simplified data input for creating local hooks.
-
-    It's common for pre-commit hooks to be defined locally when using Nix. This
-    allows using binaries from the Nix store rather than having pre-commit
-    manage them. This function is optimized for this use-case and takes a
-    simplified data input. See the docs for more information.
-  */
-  mkLocalConfig = import ./mkLocalConfig.nix { inherit pkgs lib; };
+{
+  name = "pre-commit";
+  types = {
+    default = {
+      output = ".pre-commit-config.yaml";
+      make = import ./make_default.nix { inherit pkgs lib; };
+    };
+    simple = {
+      output = ".pre-commit-config.yaml";
+      make = import ./make_simple.nix { inherit pkgs lib; };
+    };
+  };
 }

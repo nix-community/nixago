@@ -1,15 +1,16 @@
 # Conform
 
 This plugin generates the `.conform.yaml` file for configuring [Conform][1]. It
-provides a single function that takes a simplified version of the configuration
-file:
+takes a simplified version of the configuration file:
 
 - The top-level `policies` entry is removed
 - The `type` and `spec` sections of the policy are removed
 
-Instead, the function takes a set where the key is either `commit` or `license`
+Instead, the plugin takes a set where the key is either `commit` or `license`
 (the two valid policy types), and the value is what would typically get placed
 under `spec`. This change reduces the overall nesting of the input.
+
+## Usage
 
 Example input:
 

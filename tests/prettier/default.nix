@@ -1,16 +1,21 @@
 { runTest }:
-runTest "prettier.mkConfig" ./expected.json
-{
-  arrowParens = "always";
-  bracketSpacing = true;
-  tabWidth = 80;
-  overrides = [
-    {
-      files = "*.js";
-      options = {
-        semi = true;
-      };
-    }
-  ];
+let
+  name = "prettier";
+  expected = ./expected.json;
+  configData = {
+    arrowParens = "always";
+    bracketSpacing = true;
+    tabWidth = 80;
+    overrides = [
+      {
+        files = "*.js";
+        options = {
+          semi = true;
+        };
+      }
+    ];
+  };
+in
+runTest {
+  inherit configData expected name;
 }
-{ }
