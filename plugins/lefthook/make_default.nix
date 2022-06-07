@@ -15,7 +15,7 @@ let
   ];
   stages = builtins.attrNames (builtins.removeAttrs configData skip_attrs);
   stagesStr = builtins.concatStringsSep " " stages;
-  shellHookExtra = ''
+  extra = ''
     # Install configured hooks
     for stage in ${stagesStr}; do
       ${lefthook}/bin/lefthook add -a "$stage"
@@ -23,5 +23,7 @@ let
   '';
 in
 {
-  inherit shellHookExtra;
+  hook = {
+    inherit extra;
+  };
 }

@@ -4,56 +4,91 @@
 */
 { config, lib, ... }:
 with lib;
+let
+  cue = types.submodule ({ config, lib, ... }:
+    {
+      options = {
+        flags = mkOption {
+          type = types.attrs;
+          description = "An optional list of flags to pass to cue";
+          default = { };
+        };
+        package = mkOption {
+          type = types.str;
+          description = "The name of the cue package to evaluate";
+          default = "";
+        };
+        postBuild = mkOption {
+          type = types.str;
+          description = "Shell code to run after executing cue eval";
+          default = "";
+        };
+      };
+    });
+
+  hook = types.submodule ({ config, lib, ... }:
+    {
+      options = {
+        # TODO: Make this a list
+        extra = mkOption {
+          type = types.str;
+          description = "Shell code to run after configuration file is updated";
+          default = "";
+        };
+        mode = mkOption {
+          type = types.str;
+          description = "The output mode to use";
+          default = "link";
+        };
+        output = mkOption {
+          type = types.str;
+          description = "The output path of the generated configuration file";
+          default = "";
+        };
+      };
+    });
+
+  plugin = types.submodule ({ config, lib, ... }:
+    {
+      options = {
+        name = mkOption {
+          type = types.str;
+          description = "The plugin being used";
+          default = "";
+        };
+        opts = mkOption {
+          type = types.attrs;
+          description = "Additional options to pass to the plugin";
+          default = { };
+        };
+        type = mkOption {
+          type = types.str;
+          description = "The type of configuration to generate";
+          default = "default";
+        };
+      };
+    });
+in
 {
   options = {
-    name = mkOption {
-      type = types.str;
-      description = "The plugin being used";
-      default = "";
-    };
     configData = mkOption {
       type = types.anything;
       description = "The raw configuration data";
     };
-    flags = mkOption {
-      type = types.attrs;
-      description = "An optional list of flags to pass to cue";
+    cue = mkOption {
+      type = cue;
+      description = "Additional options for controlling cue evaluation";
       default = { };
     };
-    mode = mkOption {
-      type = types.str;
-      description = "The output mode to use";
-      default = "link";
-    };
-    package = mkOption {
-      type = types.str;
-      description = "The name of the cue package to evaluate";
-      default = "";
-    };
-    pluginOpts = mkOption {
-      type = types.attrs;
-      description = "Additional options to pass to the plugin";
+    hook = mkOption {
+      type = hook;
+      description = "Additional options for controlling hook generation";
       default = { };
     };
-    output = mkOption {
-      type = types.str;
-      description = "The output path of the generated configuration file";
-      default = "";
-    };
-    postBuild = mkOption {
-      type = types.str;
-      description = "Shell code to run after executing cue eval";
-      default = "";
-    };
-    shellHookExtra = mkOption {
-      type = types.str;
-      description = "Shell code to run after configuration file is updated";
-      default = "";
-    };
-    type = mkOption {
-      type = types.str;
-      description = "The type of configuration to generate";
-      default = "default";
+    plugin = mkOption {
+      type = plugin;
+      description = "Options for selecting and controlling plugin usage";
+      default = { };
     };
   };
 }

@@ -57,7 +57,7 @@ let
 in
 {
   inherit configData;
-  shellHookExtra = ''
+  extra = ''
     # Uninstall all existing hooks
     for hook in ${hooksStr}; do
       ${pre-commit}/bin/pre-commit uninstall -t $hook

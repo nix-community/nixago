@@ -8,5 +8,8 @@ let
   configData = { data = userData.configData; };
 in
 {
-  inherit configData flags;
+  inherit configData;
+  cue = {
+    inherit flags;
+  };
 }

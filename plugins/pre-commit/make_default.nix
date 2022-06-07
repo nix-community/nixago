@@ -2,7 +2,8 @@
 userData:
 with pkgs.lib;
 let
-  inherit (userData) configData type;
+  inherit (userData) configData;
+  inherit (userData.plugin) type;
   pre-commit = pkgs.pre-commit;
 
   # Build configData and shellHookExtra
@@ -11,5 +12,8 @@ let
   };
 in
 {
-  inherit (common) configData shellHookExtra;
+  inherit (common) configData;
+  hook = {
+    inherit (common) extra;
+  };
 }

@@ -9,12 +9,16 @@ let
   plugin = plugins.${name};
 
   # Build user config
-  userConfig = lib.filterEmpty
-    { inherit name configData type output mode pluginOpts; };
+  userConfig = {
+    inherit configData;
+    hook = lib.filterEmpty { inherit output mode; };
+    plugin = lib.filterEmpty { inherit name type; opts = pluginOpts; };
+  };
+
   userRequest = lib.mkRequest [ userConfig ];
 
   # Build plugin config
-  pluginConfig = plugin.types.${userRequest.type}.make userRequest;
+  pluginConfig = plugin.types.${userRequest.plugin.type}.make userRequest;
 
   # Build the request
   request = lib.mkRequest [
@@ -22,10 +26,12 @@ let
     pluginConfig
     {
       # Use default output if the user didn't specify one
-      output =
+      hook.output =
         if output == "" then
-          plugin.types.${userRequest.type}.output else output;
-      package = userRequest.type;
+          plugin.types.${userRequest.plugin.type}.output else output;
+
+      # Use the plugin type as the package name
+      cue.package = userRequest.plugin.type;
     }
   ];
 
