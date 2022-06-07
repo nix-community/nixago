@@ -98,6 +98,8 @@
     name = "prettier";
     type = "ignore";
     configData = [
+      "docs/book"
+      "docs/*.js"
       ".direnv"
       ".conform.yaml"
       ".prettierrc.json"
