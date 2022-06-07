@@ -1,90 +1,68 @@
-# Schema: https://github.com/settings/installations/26223152
-#
-# Colors:
-#  Black:        "#000000"
-#  Blue:         "#1565C0"
-#  Light Blue:   "#64B5F6"
-#  Green:        "#4CAF50"
-#  Light Green:  "#81C784"
-#  Gold:         "#FDD835"
-#  Orange:       "#FB8C00"
-#  Purple:       "#AB47BC"
-#  Red:          "#F44336"
-#  Yellow:       "#FFEE58"
-
+labels:
+  - color: '#000000'
+    description: This issue has been abdandoned
+    name: 'Status: Abdandoned'
+  - color: '#4CAF50'
+    description: This issue has been accepted
+    name: 'Status: Accepted'
+  - color: '#81C784'
+    description: This issue is available for assignment
+    name: 'Status: Available'
+  - color: '#F44336'
+    description: This issue is in a blocking state
+    name: 'Status: Blocked'
+  - color: '#A6A6A6'
+    description: This issue is actively being worked on
+    name: 'Status: In Progress'
+  - color: '#F44336'
+    description: This issue is not currently being worked on
+    name: 'Status: On Hold'
+  - color: '#FFEE58'
+    description: This issue is in a pending state
+    name: 'Status: Pending'
+  - color: '#FDD835'
+    description: This issue is pending a review
+    name: 'Status: Review Needed'
+  - color: '#F44336'
+    description: This issue targets a bug
+    name: 'Type: Bug'
+  - color: '#64B5F6'
+    description: This issue targets a new feature
+    name: 'Type: Feature'
+  - color: '#FB8C00'
+    description: This issue targets general maintenance
+    name: 'Type: Maintenance'
+  - color: '#AB47BC'
+    description: This issue contains a question
+    name: 'Type: Question'
+  - color: '#F44336'
+    description: This issue targets a security vulnerability
+    name: 'Type: Security'
+  - color: '#F44336'
+    description: This issue is prioritized as critical
+    name: 'Priority: Critical'
+  - color: '#FB8C00'
+    description: This issue is prioritized as high
+    name: 'Priority: High'
+  - color: '#FFEE58'
+    description: This issue is prioritized as medium
+    name: 'Priority: Medium'
+  - color: '#4CAF50'
+    description: This issue is prioritized as low
+    name: 'Priority: Low'
+  - color: '#4CAF50'
+    name: 'Effort: 1'
+  - color: '#81C784'
+    name: 'Effort: 2'
+  - color: '#FFEE58'
+    name: 'Effort: 3'
+  - color: '#FB8C00'
+    name: 'Effort: 4'
+  - color: '#F44336'
+    name: 'Effort: 5'
 repository:
-  name: nixago
+  default_branch: master
   description: Generate configuration files using Nix
   homepage: https://jmgilman.github.io/nixago/
+  name: nixago
   topics: nix, cuelang, development, developer-tools, development-environment
-  default_branch: master
-
-labels:
-  # Statuses
-  - name: "Status: Abdandoned"
-    description: This issue has been abdandoned
-    color: "#000000"
-  - name: "Status: Accepted"
-    description: This issue has been accepted
-    color: "#4CAF50"
-  - name: "Status: Available"
-    description: This issue is available for assignment
-    color: "#81C784"
-  - name: "Status: Blocked"
-    description: This issue is in a blocking state
-    color: "#F44336"
-  - name: "Status: In Progress"
-    description: This issue is actively being worked on
-    color: "#a6a6a6"
-  - name: "Status: On Hold"
-    description: This issue is not currently being worked on
-    color: "#F44336"
-  - name: "Status: Pending"
-    description: This issue is in a pending state
-    color: "#FFEE58"
-  - name: "Status: Review Needed"
-    description: This issue is pending a review
-    color: "#FDD835"
-
-  # Types
-  - name: "Type: Bug"
-    description: This issue targets a bug
-    color: "#F44336"
-  - name: "Type: Feature"
-    description: This issue targets a new feature
-    color: "#64B5F6"
-  - name: "Type: Maintenance"
-    description: This issue targets general maintenance
-    color: "#FB8C00"
-  - name: "Type: Question"
-    description: This issue contains a question
-    color: "#AB47BC"
-  - name: "Type: Security"
-    description: This issue targets a security vulnerability
-    color: "#F44336"
-
-  # Priorities
-  - name: "Priority: Critical"
-    description: "This issue is prioritized as critical"
-    color: "#F44336"
-  - name: "Priority: High"
-    description: "This issue is prioritized as high"
-    color: "#FB8C00"
-  - name: "Priority: Medium"
-    description: "This issue is prioritized as medium"
-    color: "#FFEE58"
-  - name: "Priority: Low"
-    description: "This issue is prioritized as low"
-    color: "#4CAF50"
-
-  # Effort
-  - name: "Effort: 1"
-    color: "#4CAF50"
-  - name: "Effort: 2"
-    color: "#81C784"
-  - name: "Effort: 3"
-    color: "#FFEE58"
-  - name: "Effort: 4"
-    color: "#FB8C00"
-  - name: "Effort: 5"
-    color: "#F44336"
