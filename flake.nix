@@ -16,7 +16,7 @@
 
         # Internal attributes
         lib = self.lib.${system};
-        plugins = self.plugins.${system};
+        plugins = import ./plugins { inherit pkgs lib; };
 
         # Test runner
         runTest = import ./tests/common.nix { inherit pkgs lib plugins; };
@@ -66,9 +66,6 @@
       rec {
         # Load lib functions
         lib = (import ./lib { inherit pkgs lib plugins; });
-
-        # Load plugins
-        plugins = import ./plugins { inherit pkgs lib; };
 
         # Local tests
         checks = import ./tests { inherit pkgs runTest; };
