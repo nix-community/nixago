@@ -13,7 +13,11 @@ let
 in
 lib.genConfig
 {
-  inherit defaultOutput package;
-  inherit (common) shellHookExtra;
-  config = lib.overrideData config common.configData;
+  inherit (common) configData;
+  cue = {
+    inherit package;
+  };
+  hook = {
+    inherit (common) extra;
+  };
 }

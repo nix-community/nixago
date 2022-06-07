@@ -2,6 +2,10 @@
 
 - [Introduction](./introduction.md)
   - [Quick Start](./quick_start.md)
+- [Usage](./usage/quick_start.md)
+  - [Controlling Output](./usage/controlling_output.md)
+  - [Making Multiple Configurations](./usage/making_multiple.md)
+  - [Customizing](./usage/customizing.md)
 - [Plugins](./plugins/index.md)
   - [Conform](./plugins/conform.md)
   - [Just](./plugins/just.md)

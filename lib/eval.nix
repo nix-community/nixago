@@ -4,8 +4,9 @@
 */
 { pkgs, lib, plugins }:
 { path
-, package
-, output
+, output ? "default"
+, format ? ""
+, package ? ""
 , postBuild ? ""
 , configData ? { }
 , flags ? { }
@@ -16,12 +17,17 @@ with pkgs.lib;
 let
   json = optionalString (configData != { }) (builtins.toJSON configData);
 
-  defaultFlags = {
-    outfile = "$out"; # Output the evaluation result to the derivation output
-  };
+  defaultFlags = (
+    {
+      # Output the evaluation result to the derivation output
+      outfile = "$out";
+      # Add optional output format
+    } // (optionalAttrs (format != "") { out = format; })
+  );
+  defaultInputs = if package == "" then [ "./" ] else [ ".:${package}" ];
 
   allFlags = defaultFlags // flags;
-  allInputs = [ ".:${package}" ] ++ optionals (json != "") [ "json: $jsonPath" ];
+  allInputs = defaultInputs ++ optionals (json != "") [ "json: $jsonPath" ];
 
   # Converts {flagName = "string"; } to --flagName "string" (or empty for bool)
   flagsToString = name: value:
@@ -41,7 +47,6 @@ let
     } // optionalAttrs (json != "") { inherit json; passAsFile = [ "json" ]; })
     ''
       echo "nixago: Rendering output..."
-      echo ${cueEvalCmd}
       cd ${path} && ${cueEvalCmd}
       ${postBuild}
     '';

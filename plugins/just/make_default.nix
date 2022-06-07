@@ -19,6 +19,8 @@ let
   configDataFinal = { data = configData; };
 in
 {
-  inherit postBuild flags;
+  cue = {
+    inherit postBuild flags;
+  };
   configData = configDataFinal;
 }
