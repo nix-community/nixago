@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.0](https://github.com/jmgilman/nixago/compare/v1.0.0...v2.0.0) (2022-06-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* standardizes the plugin interface (#10)
+* adds argument for selecting copy/link mode and output path (#6)
+* adds support for passing options to make functions (#4)
+
+### Features
+
+* adds argument for selecting copy/link mode and output path ([#6](https://github.com/jmgilman/nixago/issues/6)) ([59e664c](https://github.com/jmgilman/nixago/commit/59e664ca5de015eb9d232092e90f289b48ceabbc))
+* adds support for passing options to make functions ([#4](https://github.com/jmgilman/nixago/issues/4)) ([c459955](https://github.com/jmgilman/nixago/commit/c4599555343c4e2e430ffe7d7bcd06bc7ea4483c))
+* standardizes the plugin interface ([#10](https://github.com/jmgilman/nixago/issues/10)) ([2dea0bf](https://github.com/jmgilman/nixago/commit/2dea0bfb843f3a1a3133bbb8854df92d107978c3))
+
 ## 1.0.0 (2022-06-01)
 
 
