@@ -9,6 +9,7 @@ with lib;
     name = mkOption {
       type = types.str;
       description = "The plugin being used";
+      default = "";
     };
     configData = mkOption {
       type = types.anything;
