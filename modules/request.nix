@@ -13,6 +13,11 @@ let
           description = "An optional list of flags to pass to cue";
           default = { };
         };
+        format = mkOption {
+          type = types.str;
+          description = "The output format to generate";
+          default = "";
+        };
         package = mkOption {
           type = types.str;
           description = "The name of the cue package to evaluate";

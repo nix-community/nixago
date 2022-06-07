@@ -8,9 +8,9 @@ let
   output = request.hook.output;
   shellHookExtra = request.hook.extra;
 
-  # If we're using a plugin, set the base path to the templates directory
+  # If we're using a plugin, set the cue path to the templates directory
   path =
-    if request.plugin ? name
+    if request.plugin.name != ""
     then ../plugins/${request.plugin.name}/templates else request.cue.path;
 
   # Build the configuration file derivation
@@ -18,7 +18,7 @@ let
     {
       inherit output path;
       inherit (request) configData;
-      inherit (request.cue) flags package postBuild;
+      inherit (request.cue) flags format package postBuild;
     };
 
   # Build shell hook
