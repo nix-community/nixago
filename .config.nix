@@ -244,6 +244,7 @@ in
     configData = [
       "docs/book"
       "docs/*.js"
+      ".github/settings.yml"
       ".direnv"
       ".conform.yaml"
       ".prettierrc.json"
