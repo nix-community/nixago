@@ -8,6 +8,7 @@
   - [Customizing](./usage/customizing.md)
 - [Plugins](./plugins/index.md)
   - [Conform](./plugins/conform.md)
+  - [Github Settings](./plugins/ghsettings.md)
   - [Just](./plugins/just.md)
   - [Lefthook](./plugins/lefthook.md)
   - [Pre-commit](./plugins/pre-commit.md)

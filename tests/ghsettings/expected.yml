@@ -1,0 +1,16 @@
+labels:
+  - color: CC0000
+    description: An issue with the system
+    name: bug
+  - color: '#336699'
+    description: New functionality
+    name: feature
+milestones:
+  - description: milestone-description
+    state: open
+    title: milestone-title
+repository:
+  description: description of repo
+  homepage: https://example.github.io/
+  name: repo-name
+  private: false
