@@ -1,10 +1,9 @@
 # Just
 
 This plugin generates the `.just` file used by the [Just][1] task runner. It
-provides a single function that allows you to declare a header section and
-subsequent tasks/steps.
+allows the creation of a `.justfile` by specifying a header and tasks:
 
-## Using mkConfig
+## Usage
 
 ```nix
 {
