@@ -140,33 +140,175 @@ of Nixago makes these steps relatively straightforward.</p>
 <h2 id="checklist"><a class="header" href="#checklist">Checklist</a></h2>
 <p>The following is a helpful checklist to go over before submitting a PR:</p>
 <ol>
-<li>Is the plugin named after the tool it supports?</li>
 <li>Does the plugin have a dedicated directory under <a href="https://github.com/jmgilman/nixago/tree/master/plugins">plugins</a>?</li>
-<li>Was the plugin added to the main <a href="https://github.com/jmgilman/nixago/blob/master/plugins/default.nix">default.nix</a>?</li>
 <li>Does the plugin have tests written for it?</li>
-<li>Have the tests been added to the <a href="https://github.com/jmgilman/nixago/blob/master/flake.nix">flake.nix</a> <code>checks</code> output?</li>
 <li>Does the plugin have a dedicated page in the documentation?</li>
 </ol>
 <p>If you answered yes to all of the above questions, you are ready to submit a PR!</p>
+<h2 id="plugin-structure"><a class="header" href="#plugin-structure">Plugin Structure</a></h2>
+<p>It's helpful to understand the overall structure of a plugin before diving in to
+build one. Each plugin lives in a dedicated directory under the <a href="https://github.com/jmgilman/nixago/tree/master/plugins">plugins</a>
+directory. The structure of the directory follows a basic format:</p>
+<ul>
+<li><code>default.nix</code></li>
+<li><code>make_&lt;type&gt;.nix</code></li>
+<li><code>templates/&lt;type&gt;.cue</code></li>
+</ul>
+<h3 id="plugin-declaration"><a class="header" href="#plugin-declaration">Plugin declaration</a></h3>
+<p>The plugin is first <em>declared</em> in the <code>default.nix</code>:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+{
+  name = &quot;myPlugin&quot;; # The name of the plugin (should match directory name)
+  types = { # An attribute set of the types of configurations this plugin makes
+    default = { # The default type
+      output = &quot;my_plugin.yaml&quot;; # The default output file
+      make = import ./make_default.nix { inherit pkgs lib; }; # The type func
+    };
+    anotherType = { # Another type
+      output = &quot;my_plugin.yaml&quot;;
+      make = import ./make_another_type.nix { inherit pkgs lib; };
+    };
+  };
+}
+</code></pre>
+<p>All plugins should receive the <code>{ pkgs, lib }</code> set as the first argument. The
+flake supplies this set, and it contains a copy of <code>nixpkgs</code> and the internal
+<code>lib</code> set.</p>
+<p>The function should return a set with the format shown above. Most plugins only
+have one type (<code>default</code>). However, some tools have multiple files for
+configuring them, and having the ability to designate various types allows this
+requirement to be met. For example, the <code>prettier</code> plugin generates both a
+configuration file and an ignore file.</p>
+<p>Each type has two attributes: the <code>output</code> defines the default path (relative to
+the root) of the file that should be generated (the user can override this), and
+the <code>make</code> defines the function that should be called when this plugin type is
+executed. We will discuss this function next.</p>
+<h3 id="plugin-function"><a class="header" href="#plugin-function">Plugin function</a></h3>
+<p>Each declared type of the plugin has an associated function. This function is
+called when the user invokes the <a href="https://github.com/jmgilman/nixago/blob/master/lib/make.nix">make</a> function and specifies this plugin
+and type. Each function should live in a separate file with the following naming
+scheme: <code>make_&lt;type&gt;.nix</code>. This is the format of the function:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+userData:
+{ }
+</code></pre>
+<p>Believe it or not, this is a valid plugin! It will make more sense soon. Each
+function takes an attribute set similar to the one seen in the previous section.
+The second argument (<code>userData</code>) is an instance of the <a href="https://github.com/jmgilman/nixago/blob/issues/9/modules/request.nix">request</a> module. Note
+that not all options are required to be specified (only <code>name</code> and
+<code>configData</code>).</p>
+<p>The plugin is expected to return an attribute set that contains a partial
+definition of the <a href="https://github.com/jmgilman/nixago/blob/issues/9/modules/request.nix">request</a> module. Any values provided here <strong>will
+override</strong> the values provided by the user. Thus, if you want to transform the
+<code>configData</code>, do so in the function body and return it to the set. It will then
+override the user-supplied data. Many plugins perform this operation to take
+input from the data in one format and then convert it to the format expected by
+the configuration file being generated.</p>
+<p>Refer to the module definition for all of the available options. Many options
+for influencing the way <code>cue</code> is executed can also be provided. For an overview
+of basic patterns, refer to existing plugin functions.</p>
+<h3 id="plugin-template"><a class="header" href="#plugin-template">Plugin template</a></h3>
+<p>Each plugin should have a <code>templates</code> subfolder that contains all of the CUE
+files used by the plugin. The naming of each CUE file is unimportant; however,
+the package that they are included in matters. When a plugin is executed, the
+specified type determines which CUE files are evaluated. For example, if the
+<code>default</code> type is specified, then the files which are in the <code>default</code> package
+will be evaluated:</p>
+<pre><code class="language-cue">package default
+
+// CUE file contents
+</code></pre>
+<p>It's possible to have multiple files belonging to the same package. All files
+will be joined together at evaluation time. This feature makes it easy to break
+up large CUE files into more manageable chunks.</p>
+<p>You may want to re-use a file for multiple types in some cases. In this case,
+you may override the <code>package</code> attribute in the function:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+userData:
+{
+  package = &quot;use_this_package&quot;;
+}
+</code></pre>
 <h2 id="creating-a-plugin"><a class="header" href="#creating-a-plugin">Creating a Plugin</a></h2>
 <p>Creating a plugin encompasses three primary tasks:</p>
 <ol>
-<li>Create a CUE file</li>
-<li>Create the Nix functions</li>
-<li>Write tests and documentation</li>
+<li>Create the plugin declaration</li>
+<li>Create functions for each type</li>
+<li>Create CUE files for each type</li>
+<li>Create tests and documentation</li>
 </ol>
 <p>You should isolate each plugin to a dedicated directory under <a href="https://github.com/jmgilman/nixago/tree/master/plugins">plugins</a>. The
 first step is to create a new directory with the plugin's name. The name should
 ideally indicate the tool that it supports (i.e., the plugin for the Prettier
 formatter is called <code>prettier</code>).</p>
 <p>The remainder of this section will walk through creating a plugin for the
-<a href="https://pre-commit.com/">pre-commit</a> CLI tool. The plugin will generate a <code>.pre-commit-config.yaml</code>
-file to configure the pre-commit tool.</p>
+<a href="https://github.com/evilmartians/lefthook">lefthook</a> CLI tool. The plugin will generate a <code>lefthook.yml</code> file to
+configure the lefthook tool.</p>
+<h3 id="creating-the-declaration"><a class="header" href="#creating-the-declaration">Creating the declaration</a></h3>
+<p>As discussed in the previous section, each function is declared in the
+<code>default.nix</code> at the root of the plugin directory. Here is the declaration for
+our plugin:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+{
+  name = &quot;lefthook&quot;;
+  types = {
+    default = {
+      output = &quot;lefthook.yml&quot;;
+      make = import ./make_default.nix { inherit pkgs lib; };
+    };
+  };
+}
+</code></pre>
+<p>This should be self-explanatory. The only thing worth noting is the default
+output matches what the lefthook tool looks for by default (a <code>lefthook.yml</code>
+file at the root of the repository).</p>
+<h3 id="creating-the-function"><a class="header" href="#creating-the-function">Creating the function</a></h3>
+<p>The next step is creating our function in <code>make_default.nix</code>:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+userData:
+with pkgs.lib;
+let
+  inherit (userData) configData;
+  lefthook = pkgs.lefthook;
+
+  # Add an extra hook for adding required stages whenever the file changes
+  skip_attrs = [
+    &quot;colors&quot;
+    &quot;extends&quot;
+    &quot;skip_output&quot;
+    &quot;source_dir&quot;
+    &quot;source_dir_local&quot;
+  ];
+  stages = builtins.attrNames (builtins.removeAttrs configData skip_attrs);
+  stagesStr = builtins.concatStringsSep &quot; &quot; stages;
+  shellHookExtra = ''
+    # Install configured hooks
+    for stage in ${stagesStr}; do
+      ${lefthook}/bin/lefthook add -a &quot;$stage&quot;
+    done
+  '';
+in
+{
+  inherit shellHookExtra;
+}
+</code></pre>
+<p>This is where we place the meat of the logic for our plugin. In the above case,
+we need to perform an extra step when the shell hook activates to ensure that
+all of the pre-commit stages we defined in the configuration get installed into
+the local <code>.git/hooks</code> directory. The stages are declared at the root of the
+configuration, along with some other options. We strip these options to get the
+stages by themselves and then put them into a space-separated string.</p>
+<p>The <code>shellHookExtra</code> option allows passing a block of shell code that will be
+executed whenever the configuration file is updated. Since the user may have
+added more stages to the configuration file, we add some logic to install all
+stages whenever the file changes.</p>
+<p>As noted earlier, we return all of our desired changes in a set. This set will
+be joined with the one provided by the user to make the final request instance
+which is used to generate the configuration file.</p>
 <h3 id="creating-the-cue-file"><a class="header" href="#creating-the-cue-file">Creating the CUE file</a></h3>
 <p>Review the <a href="design.html#cue">CUE section</a> of the design page for more information
-about CUE. Each plugin typically utilizes a single CUE file, although more
-advanced cases may require multiple files. The file should be called
-<code>template.cue</code>.</p>
+about CUE. Each type of the plugin typically utilizes a single CUE file,
+although more advanced cases may require multiple files.</p>
 <p>When creating the CUE file, keep the following in mind:</p>
 <ul>
 <li>
@@ -182,71 +324,68 @@ configuration field, use constraints to improve the accuracy of the schema.</p>
 and not generate many false negatives.</p>
 </li>
 </ul>
-<p>Here is the <code>template.nix</code> file for our pre-commit plugin:</p>
-<pre><code class="language-cue">#Config: {
-    default_install_hook_types?: [...string]
-    default_language_version?: [string]: string
-    default_stages?: [...string]
-    files?: string
-    exclude?: string
-    fail_fast?: bool
-    minimum_pre_commit_version?: string
-    repos: [...#Repo]
+<p>Here is the <code>templates/default.cue</code> file for our plugin:</p>
+<pre><code class="language-cue">package default
+
+#Config: {
+    [string]: #Hook
+    colors?: bool | *true
+    extends?: [...string]
+    skip_output?: [...string]
+    source_dir?: string
+    source_dir_local?: string
+    ...
 }
 
 #Hook: {
-    additional_dependencies?: [...string]
-    alias?: string
-    always_run?: bool
-    args?: [...string]
-    entry?: string
-    exclude?: string
-    exclude_types?: [...string]
-    files?: string
-    id: string
-    language?: string
-    language_version?: string
-    log_file?: string
-    name?: string
-    stages?: [...string]
-    types?: [...string]
-    types_or?: [...string]
-    verbose?: bool
+    commands?: [string]: #Command
+    exclude_tags?: [...string]
+    parallel?: bool | *false
+    piped?: bool | *false
+    scripts?: [string]: #Script
+    ...
 }
 
-#Repo: {
-    repo: string
-    rev?: string
-    if repo != &quot;local&quot; {
-        rev: string
-    }
-    hooks: [...#Hook]
+#Command: {
+    exclude?: string
+    files?: string
+    glob?: string
+    root?: string
+    run: string
+    skip?: bool | [...string]
+    tags?: string
+    ...
+}
+
+#Script: {
+    runner: string
+    ...
 }
 
 {
     #Config
 }
 </code></pre>
-<p>This file defines three <a href="https://cuetorials.com/overview/types-and-values/#definitions">definitions</a>, notated by the <code>#</code> symbol. A
-definition is synonymous with a schema or contract. It describes the shape of
-valid data through various constraints. Let's break one down:</p>
-<pre><code class="language-cue">#Repo: {
-    repo: string
-    rev?: string
-    if repo != &quot;local&quot; {
-        rev: string
-    }
-    hooks: [...#Hook]
+<p>This file defines four <a href="https://cuetorials.com/overview/types-and-values/#definitions">definitions</a>, denoted by the <code>#</code> symbol. A definition
+is synonymous with a schema or contract. It describes the shape of valid data
+through various constraints. Let's break one down:</p>
+<pre><code class="language-cue">#Config: {
+    [string]: #Hook
+    colors?: bool | *true
+    extends?: [...string]
+    skip_output?: [...string]
+    source_dir?: string
+    source_dir_local?: string
 }
 </code></pre>
-<p>The <code>pre-commit-config.yaml</code> file has a <code>repos</code> field which is a list of
-repositories that pre-commit should build from. The <code>#Repo</code> definition provides
-the schema for these entries. Each entry must have a <code>repo</code> field which is a
-string value. The <code>rev</code> field is interesting: it's only optional if the <code>repo</code>
-field is set to &quot;local&quot;. The above sets the <code>rev</code> field to optional using the
-<code>?</code> symbol and then conditonally sets it to required based on the value of
-<code>repo</code>. Finally, each entry has a list of hooks, denoted by the <code>[...#Hooks]</code>
-syntax.</p>
+<p>Each definition typically encompasses a single layer of the configuration file.
+The <code>#Config</code> definition encompasses the top layer. The top layer contains
+global options which change the behavior of the tool (i.e., <code>source_dir</code>) and a
+map of stage names to their respective hook definition (<code>[string]: #Hook</code>). The
+<code>?</code> at the end of the names denotes that they are optional.</p>
+<p>Definitions can reference other definitions, as seen by the <code>[string]: #Hook</code>
+line. This says that the data must contain a string name that has a body that is
+compatible with the <code>#Hook</code> definition.</p>
 <pre><code class="language-cue">{
     #Config
 }
@@ -256,166 +395,76 @@ will appear when we evaluate the CUE file. In the above case, we're saying the
 input data should be a <a href="https://cuetorials.com/overview/types-and-values/#structs">struct</a> that conforms to the schema defined by
 <code>#Config</code>.</p>
 <p>We're doing no additional transformations to the incoming data in this case. We
-expect the input data to be in the format defined in the
-<code>.pre-commit-config.yaml</code> file. Since YAML is a superset of JSON, we can easily
-ask CUE to evaluate the input and produce a YAML output.</p>
-<h3 id="creating-the-nix-functions"><a class="header" href="#creating-the-nix-functions">Creating the Nix Functions</a></h3>
-<p>With the CUE file created, the next step is to make our primary Nix function. We
-will create a single function for generating our configuration file. First,
-let's examine the basic structure of a plugin function:</p>
-<pre><code class="language-nix">{ pkgs, lib }:
-{ configData, output ? &quot;file.json&quot;, mode ? &quot;link&quot; }:
-with pkgs.lib;
-let
-  # Define input files
-  files = [ ./template.cue ];
-
-  # Add ddditional logic here
-
-  # Generate the module
-  result = lib.mkTemplate {
-    inherit configData files mode output;
-  };
-in
-{
-  inherit (result) configFile shellHook;
-}
-</code></pre>
-<p>It's assumed that all plugin functions are defined in this way. You must use
-this as a template to start with and then add logic as needed. Let's break down
-this structure to better understand each component.</p>
-<p>The function takes two arguments, both of them being attribute sets. The first
-attribute set is invisible to the end-user and is instead passed by the internal
-flake so that the plugin has access to a copy of <code>nixpkgs</code> and the internal
-flake <code>lib</code> output. The second attribute set is standardized and should contain
-the attributes shown. They are explained below:</p>
-<ul>
-<li><strong>configData</strong>: This is the raw configuration data provided by the end user</li>
-<li><strong>output</strong>: This is the file path where the generated file will be managed</li>
-<li><strong>mode</strong>: This determines how the file is managed: the default is <code>link</code> that
-instructs the file to be symlinked. However, it can also be changed to <code>copy</code>
-instead to maintain a local copy of the generated configuration file.</li>
-</ul>
-<p>You should change the default values of the last two attributes as needed. It
-makes more sense to maintain a copy of a file rather than a symlink in some
-cases. The output path is relative to the current working directory of the user.
-Most configuration files reside at the root; however, it's possible to nest the
-configuration deeper (i.e., <code>configs/file.json</code>).</p>
-<p>You are not restricted from adding additional attributes to the second argument.
-The only requirement is you keep the three listed above. It's recommended you
-document the additional attributes added, including what they do, so that the
-end user understands what options are available for controlling the plugin.</p>
-<p>The remainder of the function is fairly self-explanatory. We declare the input
-files to be passed to <code>cue eval</code> in the <code>files</code> variable. We conclude with a
-call to <code>lib.mkTemplate</code>, which contains all of the necessary logic for
-generating the output the end user is expecting. This function has additional
-arguments that can be passed to customize the result; namely, <code>shellHookExtra</code>
-for adding additional logic to the generated shell hook and <code>postBuild</code> for
-adding additional logic after <code>cue eval</code> is run. You can also pass other flags
-to <code>cue eval</code> via the <code>flags</code> argument. For more details about this function,
-<a href="design.html#templates">see here</a>.</p>
-<p>The returned output is standardized and should not be changed. Here is the final
-result of our function for the pre-commit plugin:</p>
-<pre><code class="language-nix">{ pkgs, lib }:
-{ configData, output ? &quot;.pre-commit-config.yaml&quot;, mode ? &quot;link&quot; }:
-with pkgs.lib;
-let
-  files = [ ./template.cue ];
-  pre-commit = pkgs.pre-commit;
-
-  # Add an extra hook for reinstalling required stages whenever the file changes
-  stages = unique (flatten
-    (builtins.map
-      (repo: builtins.map
-        (hook: optionals (hook ? stages) hook.stages)
-        repo.hooks)
-      configData.repos) ++ [ &quot;pre-commit&quot; ]);
-  stagesStr = builtins.concatStringsSep &quot; &quot; stages;
-  shellHookExtra =
-    (import ./common.nix { inherit pre-commit stagesStr; }).shellHookExtra;
-
-  # Generate the module
-  result = lib.mkTemplate {
-    inherit configData files mode output shellHookExtra;
-  };
-in
-{
-  inherit (result) configFile shellHook;
-}
-</code></pre>
-<p>We must take two additional steps for our plugin to be picked up by the flake.
-The first is creating a <code>default.nix</code> in our plugin directory that exports our
-function:</p>
-<pre><code class="language-nix">{ pkgs, lib }:
-rec {
-  default = mkConfig;
-
-  /* Creates a .pre-commit-config.yaml file for configuring pre-commit.
-  */
-  mkConfig = import ./mkConfig.nix { inherit pkgs lib; };
-}
-</code></pre>
-<p>This will allow the <code>mkConfig</code> function to be accessible under
-<code>nixago.plugins.{myPlugin}.mkConfig</code>. Setting the <code>default</code> attribute is
-recommended; otherwise, the plugin may not play well with the <code>mkAll</code> function.
-You should set it to the most widely used function.</p>
-<p>Finally, we must create an entry in the main <code>default.nix</code>:</p>
-<pre><code class="language-nix">{ pkgs, lib }:
-{
-  # ...
-
-  /* https://github.com/pre-commit/pre-commit
-  */
-  pre-commit = import ./pre-commit { inherit pkgs lib; };
-
-  # ....
-}
-</code></pre>
-<p>This function registers the plugin to make it accessible from <code>nixago.plugins</code>.</p>
+expect the input data to be in the format defined in the <code>lefthook.yml</code> file.
+Since YAML is a superset of JSON, we can easily ask CUE to evaluate the input
+and produce a YAML output.</p>
 <h3 id="writing-tests-and-documentation"><a class="header" href="#writing-tests-and-documentation">Writing Tests and Documentation</a></h3>
 <p>The final step is to write tests and documentation for the plugin. Tests live in
 the <a href="https://github.com/jmgilman/nixago/tree/master/tests">tests</a> directory in a dedicated directory named after the plugin. Tests
 are relatively trivial to write.</p>
 <p>The first step is to create a <code>default.nix</code> which runs the test:</p>
 <pre><code class="language-nix">{ runTest }:
-runTest &quot;pre-commit.mkConfig&quot; ./expected.yml {
-  repos = [
-    {
-      repo = &quot;https://github.com/my/repo&quot;;
-      rev = &quot;1.0&quot;;
-      hooks = [
-        {
-          id = &quot;my-hook&quot;;
-        }
-      ];
-    }
-  ];
+{ runTest }:
+let
+  name = &quot;lefthook&quot;;
+  expected = ./expected.yml;
+  configData = {
+    commit-msg = {
+      scripts = {
+        template_checker = { runner = &quot;bash&quot;; };
+      };
+    };
+    pre-commit = {
+      commands = {
+        stylelint = {
+          tags = &quot;frontend style&quot;;
+          glob = &quot;*.js&quot;;
+          run = &quot;yarn stylelint {staged_files}&quot;;
+        };
+        rubocop = {
+          tags = &quot;backend style&quot;;
+          glob = &quot;*.rb&quot;;
+          exclude = &quot;application.rb|routes.rb&quot;;
+          run = &quot;bundle exec rubocop --force-exclusion {all_files}&quot;;
+        };
+      };
+      scripts = {
+        &quot;good_job.js&quot; = { runner = &quot;node&quot;; };
+      };
+    };
+  };
+in
+runTest {
+  inherit configData expected name;
 }
-{ }
-
 </code></pre>
 <p>The <code>runTest</code> helper function provided performs most of the underlying work
-required to test the plugin. It takes four arguments: the function to call for
-the test, the location of the expected test output, the data to pass to the
-specified function, and any additional arguments to pass to the plugin function.</p>
+required to test the plugin. It takes three arguments: the plugin's name to
+execute, a path to a file with the expected result, and the configuration data
+to use.</p>
 <p>The second step is to create the expected output. In this case, the above
 invocation should produce the following result:</p>
-<pre><code class="language-yaml">repos:
-  - hooks:
-      - id: my-hook
-    repo: https://github.com/my/repo
-    rev: &quot;1.0&quot;
+<pre><code class="language-yaml">commit-msg:
+  scripts:
+    template_checker:
+      runner: bash
+pre-commit:
+  commands:
+    rubocop:
+      exclude: application.rb|routes.rb
+      glob: &quot;*.rb&quot;
+      run: bundle exec rubocop --force-exclusion {all_files}
+      tags: backend style
+    stylelint:
+      glob: &quot;*.js&quot;
+      run: yarn stylelint {staged_files}
+      tags: frontend style
+  scripts:
+    good_job.js:
+      runner: node
 </code></pre>
 <p>The expected result is compared to the generated output, and the test will fail
 if there is a difference.</p>
-<p>The final step is to add the test to the <code>checks</code> output in the <code>default.nix</code>
-file located at the root of the tests directory:</p>
-<pre><code class="language-nix">{
-  # ...
-  pre-commit = pkgs.callPackage ./pre-commit { inherit runTest; };
-  # ...
-}
-</code></pre>
 <p>Finally, before submitting a PR, add documentation under the <a href="https://github.com/jmgilman/nixago/tree/master/docs/plugins">plugins</a>
 section of the documentation. Ensure you cover general usage information about
 the plugin, including an example invocation.</p>
@@ -451,5 +500,7 @@ the plugin, including an example invocation.</p>
         <script src="../book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        <script type="text/javascript" src="../mermaid.min.js"></script>
+        <script type="text/javascript" src="../mermaid-init.js"></script>
     </body>
 </html>

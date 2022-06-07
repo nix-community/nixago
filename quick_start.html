@@ -164,7 +164,9 @@ recommended to force Nixago's copy to follow the one declared in your flake.</p>
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+    preCommit = nixago.lib.make {
+        name = &quot;pre-commit&quot;;
+        type = &quot;simple&quot;;
         configData = preCommitConfig;
     };
 # ...
@@ -192,6 +194,21 @@ file with the following contents:</p>
         name: nixpkgs-fmt
     repo: local
 </code></pre>
+<h2 id="changing-types"><a class="header" href="#changing-types">Changing Types</a></h2>
+<p>Some plugins can generate different types of configuration files. See the
+documentation for each plugin for more information. Our previous example used
+the <code>simple</code> type provided by the pre-commit plugin. This type allows passing a
+simplified configuration that is geared towards executing local hooks. Another
+example is the plugin for prettier, which can create regular configuration files
+as well as ignore files:</p>
+<pre><code class="language-nix">{
+  prettier = nixago.lib.make {
+    name = &quot;prettier&quot;;
+    configData = [&quot;file1.txt&quot; &quot;file2.yml&quot; ];
+    type = &quot;ignore&quot;;
+  };
+}
+</code></pre>
 <h2 id="changing-output-path"><a class="header" href="#changing-output-path">Changing Output Path</a></h2>
 <p>By default, the shell hook for each plugin will generate the configuration file
 at the root of your repository (i.e., the location where <code>flake.nix</code> resides).
@@ -206,7 +223,8 @@ The file name and relative location can be modified:</p>
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+    preCommit = nixago.lib.make {
+        name = &quot;pre-commit&quot;;
         configData = preCommitConfig;
         output = &quot;.config/pre-commit-config.yaml&quot;;
     };
@@ -216,9 +234,9 @@ The file name and relative location can be modified:</p>
 <p>The above example would place the configuration file in
 <code>.config/pre-commit-config.yaml</code>.</p>
 <h2 id="changing-generation-mode"><a class="header" href="#changing-generation-mode">Changing Generation Mode</a></h2>
-<p>By default, the shell hook manages a symbolic link from the Nix store to the
-output path. It automatically synchronizes any changes by updating the link if
-the generated configuration file changes. This mode can be altered to instead
+<p>The shell hook manages a symbolic link from the Nix store to the output path by
+default. It automatically synchronizes any changes by updating the link if the
+generated configuration file changes. This mode can be altered to instead
 maintain a local copy of the generated configuration file. In this mode, the
 shell hook compares the contents of the local copy to the one in the Nix store
 and updates it accordingly. The primary benefit of this change is that it allows
@@ -234,7 +252,8 @@ edited locally.</p>
         };
     };
 
-    preCommit = nixago.plugins.pre-commit.mkLocalConfig {
+    preCommit = nixago.lib.make {
+        name = &quot;pre-commit&quot;;
         configData = preCommitConfig;
         mode = &quot;copy&quot;;
     };
@@ -246,98 +265,78 @@ edited locally.</p>
 following is an excerpt from the <code>flake.nix</code> that manages this project:</p>
 <pre><code class="language-nix">{
 # Define development tool configuration
-    configurations = {
-        # Just configuration
-        &quot;just&quot; = {
-            tasks = {
-                check = [
-                    &quot;@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')&quot;
-                    &quot;@${tools.prettier.exe} --check .&quot;
-                    &quot;@${tools.typos.exe}&quot;
-                    &quot;@nix flake check&quot;
-                ];
-                check-docs = [
-                    &quot;@${tools.typos.exe}&quot;
-                ];
-                make-docs = [
-                    &quot;@cd docs &amp;&amp; mdbook build&quot;
-                ];
-                fmt = [
-                    &quot;@${tools.nixpkgs-fmt.exe} flake.nix $(git ls-files '**/*.nix')&quot;
-                    &quot;@${tools.prettier.exe} -w .&quot;
-                ];
-            };
+configurations = [
+  # Conform configuration
+  {
+    name = &quot;conform&quot;;
+    configData = {
+      commit = {
+        header = { length = 89; };
+        conventional = {
+          types = [
+            &quot;build&quot;
+            &quot;chore&quot;
+            &quot;ci&quot;
+            &quot;docs&quot;
+            &quot;feat&quot;
+            &quot;fix&quot;
+            &quot;perf&quot;
+            &quot;refactor&quot;
+            &quot;style&quot;
+            &quot;test&quot;
+          ];
+          scopes = [
+            &quot;conform&quot;
+            &quot;just&quot;
+            &quot;lefthook&quot;
+            &quot;pre-commit&quot;
+            &quot;prettier&quot;
+            &quot;core&quot;
+            &quot;flake&quot;
+          ];
         };
-        # Lefthook configuration
-        &quot;lefthook&quot; = {
-        pre-commit = {
-            commands = {
-                nixpkgs-fmt = {
-                    run = &quot;${tools.nixpkgs-fmt.exe} --check {staged_files}&quot;;
-                    glob = &quot;*.nix&quot;;
-                };
-                prettier = {
-                    run = &quot;${tools.prettier.exe} --check {staged_files}&quot;;
-                    glob = &quot;*.{yaml,yml,md}&quot;;
-                };
-                typos = {
-                    run = &quot;${tools.typos.exe} {staged_files}&quot;;
-                };
-            };
-        };
-        };
-        # Prettier
-        &quot;prettier.mkIgnoreConfig&quot; = [
-            &quot;.direnv&quot;
-            &quot;tests&quot;
-            &quot;lefthook.yml&quot;
-        ];
+      };
     };
+  }
 
-    # ...
+  # ....
 
-    # Local development shell
-    devShells = {
-        default = pkgs.mkShell {
-            shellHook = (lib.mkAll configurations).shellHook;
-            packages = tools.all;
-        };
+  # Prettier
+  {
+    name = &quot;prettier&quot;;
+    configData = {
+      proseWrap = &quot;always&quot;;
     };
-}
-</code></pre>
-<p>The input to <code>mkAll</code> expects an attribute set where the name is one of the
-following:</p>
-<ol>
-<li>A path to the function to be called, relative to the <code>plugins</code> set (i.e.,
-<code>prettier.mkIgnoreConfig</code>)</li>
-<li>The name of a plugin with <code>.opts</code> appended (i.e., <code>prettier.opts</code>)</li>
-</ol>
-<p>Appending the function name after the plugin name is optional. In this case, the
-<code>mkAll</code> function will call the <code>default</code> function. This function is specific to
-each plugin; refer to the source code for what is called.</p>
-<p>The value of the attribute should be the raw configuration data that will be
-passed to the function. All plugin functions take a <code>configData</code> argument which
-contains the configuration data. This argument is supplied with the value of the
-attribute.</p>
-<p>The <code>default</code> function will be called from the plugin if none is provided. See
-the individual plugins for which function this is. Most plugin functions accept
-additional arguments beyond <code>configData</code>. To pass other arguments using the
-<code>mkAll</code> function, you must add an extra attribute in the format of
-<code>pluginName.opts</code>. The value of this attribute should be a set that will be
-merged into the final call to the plugin function. The below example changes the
-mode of the Prettier plugin:</p>
-<pre><code class="language-nix">{
-  # ...
-  &quot;prettier.opts&quot; = {
-    mode = &quot;copy&quot;;
+  }
+  {
+    name = &quot;prettier&quot;;
+    type = &quot;ignore&quot;;
+    configData = [
+      &quot;.direnv&quot;
+      &quot;.conform.yaml&quot;
+      &quot;.prettierrc.json&quot;
+      &quot;tests&quot;
+      &quot;CHANGELOG.md&quot;
+      &quot;lefthook.yml&quot;
+    ];
+  }
+];
+
+# ...
+
+# Local development shell
+devShells = {
+  default = pkgs.mkShell {
+    shellHook = (lib.mkAll configurations).shellHook;
+    packages = tools.all;
   };
-  # ...
+};
 }
 </code></pre>
-<p>The second parameter is the configuration to be passed. The result is an
-attribute set with a unified <code>shellHook</code> attribute that contains all of the
-logic for managing the configurations. This result makes adding additional
-configuration files to your existing projects seamless.</p>
+<p>The input to <code>mkAll</code> is a list of configurations. The attribute sets in the list
+match the same arguments that the <code>lib.make</code> function accepts. The only
+difference is that <code>mkAll</code> returns a list of the created derivations and a
+single <code>shellHook</code> encompassing all generated configuration files.</p>
 
                     </main>
 
@@ -376,5 +375,7 @@ configuration files to your existing projects seamless.</p>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        <script type="text/javascript" src="mermaid.min.js"></script>
+        <script type="text/javascript" src="mermaid-init.js"></script>
     </body>
 </html>
