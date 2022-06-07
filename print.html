@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="plugins/just.html"><strong aria-hidden="true">3.2.</strong> Just</a></li><li class="chapter-item expanded "><a href="plugins/lefthook.html"><strong aria-hidden="true">3.3.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="plugins/pre-commit.html"><strong aria-hidden="true">3.4.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="plugins/prettier.html"><strong aria-hidden="true">3.5.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="plugins/ghsettings.html"><strong aria-hidden="true">3.2.</strong> Github Settings</a></li><li class="chapter-item expanded "><a href="plugins/just.html"><strong aria-hidden="true">3.3.</strong> Just</a></li><li class="chapter-item expanded "><a href="plugins/lefthook.html"><strong aria-hidden="true">3.4.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="plugins/pre-commit.html"><strong aria-hidden="true">3.5.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="plugins/prettier.html"><strong aria-hidden="true">3.6.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -776,10 +776,63 @@ under <code>spec</code>. This change reduces the overall nesting of the input.</
         - build*/
     type: license
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="github-settings"><a class="header" href="#github-settings">Github Settings</a></h1>
+<p>This plugin generates the <code>.github/settings.yml</code> file used by the <a href="https://github.com/probot/settings">Settings
+App</a>.</p>
+<h2 id="usage-1"><a class="header" href="#usage-1">Usage</a></h2>
+<p>The schema for the configuration file is <a href="https://github.com/probot/settings#usage">detailed here</a>. For example:</p>
+<pre><code class="language-nix">{
+  configData = {
+    repository = {
+      name = &quot;repo-name&quot;;
+      description = &quot;description of repo&quot;;
+      homepage = &quot;https://example.github.io/&quot;;
+      private = false;
+    };
+    labels = [
+      {
+        name = &quot;bug&quot;;
+        color = &quot;CC0000&quot;;
+        description = &quot;An issue with the system&quot;;
+      }
+      {
+        name = &quot;feature&quot;;
+        color = &quot;#336699&quot;;
+        description = &quot;New functionality&quot;;
+      }
+    ];
+    milestones = [
+      {
+        title = &quot;milestone-title&quot;;
+        description = &quot;milestone-description&quot;;
+        state = &quot;open&quot;;
+      }
+    ];
+  };
+}
+</code></pre>
+<p>Produces the following <code>.github/settings.yml</code>:</p>
+<pre><code class="language-yaml">labels:
+  - color: CC0000
+    description: An issue with the system
+    name: bug
+  - color: &quot;#336699&quot;
+    description: New functionality
+    name: feature
+milestones:
+  - description: milestone-description
+    state: open
+    title: milestone-title
+repository:
+  description: description of repo
+  homepage: https://example.github.io/
+  name: repo-name
+  private: false
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="just"><a class="header" href="#just">Just</a></h1>
 <p>This plugin generates the <code>.just</code> file used by the <a href="https://github.com/casey/just">Just</a> task runner. It
 allows the creation of a <code>.justfile</code> by specifying a header and tasks:</p>
-<h2 id="usage-1"><a class="header" href="#usage-1">Usage</a></h2>
+<h2 id="usage-2"><a class="header" href="#usage-2">Usage</a></h2>
 <pre><code class="language-nix">{
   just = plugins.just.mkConfig {
     config = {
@@ -813,7 +866,7 @@ task1:
 <p>This plugin generates the <code>lefthook.yml</code> file for configuring <a href="https://github.com/evilmartians/lefthook">Lefthook</a>. It
 provides a single function that allows configuring any of the <a href="https://github.com/evilmartians/lefthook/blob/master/docs/full_guide.md">valid
 options</a>.</p>
-<h2 id="usage-2"><a class="header" href="#usage-2">Usage</a></h2>
+<h2 id="usage-3"><a class="header" href="#usage-3">Usage</a></h2>
 <pre><code class="language-nix">{
     config = {
         commit-msg = {
@@ -865,7 +918,7 @@ pre-commit:
 <div style="break-before: page; page-break-before: always;"></div><h1 id="pre-commit"><a class="header" href="#pre-commit">Pre-commit</a></h1>
 <p>This plugin generates the <code>.pre-commit-config.yaml</code> file used to configure
 <a href="https://pre-commit.com/">pre-commit</a>. It provides two types for generating the configuration.</p>
-<h2 id="usage-3"><a class="header" href="#usage-3">Usage</a></h2>
+<h2 id="usage-4"><a class="header" href="#usage-4">Usage</a></h2>
 <h3 id="default-type"><a class="header" href="#default-type">Default type</a></h3>
 <p>The default type follows the <a href="https://pre-commit.com/#adding-pre-commit-plugins-to-your-project">structure described in the docs</a>:</p>
 <pre><code class="language-nix">{
@@ -930,7 +983,7 @@ produce the following <code>pre-commit-config.yaml</code> file:</p>
 <p>This plugin generates the <code>.prettierrc.json</code> file for configuring <a href="https://prettier.io/">Prettier</a>.
 It provides two types: one that allows you to configure any valid API
 options]<a href="https://prettier.io/docs/en/options.html">2</a> and another for generating an ignore file.</p>
-<h2 id="usage-4"><a class="header" href="#usage-4">Usage</a></h2>
+<h2 id="usage-5"><a class="header" href="#usage-5">Usage</a></h2>
 <h3 id="default-type-1"><a class="header" href="#default-type-1">Default type</a></h3>
 <p>The schema for the configuration file is <a href="https://prettier.io/docs/en/configuration.html">detailed here</a>. For example:</p>
 <pre><code class="language-nix">{

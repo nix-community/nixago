@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Design - Nixago</title>
+        <title>Github Settings - Nixago</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/ghsettings.html"><strong aria-hidden="true">3.2.</strong> Github Settings</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.3.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">3.4.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.5.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">3.6.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html" class="active"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/ghsettings.html" class="active"><strong aria-hidden="true">3.2.</strong> Github Settings</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.3.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">3.4.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.5.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">3.6.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,87 +134,68 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="design"><a class="header" href="#design">Design</a></h1>
-<p>When contributing to Nixago, it's essential to understand the general design
-principles that guide its development. This section provides details on how the
-library is structured and introduces the basic concepts required to contribute
-effectively.</p>
-<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
-<pre class="mermaid">%%{ init : { &quot;theme&quot; : &quot;dark&quot;, &quot;flowchart&quot; : { &quot;curve&quot; : &quot;linear&quot; }}}%%
-%%
-flowchart TD
-    flake{{User's flake.nix}}
-    make(Call to make)
-    plugin(Plugin is called)
-    generate(Call to generate)
-    eval(Call to eval)
-    flake -- request ---&gt; make
-    make &lt;-- request ---&gt; plugin
-    make &lt;-- user + plugin request ---&gt; generate
-    generate --&gt; eval
-    make -- result --&gt; flake
-</pre>
-<p>Nixago uses a <a href="https://github.com/jmgilman/nixago/tree/master/plugins">plugin-based</a> infrastructure to enable easily extending its
-support for various configuration files. Plugins act as a middle-man by taking
-input from the end-user, applying any potential modifications or additions, and
-then sending it off to be generated into the resulting configuration file.</p>
-<p>The flow chart above demonstrates the basic data flow from when the user calls
-into Nixago to when they receive the resulting configuration. Nixago utilizes
-three primary functions to accomplish this.</p>
-<h3 id="make"><a class="header" href="#make">Make</a></h3>
-<p>The <a href="https://github.com/jmgilman/nixago/blob/master/lib/make.nix">make</a> function is the main entry point into Nixago. The end-user calls
-this function and specifies the plugin to interact with and the configuration
-data used to generate the resulting configuration file. The <code>make</code> function uses
-this data to build the first <a href="https://github.com/jmgilman/nixago/blob/issues/9/modules/request.nix">request</a>. The request module serves as the
-primary data container and is passed around internally when performing
-generation.</p>
-<p>One of the primary functions of <code>make</code> is to call the plugin specified by the
-end-user. The plugin will receive a copy of the current request and return its
-version. The plugin version may opt to override any of the details included in
-the user request; however, it typically only adds additional components, for
-example, other flags and files to pass to <code>eval</code>.</p>
-<p>The <code>make</code> function then merges the user request and plugin request modules into
-a final unified version passed to the <code>generate</code> function.</p>
-<h3 id="generate"><a class="header" href="#generate">Generate</a></h3>
-<p>The <a href="https://github.com/jmgilman/nixago/blob/master/lib/generate.nix">generate</a> function is responsible for building the final result returned
-to the user. The result includes a derivation that produces the specified
-configuration file and a shell hook for managing it. The primary function of
-<code>generate</code> is to pull the necessary contextual information out of the request
-and call <code>eval</code> to create the derivation. Secondary to this is building the
-correct shell hook and packaging all of this in an attribute set that is
-eventually returned to the end-user.</p>
-<h3 id="eval"><a class="header" href="#eval">Eval</a></h3>
-<p>The <a href="https://github.com/jmgilman/nixago/blob/master/lib/eval.nix">eval</a> function is at the lowest level and is responsible for interacting
-with <a href="https://cuelang.org/">CUE</a> via its command-line interface. It takes the necessary contextual
-information from <code>generate</code> and uses it to create a derivation using the
-<a href="https://github.com/NixOS/nixpkgs/blob/1d44ac176ce6de74ac912a5b043e948a87a6d2f5/pkgs/build-support/trivial-builders.nix#L27">runCommand</a> function.</p>
-<h3 id="result"><a class="header" href="#result">Result</a></h3>
-<p>The result returned to the end-user is an attribute set containing a derivation
-and a shell hook. The shell hook has a dependency on the derivation through
-interpolation. The derivation is eventually built once the user includes the
-shell hook into their environment.</p>
-<h2 id="cue"><a class="header" href="#cue">CUE</a></h2>
-<p>The primary tool underlying Nixago is <a href="https://github.com/jmgilman/nixago/tree/master/plugins">CUE</a>. CUE stands for Configure, Unify,
-and Execute. It's a general-purpose language for defining, generating, and
-validating data. This flake chose CUE for its strengths in configuration
-validation and generation. It's also a young project with a rapidly growing
-platform.</p>
-<p>Learning the CUE language is necessary for contributing plugins. Don't worry,
-though. It's much easier to pick up than Nix. Please review the <a href="https://github.com/jmgilman/nixago/blob/master/lib/make.nix">Cuetorials
-website</a> and the <a href="https://github.com/jmgilman/nixago/blob/issues/9/modules/request.nix">Logic of CUE</a> to get an overview of the CUE language.</p>
-<p>When creating a plugin, you'll need to write a CUE schema that can validate the
-incoming configuration data. The schema ensures that configuration data is
-accurate, and it also creates the foundation for transforming that data into the
-format needed for the configuration file.</p>
+                        <h1 id="github-settings"><a class="header" href="#github-settings">Github Settings</a></h1>
+<p>This plugin generates the <code>.github/settings.yml</code> file used by the <a href="https://github.com/probot/settings">Settings
+App</a>.</p>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<p>The schema for the configuration file is <a href="https://github.com/probot/settings#usage">detailed here</a>. For example:</p>
+<pre><code class="language-nix">{
+  configData = {
+    repository = {
+      name = &quot;repo-name&quot;;
+      description = &quot;description of repo&quot;;
+      homepage = &quot;https://example.github.io/&quot;;
+      private = false;
+    };
+    labels = [
+      {
+        name = &quot;bug&quot;;
+        color = &quot;CC0000&quot;;
+        description = &quot;An issue with the system&quot;;
+      }
+      {
+        name = &quot;feature&quot;;
+        color = &quot;#336699&quot;;
+        description = &quot;New functionality&quot;;
+      }
+    ];
+    milestones = [
+      {
+        title = &quot;milestone-title&quot;;
+        description = &quot;milestone-description&quot;;
+        state = &quot;open&quot;;
+      }
+    ];
+  };
+}
+</code></pre>
+<p>Produces the following <code>.github/settings.yml</code>:</p>
+<pre><code class="language-yaml">labels:
+  - color: CC0000
+    description: An issue with the system
+    name: bug
+  - color: &quot;#336699&quot;
+    description: New functionality
+    name: feature
+milestones:
+  - description: milestone-description
+    state: open
+    title: milestone-title
+repository:
+  description: description of repo
+  homepage: https://example.github.io/
+  name: repo-name
+  private: false
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../contributing/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../plugins/conform.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../contributing/plugins.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../plugins/just.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -223,10 +204,10 @@ format needed for the configuration file.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../contributing/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../plugins/conform.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../contributing/plugins.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../plugins/just.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
