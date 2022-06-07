@@ -7,7 +7,7 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        version = "1.0.0"; # x-release-please-version
+        version = "2.0.0"; # x-release-please-version
 
         # Setup pkgs
         pkgs = import nixpkgs {
