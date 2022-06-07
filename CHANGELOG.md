@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/jmgilman/nixago/compare/v2.0.0...v2.1.0) (2022-06-07)
+
+
+### Features
+
+* adds plugin for configuring Github ([#15](https://github.com/jmgilman/nixago/issues/15)) ([3506414](https://github.com/jmgilman/nixago/commit/3506414aa958712dadaa4b1f090bbcfd9086e5a6))
+* Allows making configurations without a plugin  ([#12](https://github.com/jmgilman/nixago/issues/12)) ([7347fb7](https://github.com/jmgilman/nixago/commit/7347fb7067def9a752ea4c0bd22aaea9c6b54ce5))
+
 ## [2.0.0](https://github.com/jmgilman/nixago/compare/v1.0.0...v2.0.0) (2022-06-07)
 
 
