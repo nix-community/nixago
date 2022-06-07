@@ -7,7 +7,11 @@ with pkgs.lib;
 let
   output = request.hook.output;
   shellHookExtra = request.hook.extra;
-  path = ../plugins/${request.plugin.name}/templates;
+
+  # If we're using a plugin, set the base path to the templates directory
+  path =
+    if request.plugin ? name
+    then ../plugins/${request.plugin.name}/templates else request.cue.path;
 
   # Build the configuration file derivation
   configFile = lib.eval

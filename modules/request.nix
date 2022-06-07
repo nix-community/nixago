@@ -18,6 +18,11 @@ let
           description = "The name of the cue package to evaluate";
           default = "";
         };
+        path = mkOption {
+          type = types.path;
+          description = "The base path to search for packages in";
+          default = ./.;
+        };
         postBuild = mkOption {
           type = types.str;
           description = "Shell code to run after executing cue eval";
