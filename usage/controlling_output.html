@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Plugins - Nixago</title>
+        <title>Controlling Output - Nixago</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html" class="active"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.2.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">3.3.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.4.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">3.5.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html" class="active"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.2.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">3.3.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.4.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">3.5.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,20 +134,68 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="plugins"><a class="header" href="#plugins">Plugins</a></h1>
-<p>Nixago provides most functionality through plugins. Each plugin targets a
-specific tool by providing a clean interface for end-users. Each plugin may also
-offer the generation of multiple types of configuration files associated with
-the tool. Refer to each plugin's page for more details.</p>
+                        <h1 id="controlling-output"><a class="header" href="#controlling-output">Controlling Output</a></h1>
+<p>The <code>make</code> function takes additional arguments which augment the output
+produced.</p>
+<h2 id="types"><a class="header" href="#types">Types</a></h2>
+<p>Some plugins can generate different types of configuration files. See the
+documentation for each plugin for more information. In the quick start example,
+we used the <code>simple</code> type provided by the pre-commit plugin. This type allows
+passing a simplified configuration that is geared towards executing local hooks.
+Another example is the plugin for prettier, which can create regular
+configuration files as well as ignore files:</p>
+<pre><code class="language-nix">{
+  prettier = nixago.lib.make {
+    name = &quot;prettier&quot;;
+    configData = [&quot;file1.txt&quot; &quot;file2.yml&quot; ];
+    type = &quot;ignore&quot;;
+  };
+}
+</code></pre>
+<h2 id="output-path"><a class="header" href="#output-path">Output Path</a></h2>
+<p>By default, the shell hook for each plugin will generate the configuration file
+at the root of your repository (i.e., the location where <code>flake.nix</code> resides).
+The file name and relative location can be modified:</p>
+<pre><code class="language-nix">{
+# ...
+    preCommit = nixago.lib.make {
+        name = &quot;pre-commit&quot;;
+        configData = preCommitConfig;
+        output = &quot;.config/pre-commit-config.yaml&quot;;
+    };
+# ...
+}
+</code></pre>
+<p>The above example would place the configuration file in
+<code>.config/pre-commit-config.yaml</code>.</p>
+<h2 id="generation-mode"><a class="header" href="#generation-mode">Generation Mode</a></h2>
+<p>The shell hook manages a symbolic link from the Nix store to the output path by
+default. It automatically synchronizes any changes by updating the link if the
+generated configuration file changes. This mode can be altered to instead
+maintain a local copy of the generated configuration file. In this mode, the
+shell hook compares the contents of the local copy to the one in the Nix store
+and updates it accordingly. The primary benefit of this change is that it allows
+the file to be checked into git, and if your Nix store is read-only, it can be
+edited locally.</p>
+<pre><code class="language-nix">{
+# ...
+    preCommit = nixago.lib.make {
+        name = &quot;pre-commit&quot;;
+        configData = preCommitConfig;
+        mode = &quot;copy&quot;;
+    };
+# ...
+}
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../usage/customizing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../usage/quick_start.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../plugins/conform.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../usage/making_multiple.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -156,10 +204,10 @@ the tool. Refer to each plugin's page for more details.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../usage/customizing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../usage/quick_start.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../plugins/conform.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../usage/making_multiple.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

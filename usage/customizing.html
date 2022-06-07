@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Plugins - Nixago</title>
+        <title>Customizing - Nixago</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html" class="active"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.2.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">3.3.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.4.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">3.5.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html" class="active"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.2.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">3.3.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.4.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">3.5.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,20 +134,152 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="plugins"><a class="header" href="#plugins">Plugins</a></h1>
-<p>Nixago provides most functionality through plugins. Each plugin targets a
-specific tool by providing a clean interface for end-users. Each plugin may also
-offer the generation of multiple types of configuration files associated with
-the tool. Refer to each plugin's page for more details.</p>
+                        <h1 id="customizing"><a class="header" href="#customizing">Customizing</a></h1>
+<p>It's possible to completely bypass the usage of plugins and generate
+configuration files directly. This mode of operation requires familization with
+<a href="https://cuelang.org/">CUE</a> and it's associated CLI tool. See the
+<a href="../contributing/design.html#cue">design section</a> for more information.</p>
+<p>Nixago provides a single function for generating custom configurations:
+<a href="https://github.com/jmgilman/nixago/blob/master/lib/make_custom.nix">make_custom</a>. It takes a single argument in the form of the <a href="https://github.com/jmgilman/nixago/blob/master/modules/request.nix">request
+module</a>. The request module is the primary data container that holds all
+options used for generating configuration files. Refer to the module source for
+the available options.</p>
+<h2 id="creating-a-cue-file"><a class="header" href="#creating-a-cue-file">Creating a CUE file</a></h2>
+<p>Before continuing on in this section, ensure you've setup a <code>flake.nix</code> and
+added Nixago as an input.</p>
+<p>When creating a custom configuration, you will need to supply the CUE files that
+will validate and generate the output structure. Refer to the <a href="https://github.com/jmgilman/nixago/tree/master/plugins">plugins</a>
+directory for examples of these CUE files. For this example, we will create a
+configuration for the <a href="https://github.com/evilmartians/lefthook">lefthook</a> CLI tool:</p>
+<pre><code class="language-cue">#Config: {
+    [string]: #Hook
+    colors?: bool | *true
+    extends?: [...string]
+    skip_output?: [...string]
+    source_dir?: string
+    source_dir_local?: string
+    ...
+}
+
+#Hook: {
+    commands?: [string]: #Command
+    exclude_tags?: [...string]
+    parallel?: bool | *false
+    piped?: bool | *false
+    scripts?: [string]: #Script
+    ...
+}
+
+#Command: {
+    exclude?: string
+    files?: string
+    glob?: string
+    root?: string
+    run: string
+    skip?: bool | [...string]
+    tags?: string
+    ...
+}
+
+#Script: {
+    runner: string
+    ...
+}
+
+{
+    #Config
+}
+</code></pre>
+<p>We will place this file in a subdirectory: <code>templates/lefthook.cue</code>.</p>
+<h2 id="creating-a-request"><a class="header" href="#creating-a-request">Creating a Request</a></h2>
+<p>The request module is made up of three submodules: <code>cue</code>, <code>hook</code>, and <code>plugin</code>.
+The latter is not useful to us when creating custom configurations. The <code>cue</code>
+submodule provides options for controlling the CUE CLI tool and the <code>hook</code>
+submodule provides options for controlling the output of the generated shell
+hook.</p>
+<p>When creating a custom configuration, only three options are mandatory:</p>
+<ul>
+<li><code>configData</code>: The configuration data to be used in generation</li>
+<li><code>cue.path</code>: The path where CUE should look for <code>.cue</code> files</li>
+<li><code>cue.format</code>: The output format that CUE should produce</li>
+</ul>
+<p>For our example, we'll specify the following configuration data:</p>
+<pre><code class="language-nix">{
+  configData = {
+    commit-msg = {
+      scripts = {
+        template_checker = { runner = &quot;bash&quot;; };
+      };
+    };
+    pre-commit = {
+      commands = {
+        stylelint = {
+          tags = &quot;frontend style&quot;;
+          glob = &quot;*.js&quot;;
+          run = &quot;yarn stylelint {staged_files}&quot;;
+        };
+        rubocop = {
+          tags = &quot;backend style&quot;;
+          glob = &quot;*.rb&quot;;
+          exclude = &quot;application.rb|routes.rb&quot;;
+          run = &quot;bundle exec rubocop --force-exclusion {all_files}&quot;;
+        };
+      };
+      scripts = {
+        &quot;good_job.js&quot; = { runner = &quot;node&quot;; };
+      };
+    };
+  };
+}
+</code></pre>
+<p>The CUE path should point to our <code>templates</code> subdirectory and the output we want
+is YAML. We will make the generated configuration file an output of our flake so
+that we can build it:</p>
+<pre><code class="language-nix">{
+    # ...
+    packages.lefthook = (nixago.lib.makeCustom {
+          inherit configData;
+          cue.path = ./templates;
+          cue.format = &quot;yaml&quot;;
+        }).configFile;
+    # ...
+}
+</code></pre>
+<p>Now we can build our configuration file:</p>
+<pre><code class="language-bash">nix build -o lefthook.yml .#lefthook
+</code></pre>
+<p>The result should be a <code>lefthook.yml</code> file in our local directory with the
+following contents:</p>
+<pre><code class="language-yaml">commit-msg:
+  scripts:
+    template_checker:
+      runner: bash
+pre-commit:
+  commands:
+    rubocop:
+      exclude: application.rb|routes.rb
+      glob: &quot;*.rb&quot;
+      run: bundle exec rubocop --force-exclusion {all_files}
+      tags: backend style
+    stylelint:
+      glob: &quot;*.js&quot;
+      run: yarn stylelint {staged_files}
+      tags: frontend style
+  scripts:
+    good_job.js:
+      runner: node
+</code></pre>
+<p>There are several more options available for controlling the generation process,
+including configuring a shell hook and passing custom flags to the CUE CLI tool.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../usage/customizing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../usage/making_multiple.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../plugins/conform.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../plugins/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -156,10 +288,10 @@ the tool. Refer to each plugin's page for more details.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../usage/customizing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../usage/making_multiple.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../plugins/conform.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../plugins/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
