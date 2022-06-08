@@ -5,12 +5,17 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    {
+    rec {
       # Expose template
-      templates.default = {
-        path = ./templates;
-        description = "An example Nixago configuration";
+      templates = {
+        starter = {
+          path = ./templates/starter;
+          description = "A starter template for Nixago";
+        };
       };
+
+      defaultTemplate = templates.starter;
+
     } // (flake-utils.lib.eachDefaultSystem
       (system:
         let
