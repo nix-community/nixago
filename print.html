@@ -374,6 +374,9 @@ of these plugins.</p>
 </code></pre>
 <p>To maintain consistency in the packages used across your <code>flake.nix</code>, it's
 recommended to force Nixago's copy to follow the ones declared in your flake.</p>
+<p>Alternatively, you can download a starter template:</p>
+<pre><code class="language-bash">nix flake init --template github:jmgilman/nixago
+</code></pre>
 <h2 id="generate-a-configuration-1"><a class="header" href="#generate-a-configuration-1">Generate a Configuration</a></h2>
 <p>Choose a plugin to use. The below example uses the plugin for <a href="https://pre-commit.com/">pre-commit</a>:</p>
 <pre><code class="language-nix">{
