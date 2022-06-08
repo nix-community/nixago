@@ -24,6 +24,12 @@ The first step is adding Nixago to your `flake.nix`:
 To maintain consistency in the packages used across your `flake.nix`, it's
 recommended to force Nixago's copy to follow the ones declared in your flake.
 
+Alternatively, you can download a starter template:
+
+```bash
+nix flake init --template github:jmgilman/nixago
+```
+
 ## Generate a Configuration
 
 Choose a plugin to use. The below example uses the plugin for [pre-commit][1]:
