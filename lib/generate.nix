@@ -22,8 +22,9 @@ let
     };
 
   # Build shell hook
+  name = if request.plugin.name == "" then "custom" else request.plugin.name;
   shellHook =
-    lib.makeHook { inherit configFile; hookConfig = request.hook; };
+    lib.makeHook { inherit configFile name; hookConfig = request.hook; };
 in
 {
   inherit configFile shellHook;

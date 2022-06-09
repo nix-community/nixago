@@ -1,5 +1,5 @@
 { pkgs, lib, plugins }:
-{ configFile, hookConfig }:
+{ name, configFile, hookConfig }:
 let
   # Header contains shared code across hooks
   header = import ./header.nix;
@@ -8,12 +8,12 @@ let
   hookFile = ./. + "/${hookConfig.mode}.nix";
   hook = import hookFile { inherit configFile hookConfig; };
 
-  # Use writeShellScriptBin for integrated error checking
-  shellScript = pkgs.writeShellScriptBin "nixago" hook;
+  # Use writeShellScript for integrated error checking
+  shellScript = pkgs.writeShellScript "nixago_${name}_hook" hook;
 in
 ''
   ${header}
   run_if_trace set -x
-  source ${pkgs.lib.getExe shellScript}
+  source ${shellScript}
   run_if_trace set +x
 ''
