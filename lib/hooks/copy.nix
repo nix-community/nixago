@@ -1,25 +1,27 @@
-{ configFile, output, shellHookExtra }:
+{ configFile, hookConfig }:
+let
+  inherit (hookConfig) output extra;
+in
 ''
   # Check if the file exists
   if [[ -f ${output} ]]; then
     # Check if we need to update the local copy
-    cmp ${configFile} ${output} >/dev/null
-    if [[ $? -gt 0 ]]; then
+    if ! cmp ${configFile} ${output} >/dev/null; then
       # We need to update the local copy
-      echo "nixago: ${output} copy updated"
+      log "${output} copy updated"
       install -m 644 ${configFile} ${output}
 
       # Run extra shell hook
-      ${shellHookExtra}
+      ${extra}
     else
-      echo "nixago: ${output} copy is up to date"
+      log "${output} copy is up to date"
     fi
   else
     # We need to create the first iteration of the file
-    echo "nixago: ${output} copy created"
+    log "${output} copy created"
     install -m 644 ${configFile} ${output}
 
     # Run extra shell hook
-    ${shellHookExtra}
+    ${extra}
   fi
 ''

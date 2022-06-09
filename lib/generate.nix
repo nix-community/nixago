@@ -23,10 +23,7 @@ let
 
   # Build shell hook
   shellHook =
-    if request.hook.mode == "copy" then
-      (import ./hooks/copy.nix { inherit configFile output shellHookExtra; })
-    else
-      (import ./hooks/link.nix { inherit configFile output shellHookExtra; });
+    lib.makeHook { inherit configFile; hookConfig = request.hook; };
 in
 {
   inherit configFile shellHook;

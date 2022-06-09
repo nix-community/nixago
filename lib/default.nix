@@ -29,6 +29,8 @@ rec {
 
   makeCustom = import ./make_custom.nix { inherit pkgs lib plugins; };
 
+  makeHook = import ./hooks { inherit pkgs lib plugins; };
+
   /* Updates the the attribute at `path` in `attrs` with `value`.
   */
   updateValue = (attrs: path: value:
