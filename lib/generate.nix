@@ -22,11 +22,9 @@ let
     };
 
   # Build shell hook
+  name = if request.plugin.name == "" then "custom" else request.plugin.name;
   shellHook =
-    if request.hook.mode == "copy" then
-      (import ./hooks/copy.nix { inherit configFile output shellHookExtra; })
-    else
-      (import ./hooks/link.nix { inherit configFile output shellHookExtra; });
+    lib.makeHook { inherit configFile name; hookConfig = request.hook; };
 in
 {
   inherit configFile shellHook;

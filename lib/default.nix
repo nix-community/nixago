@@ -16,18 +16,11 @@ rec {
 
   /** Recursively makes a list of configurations
   */
-  makeAll = all:
-    (
-      let
-        result = builtins.map lib.make all;
-      in
-      {
-        configs = catAttrs "configFile" result;
-        shellHook = concatStringsSep "\n" (pkgs.lib.catAttrs "shellHook" result);
-      }
-    );
+  makeAll = import ./make_all.nix { inherit pkgs lib plugins; };
 
   makeCustom = import ./make_custom.nix { inherit pkgs lib plugins; };
+
+  makeHook = import ./hooks { inherit pkgs lib plugins; };
 
   /* Updates the the attribute at `path` in `attrs` with `value`.
   */
