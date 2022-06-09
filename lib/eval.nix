@@ -11,6 +11,7 @@
 , configData ? { }
 , flags ? { }
 , cue ? pkgs.cue
+, jq ? pkgs.jq
 }:
 
 with pkgs.lib;
@@ -42,12 +43,54 @@ let
   result = pkgs.runCommand output
     ({
       inherit json;
-      buildInputs = [ cue ];
+      buildInputs = [ cue jq ];
       passAsFile = [ "json" ];
     } // optionalAttrs (json != "") { inherit json; passAsFile = [ "json" ]; })
     ''
-      echo "nixago: Rendering output..."
-      cd ${path} && ${cueEvalCmd}
+      # Helpful details if an error occurs
+      echo "----- START DEBUG -----"
+      echo "using path: ${path}"
+      echo "using package: ${package}"
+      echo "using command: ${cueEvalCmd}"
+      echo "----- END DEBUG -----"
+
+      if [[ ! -z "$jsonPath" ]]; then
+        echo "----- START CONFIG DUMP -----"
+        cat $jsonPath | jq
+        echo "----- END CONFIG DUMP -----"
+      fi
+
+      # We do our own error handling here
+      set +e
+
+      # Make sure path is a directory
+      if [[ ! -d ${path} ]]; then
+        echo "!!! path should be a directory: ${path}
+        exit 1
+      fi
+
+      # Make sure path is not empty
+      if [[ -z "$(ls -A ${path})" ]]; then
+        echo "!!! path should not be an empty directory: ${path}
+        exit 1
+      fi
+
+      echo ">>> rendering output..."
+      result=$(cd ${path} && ${cueEvalCmd} 2>&1 >/dev/null)
+
+      if [[ $? -gt 0 ]]; then
+        echo "!!! CUE failed rendering the output"
+
+        echo "----- START ERROR DUMP -----"
+        echo "$result"
+        echo "----- END ERROR DUMP -----"
+
+        exit 1
+      fi
+
+      set -e
+
+      echo ">>> running post-build commands..."
       ${postBuild}
     '';
 in
