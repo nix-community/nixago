@@ -53,10 +53,10 @@ your own, and then:
 5. Create a new Pull Request
 
 [1]: https://nixos.org/
-[2]: https://jmgilman.github.io/nixago/plugins/index.html
-[3]: https://jmgilman.github.io/nixago/usage/customizing.html
+[2]: https://nix-community.github.io/nixago/plugins/index.html
+[3]: https://nix-community.github.io/nixago/usage/customizing.html
 [4]: https://cuelang.org/
 [5]: https://cuelang.org/docs/integrations/
-[6]: https://jmgilman.github.io/nixago/usage/quick_start.html
-[7]: https://jmgilman.github.io/nixago/contributing
+[6]: https://nix-community.github.io/nixago/usage/quick_start.html
+[7]: https://nix-community.github.io/nixago/contributing
 [8]: https://github.com/jmgilman/nixago/issues

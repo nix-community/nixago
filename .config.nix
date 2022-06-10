@@ -23,7 +23,7 @@ in
       repository = {
         name = "nixago";
         description = "Generate configuration files using Nix";
-        homepage = "https://jmgilman.github.io/nixago/";
+        homepage = "https://nix-community.github.io/nixago/";
         topics = "nix, cuelang, development, developer-tools, development-environment";
         default_branch = "master";
       };

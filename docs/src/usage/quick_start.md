@@ -112,4 +112,4 @@ nix build #.precommit
 
 [1]: https://pre-commit.com/
 [2]: https://github.com/jmgilman/nixago/blob/master/lib/make.nix
-[3]: https://jmgilman.github.io/nixago/plugins/pre-commit.html
+[3]: https://nix-community.github.io/nixago/plugins/pre-commit.html
