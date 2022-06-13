@@ -1,5 +1,27 @@
-{ config, lib, ... }:
+/*
+  This module holds the main data structure that's used when handling a
+  "request" from the user to generate a configuration file.
+*/
+{ lib, engines, ... }:
 with lib;
+let
+  hook = types.submodule ({ config, lib, ... }:
+    {
+      options = {
+        # TODO: Make this a list
+        extra = mkOption {
+          type = types.str;
+          description = "Shell code to run after configuration file is updated";
+          default = "";
+        };
+        mode = mkOption {
+          type = types.str;
+          description = "The output mode to use";
+          default = "link";
+        };
+      };
+    });
+in
 {
   options = {
     configData = mkOption {
@@ -9,10 +31,16 @@ with lib;
     engine = mkOption {
       type = types.functionTo types.package;
       description = "The engine to use for generating output";
+      default = engines.nix { };
     };
     format = mkOption {
       type = types.str;
       description = "The format of the output file";
+    };
+    hook = mkOption {
+      type = hook;
+      description = "Additional options for controlling hook generation";
+      default = { };
     };
     output = mkOption {
       type = types.str;

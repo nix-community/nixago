@@ -1,9 +1,11 @@
 { pkgs, lib, plugins }:
 with pkgs.lib;
 rec {
-  inherit (import ../modules/default.nix { inherit pkgs lib; }) mkRequest;
+  inherit (import ../modules/default.nix { inherit pkgs lib; }) mkRequest mkRequestv2;
 
   eval = import ./eval.nix { inherit pkgs lib plugins; };
+
+  engines = import ./engines { inherit pkgs lib; };
 
   /* Filters out "empty" values from an attribute set
   */
@@ -13,6 +15,7 @@ rec {
   generate = import ./generate.nix { inherit pkgs lib plugins; };
 
   make = import ./make.nix { inherit pkgs lib plugins; };
+  makev2 = import ./makev2.nix { inherit pkgs lib; };
 
   /** Recursively makes a list of configurations
   */
