@@ -4,7 +4,7 @@
 { name, input, expected }:
 let
   # Call make
-  result = lib.makev2 (plugins.${name} input);
+  result = lib.make (plugins.${name} input);
 
   # Compare the result from make with the expected result
   der = pkgs.runCommand "test.${name}"

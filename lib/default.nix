@@ -1,7 +1,7 @@
 { pkgs, lib, plugins }:
 with pkgs.lib;
 rec {
-  inherit (import ../modules/default.nix { inherit pkgs lib; }) mkRequest mkRequestv2;
+  inherit (import ../modules/default.nix { inherit pkgs lib; }) mkRequest;
 
   eval = import ./eval.nix { inherit pkgs lib plugins; };
 
@@ -14,8 +14,7 @@ rec {
 
   generate = import ./generate.nix { inherit pkgs lib plugins; };
 
-  make = import ./make.nix { inherit pkgs lib plugins; };
-  makev2 = import ./makev2.nix { inherit pkgs lib; };
+  make = import ./make.nix { inherit pkgs lib; };
 
   /** Recursively makes a list of configurations
   */
