@@ -1,4 +1,4 @@
-{ pkgs, lib, plugins }:
+{ pkgs, lib }:
 { name, configFile, hookConfig }:
 let
   # Common contains shared code across hooks

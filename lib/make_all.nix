@@ -1,6 +1,6 @@
 /** Concatenates a list of configurations together
 */
-{ pkgs, lib, plugins }:
+{ pkgs, lib }:
 all:
 with pkgs.lib;
 let

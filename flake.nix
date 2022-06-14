@@ -21,7 +21,7 @@
         let
           version = "2.1.0"; # x-release-please-version
 
-          lib = (import ./lib { inherit pkgs lib plugins; });
+          lib = (import ./lib { inherit pkgs lib; });
           plugins = import ./plugins { inherit pkgs lib; };
 
           # Setup pkgs
