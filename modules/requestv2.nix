@@ -47,7 +47,7 @@ in
       description = "The relative path to link the generated file";
     };
     root = mkOption {
-      type = type.path;
+      type = types.path;
       description = "The root path from which the relative path is derived";
       default =
         if builtins.getEnv "PRJ_ROOT" == ""

@@ -4,7 +4,7 @@
 all:
 with pkgs.lib;
 let
-  result = builtins.map lib.make all;
+  result = builtins.map lib.makev2 all;
 
   # Only include common shell code once
   common = (import ./hooks/common.nix);

@@ -1,4 +1,4 @@
-{ tools }:
+{ plugins, tools }:
 let
   colors = {
     black = "#000000";
@@ -16,10 +16,8 @@ let
 in
 [
   # Github
-  {
-    name = "ghsettings";
-    mode = "copy";
-    configData = {
+  (
+    plugins.ghsettings {
       repository = {
         name = "nixago";
         description = "Generate configuration files using Nix";
@@ -141,12 +139,11 @@ in
           color = colors.red;
         }
       ];
-    };
-  }
+    }
+  )
   # Conform
-  {
-    name = "conform";
-    configData = {
+  (
+    plugins.conform {
       commit = {
         header = { length = 89; };
         conventional = {
@@ -174,12 +171,11 @@ in
           ];
         };
       };
-    };
-  }
+    }
+  )
   # Just
-  {
-    name = "just";
-    configData = {
+  (
+    plugins.just {
       tasks = {
         check = [
           "@${tools.nixpkgs-fmt.exe} --check flake.nix $(git ls-files '**/*.nix')"
@@ -201,12 +197,11 @@ in
           "@${tools.prettier.exe} -w ."
         ];
       };
-    };
-  }
+    }
+  )
   # Lefthook
-  {
-    name = "lefthook";
-    configData = {
+  (
+    plugins.lefthook {
       commit-msg = {
         commands = {
           conform = {
@@ -229,29 +224,28 @@ in
           };
         };
       };
-    };
-  }
+    }
+  )
   # Prettier
-  {
-    name = "prettier";
-    configData = {
+  (
+    plugins.prettier {
       proseWrap = "always";
-    };
-  }
-  {
-    name = "prettier";
-    type = "ignore";
-    configData = [
-      "docs/book"
-      "docs/*.js"
-      ".github/settings.yml"
-      ".direnv"
-      ".conform.yaml"
-      ".prettierrc.json"
-      "tests"
-      "CHANGELOG.md"
-      "lefthook.yml"
-    ];
-  }
+    }
+  )
+  # {
+  #   name = "prettier";
+  #   type = "ignore";
+  #   configData = [
+  #     "docs/book"
+  #     "docs/*.js"
+  #     ".github/settings.yml"
+  #     ".direnv"
+  #     ".conform.yaml"
+  #     ".prettierrc.json"
+  #     "tests"
+  #     "CHANGELOG.md"
+  #     "lefthook.yml"
+  #   ];
+  # }
 ]
 

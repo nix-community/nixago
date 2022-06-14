@@ -1,5 +1,5 @@
 { pkgs, lib }:
-{ head, tasks }:
+{ head ? "", tasks }:
 let
   # Expand configuration data
   configData = {
