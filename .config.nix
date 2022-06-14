@@ -225,19 +225,24 @@ let
 
   # Prettier
   prettier = {
-    proseWrap = "always";
+    configData = {
+      proseWrap = "always";
+    };
   };
-  prettier-ignore = [
-    "docs/book"
-    "docs/*.js"
-    ".github/settings.yml"
-    ".direnv"
-    ".conform.yaml"
-    ".prettierrc.json"
-    "tests"
-    "CHANGELOG.md"
-    "lefthook.yml"
-  ];
+  prettier-ignore = {
+    configData = [
+      "docs/book"
+      "docs/*.js"
+      ".github/settings.yml"
+      ".direnv"
+      ".conform.yaml"
+      ".prettierrc.json"
+      "tests"
+      "CHANGELOG.md"
+      "lefthook.yml"
+    ];
+    type = "ignore";
+  };
 
 in
 [
@@ -245,7 +250,7 @@ in
   (plugins.conform conform)
   (plugins.just just)
   (plugins.lefthook lefthook)
-  (plugins.prettier { configData = prettier; })
-  (plugins.prettier { configData = prettier-ignore; type = "ignore"; })
+  (plugins.prettier prettier)
+  (plugins.prettier prettier-ignore)
 ]
 
