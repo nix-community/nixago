@@ -55,11 +55,11 @@
           ];
 
           # Define development tool configuration (with Nixago!)
-          configs = import ./.config.nix { inherit tools; };
+          # configs = import ./.config.nix { inherit tools; };
         in
         rec {
           # Expose external API
-          inherit lib;
+          inherit lib plugins;
 
           # Add local tests
           checks = import ./tests { inherit pkgs runTest; };
@@ -67,7 +67,7 @@
           # Configure local development shell
           devShells = {
             default = pkgs.mkShell {
-              shellHook = (lib.makeAll configs).shellHook;
+              # shellHook = (lib.makeAll configs).shellHook;
               packages = tools.all;
             };
           };

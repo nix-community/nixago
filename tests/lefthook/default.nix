@@ -2,7 +2,7 @@
 let
   name = "lefthook";
   expected = ./expected.yml;
-  configData = {
+  input = {
     commit-msg = {
       scripts = {
         template_checker = { runner = "bash"; };
@@ -29,5 +29,5 @@ let
   };
 in
 runTest {
-  inherit configData expected name;
+  inherit input expected name;
 }

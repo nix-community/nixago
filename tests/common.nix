@@ -1,12 +1,10 @@
 /* Common test runner used across all tests
 */
 { pkgs, lib, plugins }:
-{ name, configData, expected, type ? "", output ? "", mode ? "" }:
+{ name, input, expected }:
 let
   # Call make
-  result = lib.make {
-    inherit configData mode name output type;
-  };
+  result = lib.makev2 (plugins.${name} input);
 
   # Compare the result from make with the expected result
   der = pkgs.runCommand "test.${name}"

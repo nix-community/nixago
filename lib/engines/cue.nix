@@ -6,6 +6,7 @@
 , cue ? pkgs.cue
 , jq ? pkgs.jq
 }: request:
+with pkgs.lib;
 let
   inherit (request) configData format output;
 
@@ -21,7 +22,7 @@ let
       outfile = "$out";
 
       # Specify the desired output file format
-      inherit format;
+      out = format;
     } // flags);
 
   /*
@@ -37,7 +38,7 @@ let
     ++ [ "json: $jsonPath" ];
 
   # Build the full CUE command
-  flagStr = cli.toGNUCommandLineShell { } allFlags;
+  flagStr = builtins.concatStringsSep " " (cli.toGNUCommandLine { } allFlags);
   inputStr = builtins.concatStringsSep " " allInputs;
   cueEvalCmd = "cue eval ${flagStr} ${inputStr}";
 

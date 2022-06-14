@@ -1,10 +1,10 @@
 { pkgs, lib }:
+configData:
 {
-  name = "ghsettings";
-  types = {
-    default = {
-      output = ".github/settings.yml";
-      make = import ./make_default.nix { inherit pkgs lib; };
-    };
+  inherit configData;
+  format = "yaml";
+  output = ".github/settings.yml";
+  engine = lib.engines.cue {
+    path = ./templates;
   };
 }

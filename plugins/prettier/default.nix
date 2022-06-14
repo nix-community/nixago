@@ -1,14 +1,11 @@
 { pkgs, lib }:
+configData:
 {
-  name = "prettier";
-  types = {
-    default = {
-      output = ".prettierrc.json";
-      make = import ./make_default.nix { inherit pkgs lib; };
-    };
-    ignore = {
-      output = ".prettierignore";
-      make = import ./make_ignore.nix { inherit pkgs lib; };
-    };
+  inherit configData;
+  format = "json";
+  output = ".prettierrc.json";
+  engine = lib.engines.cue {
+    path = ./templates;
+    package = "default";
   };
 }

@@ -2,7 +2,7 @@
 let
   name = "ghsettings";
   expected = ./expected.yml;
-  configData = {
+  input = {
     repository = {
       name = "repo-name";
       description = "description of repo";
@@ -31,5 +31,5 @@ let
   };
 in
 runTest {
-  inherit configData expected name;
+  inherit input expected name;
 }
