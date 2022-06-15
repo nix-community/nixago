@@ -1,5 +1,3 @@
-package default
-
 #Config: {
     default_install_hook_types?: [...string]
     default_language_version?: [string]: string

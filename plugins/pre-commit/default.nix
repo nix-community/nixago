@@ -67,6 +67,6 @@ in
     '';
   };
   engine = lib.engines.cue {
-    path = ./templates;
+    files = [ ./templates/default.cue ];
   };
 }

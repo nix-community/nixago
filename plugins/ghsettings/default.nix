@@ -6,6 +6,6 @@ configData:
   output = ".github/settings.yml";
   hook.mode = "copy";
   engine = lib.engines.cue {
-    path = ./templates;
+    files = [ ./templates/default.cue ];
   };
 }

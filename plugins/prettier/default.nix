@@ -6,16 +6,14 @@ with pkgs.lib;
   format = "json";
   output = ".prettierrc.json";
   engine = lib.engines.cue {
-    path = ./templates;
-    package = type;
+    files = [ ./templates/default.cue ];
   };
 } // optionalAttrs (type == "ignore") {
   configData = { data = configData; };
   format = "text";
   output = ".prettierignore";
   engine = lib.engines.cue {
-    path = ./templates;
-    package = "ignore";
+    files = [ ./templates/ignore.cue ];
     flags = {
       expression = "rendered";
     };

@@ -26,6 +26,6 @@ in
   output = ".justfile";
   engine = lib.engines.cue {
     inherit flags postBuild;
-    path = ./templates;
+    files = [ ./templates/default.cue ];
   };
 }

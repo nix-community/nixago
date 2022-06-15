@@ -1,6 +1,5 @@
 { pkgs, lib }:
-{ path
-, package ? ""
+{ files
 , postBuild ? ""
 , flags ? { }
 , cue ? pkgs.cue
@@ -26,16 +25,11 @@ let
     } // flags);
 
   /*
-    We change into the `path` directory before executing CUE, so we can safely
-    assume that the files are in the local directory.
-
-    CUE uses a special format for specifying packages (.:PKGNAME), so we adjust
-    the inputs accordingly. CUE can also be informed about the format of any
-    input files. Since our input file will be extensionless (Nix generates a
-    random name with no extension), then we need to append `json:` to the input.
+    CUE can be informed about the format of any input files. Since our input
+    file will be extensionless (Nix generates a random name with no extension),
+    then we need to append `json:` to the input.
   */
-  allInputs = (if package == "" then [ "./" ] else [ ".:${package}" ])
-    ++ [ "json: $jsonPath" ];
+  allInputs = files ++ [ "json: $jsonPath" ];
 
   # Build the full CUE command
   flagStr = builtins.concatStringsSep " " (cli.toGNUCommandLine { } allFlags);
@@ -52,8 +46,6 @@ let
     ''
       # Helpful details if an error occurs
       echo "----- START DEBUG -----"
-      echo "using path: ${path}"
-      echo "using package: ${package}"
       echo "using command: ${cueEvalCmd}"
       echo "----- END DEBUG -----"
 
@@ -66,20 +58,8 @@ let
       # We do our own error handling here
       set +e
 
-      # Make sure path is a directory
-      if [[ ! -d ${path} ]]; then
-        echo "!!! path should be a directory: ${path}
-        exit 1
-      fi
-
-      # Make sure path is not empty
-      if [[ -z "$(ls -A ${path})" ]]; then
-        echo "!!! path should not be an empty directory: ${path}
-        exit 1
-      fi
-
       echo ">>> rendering output..."
-      result=$(cd ${path} && ${cueEvalCmd} 2>&1 >/dev/null)
+      result=$(${cueEvalCmd} 2>&1 >/dev/null)
 
       if [[ $? -gt 0 ]]; then
         echo "!!! CUE failed rendering the output"

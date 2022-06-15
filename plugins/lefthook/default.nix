@@ -27,6 +27,6 @@ in
   output = "lefthook.yml";
   hook = { inherit extra; };
   engine = lib.engines.cue {
-    path = ./templates;
+    files = [ ./templates/default.cue ];
   };
 }
