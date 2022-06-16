@@ -1,6 +1,7 @@
 { pkgs, lib }:
 { files
-, postBuild ? ""
+, preHook ? ""
+, postHook ? ""
 , flags ? { }
 , cue ? pkgs.cue
 , jq ? pkgs.jq
@@ -55,6 +56,9 @@ let
         echo "----- END CONFIG DUMP -----"
       fi
 
+      echo ">>> running pre-hook commands..."
+      ${preHook}
+
       # We do our own error handling here
       set +e
 
@@ -73,8 +77,8 @@ let
 
       set -e
 
-      echo ">>> running post-build commands..."
-      ${postBuild}
+      echo ">>> running post-hook commands..."
+      ${postHook}
     '';
 in
 result

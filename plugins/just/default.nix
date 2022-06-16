@@ -9,7 +9,7 @@ let
   };
 
   # Run the formatter since the output from the Go template engine is ugly
-  postBuild = ''
+  postHook = ''
     cat $out
     ${pkgs.just}/bin/just --unstable --fmt -f $out
   '';
@@ -25,7 +25,7 @@ in
   format = "text";
   output = ".justfile";
   engine = lib.engines.cue {
-    inherit flags postBuild;
+    inherit flags postHook;
     files = [ ./templates/default.cue ];
   };
 }
