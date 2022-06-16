@@ -50,7 +50,7 @@ nixago.lib.make {
   inherit configData;
   output = "config.json";
   format = "json";
-  engine = nixago.lib.engines.nix { };
+  engine = nixago.engines.nix { };
 }
 ```
 
