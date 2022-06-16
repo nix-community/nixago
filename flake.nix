@@ -21,8 +21,9 @@
         let
           version = "2.1.0"; # x-release-please-version
 
+          engines = import ./engines { inherit pkgs lib; };
           lib = (import ./lib { inherit pkgs lib; });
-          plugins = import ./plugins { inherit pkgs lib; };
+          plugins = import ./plugins { inherit pkgs lib engines; };
 
           # Setup pkgs
           pkgs = import nixpkgs {
@@ -59,7 +60,7 @@
         in
         rec {
           # Expose external API
-          inherit lib plugins;
+          inherit engines lib plugins;
 
           # Add local tests
           checks = import ./tests { inherit pkgs runTest; };

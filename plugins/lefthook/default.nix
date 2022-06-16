@@ -1,4 +1,4 @@
-{ pkgs, lib }:
+{ pkgs, lib, engines }:
 configData:
 with pkgs.lib;
 let
@@ -26,7 +26,7 @@ in
   format = "yaml";
   output = "lefthook.yml";
   hook = { inherit extra; };
-  engine = lib.engines.cue {
+  engine = engines.cue {
     files = [ ./templates/default.cue ];
   };
 }

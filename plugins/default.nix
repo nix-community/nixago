@@ -1,4 +1,4 @@
-{ pkgs, lib }:
+{ pkgs, lib, engines }:
 with pkgs.lib;
 let
   # Build a list of all local directory names (same as plugin name)
@@ -8,7 +8,9 @@ let
   # Create a list of pluginName => import for each plugin
   pluginsList = builtins.map
     (p: {
-      "${p}" = import (builtins.toPath ./. + "/${p}") { inherit pkgs lib; };
+      "${p}" = import
+        (builtins.toPath ./. + "/${p}")
+        { inherit pkgs lib engines; };
     })
     plugins;
 

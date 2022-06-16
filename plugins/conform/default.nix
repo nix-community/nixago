@@ -1,4 +1,4 @@
-{ pkgs, lib }:
+{ pkgs, lib, engines }:
 { commit ? { }, license ? { } }:
 with pkgs.lib;
 let
@@ -23,7 +23,7 @@ in
   inherit configData;
   format = "yaml";
   output = ".conform.yaml";
-  engine = lib.engines.cue {
+  engine = engines.cue {
     files = [ ./templates/default.cue ];
   };
 }

@@ -1,4 +1,4 @@
-{ pkgs, lib }:
+{ pkgs, lib, engines }:
 configData:
 with pkgs.lib;
 let
@@ -66,7 +66,7 @@ in
       done
     '';
   };
-  engine = lib.engines.cue {
+  engine = engines.cue {
     files = [ ./templates/default.cue ];
   };
 }

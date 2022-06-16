@@ -1,4 +1,4 @@
-{ pkgs, lib }:
+{ pkgs, lib, engines }:
 { head ? "", tasks }:
 let
   # Expand configuration data
@@ -24,7 +24,7 @@ in
   inherit configData;
   format = "text";
   output = ".justfile";
-  engine = lib.engines.cue {
+  engine = engines.cue {
     inherit flags postHook;
     files = [ ./templates/default.cue ];
   };
