@@ -2,7 +2,7 @@
 let
   name = "just";
   expected = ./expected.txt;
-  configData = {
+  input = {
     head = ''
       var := "value"
     '';
@@ -15,5 +15,5 @@ let
   };
 in
 runTest {
-  inherit configData expected name;
+  inherit input expected name;
 }

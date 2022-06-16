@@ -2,7 +2,7 @@
 let
   name = "conform";
   expected = ./expected.yml;
-  configData = {
+  input = {
     commit = {
       header = {
         length = 89;
@@ -35,5 +35,5 @@ let
   };
 in
 runTest {
-  inherit configData expected name;
+  inherit input expected name;
 }

@@ -6,6 +6,9 @@
 
   outputs = { self, nixpkgs, flake-utils }:
     rec {
+      # Only run CI on Linux
+      herculesCI.ciSystems = [ "x86_64-linux" "aarch64-linux" ];
+
       # Expose template
       templates = {
         starter = {
@@ -21,8 +24,9 @@
         let
           version = "2.1.0"; # x-release-please-version
 
-          lib = (import ./lib { inherit pkgs lib plugins; });
-          plugins = import ./plugins { inherit pkgs lib; };
+          engines = import ./engines { inherit pkgs lib; };
+          lib = (import ./lib { inherit pkgs lib; });
+          plugins = import ./plugins { inherit pkgs lib engines; };
 
           # Setup pkgs
           pkgs = import nixpkgs {
@@ -55,11 +59,11 @@
           ];
 
           # Define development tool configuration (with Nixago!)
-          configs = import ./.config.nix { inherit tools; };
+          configs = import ./.config.nix { inherit plugins tools; };
         in
         rec {
           # Expose external API
-          inherit lib;
+          inherit engines lib plugins;
 
           # Add local tests
           checks = import ./tests { inherit pkgs runTest; };

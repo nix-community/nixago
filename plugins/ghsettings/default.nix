@@ -1,10 +1,11 @@
-{ pkgs, lib }:
+{ pkgs, lib, engines }:
+configData:
 {
-  name = "ghsettings";
-  types = {
-    default = {
-      output = ".github/settings.yml";
-      make = import ./make_default.nix { inherit pkgs lib; };
-    };
+  inherit configData;
+  format = "yaml";
+  output = ".github/settings.yml";
+  hook.mode = "copy";
+  engine = engines.cue {
+    files = [ ./templates/default.cue ];
   };
 }

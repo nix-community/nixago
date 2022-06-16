@@ -1,5 +1,3 @@
-package default
-
 import "strings"
 import "text/template"
 

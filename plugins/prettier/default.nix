@@ -1,14 +1,21 @@
-{ pkgs, lib }:
+{ pkgs, lib, engines }:
+{ configData, type ? "default" }:
+with pkgs.lib;
 {
-  name = "prettier";
-  types = {
-    default = {
-      output = ".prettierrc.json";
-      make = import ./make_default.nix { inherit pkgs lib; };
-    };
-    ignore = {
-      output = ".prettierignore";
-      make = import ./make_ignore.nix { inherit pkgs lib; };
+  inherit configData;
+  format = "json";
+  output = ".prettierrc.json";
+  engine = engines.cue {
+    files = [ ./templates/default.cue ];
+  };
+} // optionalAttrs (type == "ignore") {
+  configData = { data = configData; };
+  format = "text";
+  output = ".prettierignore";
+  engine = engines.cue {
+    files = [ ./templates/ignore.cue ];
+    flags = {
+      expression = "rendered";
     };
   };
 }

@@ -1,10 +1,29 @@
-{ pkgs, lib }:
+{ pkgs, lib, engines }:
+{ commit ? { }, license ? { } }:
+with pkgs.lib;
+let
+  # Expand out the configuration
+  configData = {
+    policies =
+      (optional
+        (commit != { })
+        {
+          type = "commit";
+          spec = commit;
+        }) ++
+      (optional
+        (license != { })
+        {
+          type = "license";
+          spec = license;
+        });
+  };
+in
 {
-  name = "conform";
-  types = {
-    default = {
-      output = ".conform.yaml";
-      make = import ./make_default.nix { inherit pkgs lib; };
-    };
+  inherit configData;
+  format = "yaml";
+  output = ".conform.yaml";
+  engine = engines.cue {
+    files = [ ./templates/default.cue ];
   };
 }

@@ -1,5 +1,3 @@
-package default
-
 #Config: {
     repository?: #Repository
     labels?: [...#Label]

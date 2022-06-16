@@ -2,20 +2,14 @@
 let
   name = "pre-commit";
   expected = ./expected.yml;
-  configData = {
-    repos = [
-      {
-        repo = "https://github.com/my/repo";
-        rev = "1.0";
-        hooks = [
-          {
-            id = "my-hook";
-          }
-        ];
-      }
-    ];
+  input = {
+    nixpkgs-fmt = {
+      entry = "nixpkgs-fmt";
+      language = "system";
+      files = "\\.nix";
+    };
   };
 in
 runTest {
-  inherit configData expected name;
+  inherit input expected name;
 }
