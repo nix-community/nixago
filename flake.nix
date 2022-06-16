@@ -6,6 +6,9 @@
 
   outputs = { self, nixpkgs, flake-utils }:
     rec {
+      # Only run CI on Linux
+      herculesCI.ciSystems = [ "x86_64-linux" "aarch64-linux" ];
+
       # Expose template
       templates = {
         starter = {
