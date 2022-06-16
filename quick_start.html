@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="quick_start.html" class="active"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="plugins/ghsettings.html"><strong aria-hidden="true">3.2.</strong> Github Settings</a></li><li class="chapter-item expanded "><a href="plugins/just.html"><strong aria-hidden="true">3.3.</strong> Just</a></li><li class="chapter-item expanded "><a href="plugins/lefthook.html"><strong aria-hidden="true">3.4.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="plugins/pre-commit.html"><strong aria-hidden="true">3.5.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="plugins/prettier.html"><strong aria-hidden="true">3.6.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="quick_start.html" class="active"><strong aria-hidden="true">2.</strong> Quick Start</a></li><li class="chapter-item expanded "><a href="engines/index.html"><strong aria-hidden="true">3.</strong> Engines</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="engines/cue.html"><strong aria-hidden="true">3.1.</strong> CUE</a></li><li class="chapter-item expanded "><a href="engines/nix.html"><strong aria-hidden="true">3.2.</strong> Nix</a></li></ol></li><li class="chapter-item expanded "><a href="contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -135,11 +135,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h1>
-<p>Nixago provides support for generating configurations for many different
-development tools. Refer to the plugins section for a list of currently
-supported tools or open up a new issue to request a tool be added.</p>
-<h2 id="add-nixago-as-an-input"><a class="header" href="#add-nixago-as-an-input">Add Nixago as an Input</a></h2>
-<p>The first step is adding Nixago as an input to your current <code>flake.nix</code>:</p>
+<p>The first step is to add Nixago as an input to your <code>flake.nix</code>:</p>
 <pre><code class="language-nix">{
   inputs = {
     # ...
@@ -150,193 +146,72 @@ supported tools or open up a new issue to request a tool be added.</p>
   };
 }
 </code></pre>
-<p>To maintain consistency in the packages being used across your <code>flake.nix</code>, it's
+<p>To maintain consistency in the packages being used across flake, it's
 recommended to force Nixago's copy to follow the one declared in your flake.</p>
 <h2 id="generate-a-configuration"><a class="header" href="#generate-a-configuration">Generate a Configuration</a></h2>
-<p>Choose a plugin to use. The below example uses the plugin for <a href="https://pre-commit.com/">pre-commit</a>:</p>
-<pre><code class="language-nix">{
-# ...
-    preCommitConfig = {
-        nixpkgs-fmt = {
-            entry = &quot;${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt&quot;;
-            language = &quot;system&quot;;
-            files = &quot;\\.nix&quot;;
-        };
-    };
-
-    preCommit = nixago.lib.make {
-        name = &quot;pre-commit&quot;;
-        type = &quot;simple&quot;;
-        configData = preCommitConfig;
-    };
-# ...
-}
-</code></pre>
-<p>The easiest way to integrate the generated configuration into your development
-environment is to use the provided shell hook:</p>
-<pre><code class="language-nix">{
-# ...
-    devShell = pkgs.mkShell {
-        shellHook = nixago.lib.mkShellHook [ preCommit ];
-    };
-# ...
-}
-</code></pre>
-<p>The hook will automatically link the file from the Nix store to the current
-working directory. The above example will produce a <code>.pre-commit-config.yaml</code>
-file with the following contents:</p>
-<pre><code class="language-yaml">repos:
-  - hooks:
-      - entry: /nix/store/pmfl7q4fqqibkfz71lsrkcdi04m0mclf-nixpkgs-fmt-1.2.0/bin/nixpkgs-fmt
-        files: \.nix
-        id: nixpkgs-fmt
-        language: system
-        name: nixpkgs-fmt
-    repo: local
-</code></pre>
-<h2 id="changing-types"><a class="header" href="#changing-types">Changing Types</a></h2>
-<p>Some plugins can generate different types of configuration files. See the
-documentation for each plugin for more information. Our previous example used
-the <code>simple</code> type provided by the pre-commit plugin. This type allows passing a
-simplified configuration that is geared towards executing local hooks. Another
-example is the plugin for prettier, which can create regular configuration files
-as well as ignore files:</p>
-<pre><code class="language-nix">{
-  prettier = nixago.lib.make {
-    name = &quot;prettier&quot;;
-    configData = [&quot;file1.txt&quot; &quot;file2.yml&quot; ];
-    type = &quot;ignore&quot;;
+<p>Nixago offers various engines which can be used for transforming input data to
+the output file. By default, Nixago will use <code>pkgs.formats</code> from the internal
+Nix library.</p>
+<pre><code class="language-nix">let
+  configData = {
+    &quot;field1&quot; = &quot;value1&quot;;
+    &quot;field2&quot; = true;
   };
+in
+nixago.lib.make {
+  inherit configData;
+  output = &quot;config.json&quot;;
+  format = &quot;json&quot;;
 }
 </code></pre>
-<h2 id="changing-output-path"><a class="header" href="#changing-output-path">Changing Output Path</a></h2>
-<p>By default, the shell hook for each plugin will generate the configuration file
-at the root of your repository (i.e., the location where <code>flake.nix</code> resides).
-The file name and relative location can be modified:</p>
-<pre><code class="language-nix">{
-# ...
-    preCommitConfig = {
-        nixpkgs-fmt = {
-            entry = &quot;${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt&quot;;
-            language = &quot;system&quot;;
-            files = &quot;\\.nix&quot;;
-        };
-    };
-
-    preCommit = nixago.lib.make {
-        name = &quot;pre-commit&quot;;
-        configData = preCommitConfig;
-        output = &quot;.config/pre-commit-config.yaml&quot;;
-    };
-# ...
-}
-</code></pre>
-<p>The above example would place the configuration file in
-<code>.config/pre-commit-config.yaml</code>.</p>
-<h2 id="changing-generation-mode"><a class="header" href="#changing-generation-mode">Changing Generation Mode</a></h2>
-<p>The shell hook manages a symbolic link from the Nix store to the output path by
-default. It automatically synchronizes any changes by updating the link if the
-generated configuration file changes. This mode can be altered to instead
-maintain a local copy of the generated configuration file. In this mode, the
-shell hook compares the contents of the local copy to the one in the Nix store
-and updates it accordingly. The primary benefit of this change is that it allows
-the file to be checked into git, and if your Nix store is read-only, it can be
-edited locally.</p>
-<pre><code class="language-nix">{
-# ...
-    preCommitConfig = {
-        nixpkgs-fmt = {
-            entry = &quot;${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt&quot;;
-            language = &quot;system&quot;;
-            files = &quot;\\.nix&quot;;
-        };
-    };
-
-    preCommit = nixago.lib.make {
-        name = &quot;pre-commit&quot;;
-        configData = preCommitConfig;
-        mode = &quot;copy&quot;;
-    };
-# ...
-}
-</code></pre>
-<h2 id="making-multiple-configurations"><a class="header" href="#making-multiple-configurations">Making Multiple Configurations</a></h2>
-<p>A utility function is available for generating multiple configurations. The
-following is an excerpt from the <code>flake.nix</code> that manages this project:</p>
-<pre><code class="language-nix">{
-# Define development tool configuration
-configurations = [
-  # Conform configuration
-  {
-    name = &quot;conform&quot;;
-    configData = {
-      commit = {
-        header = { length = 89; };
-        conventional = {
-          types = [
-            &quot;build&quot;
-            &quot;chore&quot;
-            &quot;ci&quot;
-            &quot;docs&quot;
-            &quot;feat&quot;
-            &quot;fix&quot;
-            &quot;perf&quot;
-            &quot;refactor&quot;
-            &quot;style&quot;
-            &quot;test&quot;
-          ];
-          scopes = [
-            &quot;conform&quot;
-            &quot;just&quot;
-            &quot;lefthook&quot;
-            &quot;pre-commit&quot;
-            &quot;prettier&quot;
-            &quot;core&quot;
-            &quot;flake&quot;
-          ];
-        };
-      };
-    };
-  }
-
-  # ....
-
-  # Prettier
-  {
-    name = &quot;prettier&quot;;
-    configData = {
-      proseWrap = &quot;always&quot;;
-    };
-  }
-  {
-    name = &quot;prettier&quot;;
-    type = &quot;ignore&quot;;
-    configData = [
-      &quot;.direnv&quot;
-      &quot;.conform.yaml&quot;
-      &quot;.prettierrc.json&quot;
-      &quot;tests&quot;
-      &quot;CHANGELOG.md&quot;
-      &quot;lefthook.yml&quot;
-    ];
-  }
-];
-
-# ...
-
-# Local development shell
-devShells = {
-  default = pkgs.mkShell {
-    shellHook = (lib.mkAll configurations).shellHook;
-    packages = tools.all;
+<p>This is functionally equivalent to:</p>
+<pre><code class="language-nix">let
+  configData = {
+    &quot;field1&quot; = &quot;value1&quot;;
+    &quot;field2&quot; = true;
   };
-};
+in
+nixago.lib.make {
+  inherit configData;
+  output = &quot;config.json&quot;;
+  format = &quot;json&quot;;
+  engine = nixago.engines.nix { };
 }
 </code></pre>
-<p>The input to <code>mkAll</code> is a list of configurations. The attribute sets in the list
-match the same arguments that the <code>lib.make</code> function accepts. The only
-difference is that <code>mkAll</code> returns a list of the created derivations and a
-single <code>shellHook</code> encompassing all generated configuration files.</p>
+<p>The first example omitted the engine attribute as it is the default value used
+when an engine isn't specified.</p>
+<p>The result of this invocation will be an attribute set with two attributes:</p>
+<ul>
+<li><code>configFile</code>: A derivation for building the configuration file</li>
+<li><code>shellHook</code>: A shell hook for managing the file</li>
+</ul>
+<p>Building the derivation produces a file with the following output:</p>
+<pre><code class="language-json">{
+  &quot;field1&quot;: &quot;value1&quot;,
+  &quot;field2&quot;: true
+}
+</code></pre>
+<p>The generated shell hook invokes the following script:</p>
+<pre><code class="language-bash">#!/nix/store/63a4li401f423jl8v5pwjwmyzlwd3lk9-bash-5.1-p16/bin/bash
+# Check if the link is pointing to the existing derivation result
+if readlink config.json &gt;/dev/null \
+  &amp;&amp; [[ $(readlink config.json) == /nix/store/gzf07xc8563kzvh157i27zpkr3cifzdv-config.json ]]; then
+  log &quot;config.json link is up to date&quot;
+elif [[ -L config.json || ! -f config.json ]]; then
+  # otherwise we need to update
+  log &quot;config.json link updated&quot;
+
+  # Relink to the new result
+  unlink config.json &amp;&gt;/dev/null
+  ln -s /nix/store/gzf07xc8563kzvh157i27zpkr3cifzdv-config.json config.json
+
+  # Run extra shell hook
+
+else
+  # this was an existing file
+  error &quot;refusing to overwrite config.json&quot;
+fi
+</code></pre>
 
                     </main>
 
@@ -345,7 +220,7 @@ single <code>shellHook</code> encompassing all generated configuration files.</p
                             <a rel="prev" href="introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="usage/quick_start.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="engines/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -357,7 +232,7 @@ single <code>shellHook</code> encompassing all generated configuration files.</p
                     <a rel="prev" href="introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="usage/quick_start.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="engines/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

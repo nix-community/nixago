@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Usage - Nixago</title>
+        <title>Nix - Nixago</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html" class="active"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/ghsettings.html"><strong aria-hidden="true">3.2.</strong> Github Settings</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.3.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">3.4.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.5.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">3.6.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">2.</strong> Quick Start</a></li><li class="chapter-item expanded "><a href="../engines/index.html"><strong aria-hidden="true">3.</strong> Engines</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../engines/cue.html"><strong aria-hidden="true">3.1.</strong> CUE</a></li><li class="chapter-item expanded "><a href="../engines/nix.html" class="active"><strong aria-hidden="true">3.2.</strong> Nix</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,99 +134,43 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h1>
-<p>Nixago is a tool for producing templated configuration files using data from Nix
-expressions. It ships with plugins to validate and generate configuration files
-for several development tools. The quickest way to get started is by using one
-of these plugins.</p>
-<h2 id="add-nixago-as-an-input"><a class="header" href="#add-nixago-as-an-input">Add Nixago as an Input</a></h2>
-<p>The first step is adding Nixago to your <code>flake.nix</code>:</p>
+                        <h1 id="nix-engine"><a class="header" href="#nix-engine">Nix Engine</a></h1>
+<p>The nix engine uses the set of functions provided by <code>pkgs.formats</code>. <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/pkgs-lib/formats.nix">You can
+see the source here</a>.</p>
+<h2 id="concepts"><a class="header" href="#concepts">Concepts</a></h2>
+<p>The basic outline of an entry in <code>pkgs.formats</code> is as follows:</p>
 <pre><code class="language-nix">{
-  inputs = {
-    # ...
-    nixpkgs.url = &quot;github:nixos/nixpkgs&quot;;
-    nixago.url = &quot;github:jmgilman/nixago&quot;;
-    nixago.inputs.nixpkgs.follows = &quot;nixpkgs&quot;;
-    # ...
-  };
-}
-</code></pre>
-<p>To maintain consistency in the packages used across your <code>flake.nix</code>, it's
-recommended to force Nixago's copy to follow the ones declared in your flake.</p>
-<p>Alternatively, you can download a starter template:</p>
-<pre><code class="language-bash">nix flake init --template github:jmgilman/nixago
-</code></pre>
-<h2 id="generate-a-configuration"><a class="header" href="#generate-a-configuration">Generate a Configuration</a></h2>
-<p>Choose a plugin to use. The below example uses the plugin for <a href="https://pre-commit.com/">pre-commit</a>:</p>
-<pre><code class="language-nix">{
-# ...
-    preCommitConfig = {
-        nixpkgs-fmt = {
-            entry = &quot;${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt&quot;;
-            language = &quot;system&quot;;
-            files = &quot;\\.nix&quot;;
-        };
+    format = {}: {
+        generate = name: value: pkgs.runCommand {...};
     };
-
-    preCommit = nixago.lib.make {
-        name = &quot;pre-commit&quot;;
-        type = &quot;simple&quot;;
-        configData = preCommitConfig;
-    };
-# ...
 }
 </code></pre>
-<p>The main entry point Nixago provides is via the <a href="https://github.com/jmgilman/nixago/blob/master/lib/make.nix">make</a> function. At the
-minimum, it needs a plugin name and configuration data for generating the file.
-Some plugins take an optional type argument that specifies which type of file to
-generate. In the example above, we opt to use the &quot;simple&quot; type that takes a
-simplified configuration format for using pre-commit with local commands. For
-more information, see the <a href="https://nix-community.github.io/nixago/plugins/pre-commit.html">pre-commit</a> plugin page.</p>
-<p>The result from calling <code>make</code> is an attribute set with two entries:
-<code>configFile</code>, which holds the derivation for generating the file, and
-<code>shellHook</code>, which contains a shell hook for managing the file.</p>
-<p>The easiest way to integrate the generated configuration into your development
-environment is to use the shell hook:</p>
+<p>Where <code>format</code> is the name of the supported format (i.e., <code>json</code>).</p>
+<p>Note that the <code>format</code> entry is a function that takes a single attribute set. In
+some cases, this is an empty set, but in other cases, the set contains
+additional options for configuring the format.</p>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<p>When using the <code>nix</code> engine from Nixago, one can pass attributes to the set with
+the following:</p>
 <pre><code class="language-nix">{
-# ...
-    devShell = pkgs.mkShell {
-        shellHook = preCommit.shellHook;
-    };
-# ...
+    engine = nixago.lib.engines.nix { opt1 = &quot;value1&quot;; };
 }
 </code></pre>
-<p>The hook will automatically link the file from the Nix store to the current
-working directory. The above example will produce a <code>.pre-commit-config.yaml</code>
-file with the following contents:</p>
-<pre><code class="language-yaml">repos:
-  - hooks:
-      - entry: /nix/store/pmfl7q4fqqibkfz71lsrkcdi04m0mclf-nixpkgs-fmt-1.2.0/bin/nixpkgs-fmt
-        files: \.nix
-        id: nixpkgs-fmt
-        language: system
-        name: nixpkgs-fmt
-    repo: local
-</code></pre>
-<p>Note that using the shell hook is optional. It's possible to use the derivation
-directly as an output of your flake:</p>
-<pre><code class="language-nix">{
-# ...
-    packages.precommit = preCommit.configFile;
-# ...
-}
-</code></pre>
-<p>You can then build it locally with:</p>
-<pre><code class="language-bash">nix build #.precommit
-</code></pre>
+<p>The provided set will be passed to the <code>format</code> argument before calling its
+<code>generate</code> function.</p>
+<p>When calling <code>make</code>, the specified value for the <code>format</code> attribute will be used
+to determine which entry in <code>pkgs.formats</code> to invoke. Thus, specifying an
+unsupported format will result in an assertion error. Refer to the <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/pkgs-lib/formats.nix">nixpkgs
+source code</a> to determine the currently supported output formats.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../quick_start.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../engines/cue.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../usage/controlling_output.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../contributing/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -235,10 +179,10 @@ directly as an output of your flake:</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../quick_start.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../engines/cue.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../usage/controlling_output.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../contributing/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

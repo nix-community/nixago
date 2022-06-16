@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Prettier - Nixago</title>
+        <title>Engines - Nixago</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/ghsettings.html"><strong aria-hidden="true">3.2.</strong> Github Settings</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.3.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html"><strong aria-hidden="true">3.4.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.5.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html" class="active"><strong aria-hidden="true">3.6.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">2.</strong> Quick Start</a></li><li class="chapter-item expanded "><a href="../engines/index.html" class="active"><strong aria-hidden="true">3.</strong> Engines</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../engines/cue.html"><strong aria-hidden="true">3.1.</strong> CUE</a></li><li class="chapter-item expanded "><a href="../engines/nix.html"><strong aria-hidden="true">3.2.</strong> Nix</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,83 +134,19 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="prettier"><a class="header" href="#prettier">Prettier</a></h1>
-<p>This plugin generates the <code>.prettierrc.json</code> file for configuring <a href="https://prettier.io/">Prettier</a>.
-It provides two types: one that allows you to configure any valid API
-options]<a href="https://prettier.io/docs/en/options.html">2</a> and another for generating an ignore file.</p>
-<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
-<h3 id="default-type"><a class="header" href="#default-type">Default type</a></h3>
-<p>The schema for the configuration file is <a href="https://prettier.io/docs/en/configuration.html">detailed here</a>. For example:</p>
-<pre><code class="language-nix">{
-    config = {
-      arrowParens = &quot;always&quot;;
-      bracketSpacing = true;
-      tabWidth = 80;
-    };
-}
-</code></pre>
-<p>Produces the following <code>.prettierrc.json</code>:</p>
-<pre><code class="language-json">{
-  &quot;arrowParens&quot;: &quot;always&quot;,
-  &quot;bracketSpacing&quot;: true,
-  &quot;tabWidth&quot;: 80
-}
-</code></pre>
-<p>It's possible to add <a href="https://prettier.io/docs/en/configuration.html#configuration-overrides">overrides</a> tied to specific file formats:</p>
-<pre><code class="language-nix">{
-    config = {
-      arrowParens = &quot;always&quot;;
-      bracketSpacing = true;
-      tabWidth = 80;
-      overrides = [
-        {
-          files = &quot;*.js&quot;;
-          options = {
-            semi = true;
-          };
-        }
-      ];
-    };
-}
-</code></pre>
-<p>The above produces:</p>
-<pre><code class="language-json">{
-  &quot;arrowParens&quot;: &quot;always&quot;,
-  &quot;bracketSpacing&quot;: true,
-  &quot;overrides&quot;: [
-    {
-      &quot;files&quot;: &quot;*.js&quot;,
-      &quot;options&quot;: {
-        &quot;semi&quot;: true
-      }
-    }
-  ],
-  &quot;tabWidth&quot;: 80
-}
-</code></pre>
-<h3 id="ignore-type"><a class="header" href="#ignore-type">Ignore type</a></h3>
-<p>The second type accepts a list of glob patterns used to determine which files
-are excluded when <code>prettier</code> is run:</p>
-<pre><code class="language-nix">{
-  [
-    &quot;.direnv&quot;
-    &quot;.conform.yaml&quot;
-    &quot;.prettierrc.json&quot;
-    &quot;tests&quot;
-    &quot;CHANGELOG.md&quot;
-    &quot;lefthook.yml&quot;
-  ]
-}
-</code></pre>
+                        <h1 id="engines"><a class="header" href="#engines">Engines</a></h1>
+<p>Nixago provides various engines which can be used for changing how the
+configuration file is being generated. If you would like to suggest a new
+engine, please <a href="https://github.com/nix-community/nixago/issues/new">open an issue</a>.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../plugins/pre-commit.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../quick_start.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../contributing/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../engines/cue.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -219,10 +155,10 @@ are excluded when <code>prettier</code> is run:</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../plugins/pre-commit.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../quick_start.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../contributing/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../engines/cue.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

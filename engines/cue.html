@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Lefthook - Nixago</title>
+        <title>CUE - Nixago</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">1.1.</strong> Quick Start</a></li></ol></li><li class="chapter-item expanded "><a href="../usage/quick_start.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../usage/controlling_output.html"><strong aria-hidden="true">2.1.</strong> Controlling Output</a></li><li class="chapter-item expanded "><a href="../usage/making_multiple.html"><strong aria-hidden="true">2.2.</strong> Making Multiple Configurations</a></li><li class="chapter-item expanded "><a href="../usage/customizing.html"><strong aria-hidden="true">2.3.</strong> Customizing</a></li></ol></li><li class="chapter-item expanded "><a href="../plugins/index.html"><strong aria-hidden="true">3.</strong> Plugins</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../plugins/conform.html"><strong aria-hidden="true">3.1.</strong> Conform</a></li><li class="chapter-item expanded "><a href="../plugins/ghsettings.html"><strong aria-hidden="true">3.2.</strong> Github Settings</a></li><li class="chapter-item expanded "><a href="../plugins/just.html"><strong aria-hidden="true">3.3.</strong> Just</a></li><li class="chapter-item expanded "><a href="../plugins/lefthook.html" class="active"><strong aria-hidden="true">3.4.</strong> Lefthook</a></li><li class="chapter-item expanded "><a href="../plugins/pre-commit.html"><strong aria-hidden="true">3.5.</strong> Pre-commit</a></li><li class="chapter-item expanded "><a href="../plugins/prettier.html"><strong aria-hidden="true">3.6.</strong> Prettier</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li><li class="chapter-item expanded "><a href="../contributing/plugins.html"><strong aria-hidden="true">4.2.</strong> Plugins</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../quick_start.html"><strong aria-hidden="true">2.</strong> Quick Start</a></li><li class="chapter-item expanded "><a href="../engines/index.html"><strong aria-hidden="true">3.</strong> Engines</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../engines/cue.html" class="active"><strong aria-hidden="true">3.1.</strong> CUE</a></li><li class="chapter-item expanded "><a href="../engines/nix.html"><strong aria-hidden="true">3.2.</strong> Nix</a></li></ol></li><li class="chapter-item expanded "><a href="../contributing/index.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../contributing/design.html"><strong aria-hidden="true">4.1.</strong> Design</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,68 +134,131 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="lefthook"><a class="header" href="#lefthook">Lefthook</a></h1>
-<p>This plugin generates the <code>lefthook.yml</code> file for configuring <a href="https://github.com/evilmartians/lefthook">Lefthook</a>. It
-provides a single function that allows configuring any of the <a href="https://github.com/evilmartians/lefthook/blob/master/docs/full_guide.md">valid
-options</a>.</p>
-<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
-<pre><code class="language-nix">{
-    config = {
-        commit-msg = {
-            scripts = {
-                template_checker = { runner = &quot;bash&quot;; };
-            };
-        };
-        pre-commit = {
-            commands = {
-                stylelint = {
-                    tags = &quot;frontend style&quot;;
-                    glob = &quot;*.js&quot;;
-                    run = &quot;yarn stylelint {staged_files}&quot;;
-                };
-                rubocop = {
-                    tags = &quot;backend style&quot;;
-                    glob = &quot;*.rb&quot;;
-                    exclude = &quot;application.rb|routes.rb&quot;;
-                    run = &quot;bundle exec rubocop --force-exclusion {all_files}&quot;;
-                };
-            };
-            scripts = {
-                &quot;good_job.js&quot; = { runner = &quot;node&quot;; };
-            };
-        };
-    };
+                        <h1 id="cue"><a class="header" href="#cue">CUE</a></h1>
+<p>This engine provides an interface for generating configuration files using the
+<a href="https://cuelang.org/">CUE language</a> and its associated <a href="https://cuetorials.com/overview/cli-commands/">CLI tool</a>. It allows combining the
+user-defined input with one or more CUE files and generating a file in the
+designated output format.</p>
+<p>For more information on the design of CUE, <a href="https://cuelang.org/docs/concepts/logic/">see this doc</a>. A good place to
+start learning the fundamentals is the <a href="https://cuetorials.com/">Cuetorials website</a>.</p>
+<h2 id="concepts"><a class="header" href="#concepts">Concepts</a></h2>
+<h3 id="merging"><a class="header" href="#merging">Merging</a></h3>
+<p>When using CUE, you will typically define one or more CUE files that will be
+merged into the desired output. For example, if we had the below CUE file:</p>
+<pre><code class="language-cue">name: string
+name: &quot;John Doe&quot;
+</code></pre>
+<p>We could then export it and get the following result:</p>
+<pre><code class="language-bash">$ cue export file.cue
+{
+    &quot;name&quot;: &quot;John Doe&quot;
 }
 </code></pre>
-<p>Produces the following <code>lefthook.yml</code>:</p>
-<pre><code class="language-yaml">commit-msg:
-  scripts:
-    template_checker:
-      runner: bash
-pre-commit:
-  commands:
-    rubocop:
-      exclude: application.rb|routes.rb
-      glob: &quot;*.rb&quot;
-      run: bundle exec rubocop --force-exclusion {all_files}
-      tags: backend style
-    stylelint:
-      glob: &quot;*.js&quot;
-      run: yarn stylelint {staged_files}
-      tags: frontend style
-  scripts:
-    good_job.js:
-      runner: node
+<p>When CUE is presented with multiple files, they are all merged into one singular
+output:</p>
+<pre><code class="language-cue">name: string
 </code></pre>
+<pre><code class="language-cue">name: &quot;John Doe&quot;
+</code></pre>
+<pre><code class="language-bash">$ cue export file1.cue file2.cue
+{
+    &quot;name&quot;: &quot;John Doe&quot;
+}
+</code></pre>
+<h3 id="combining-with-json"><a class="header" href="#combining-with-json">Combining with JSON</a></h3>
+<p>CUE is a superset of JSON, so it's possible to merge JSON and CUE files. Using
+our previous example, this time with JSON:</p>
+<pre><code class="language-cue">name: string
+</code></pre>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;John Doe&quot;
+}
+</code></pre>
+<pre><code class="language-bash">cue export file1.cue file2.json
+{
+    &quot;name&quot;: &quot;John Doe&quot;
+}
+</code></pre>
+<p>We get the same result because our JSON file and the previously defined CUE file
+are functionally equivalent.</p>
+<h3 id="constraints"><a class="header" href="#constraints">Constraints</a></h3>
+<p>Performing input validation is a natural benefit when using the CUE language. We
+used a <a href="https://cuelang.org/docs/tutorials/tour/intro/constraints/">constraint</a> earlier when we constrained the <code>name</code> field to a string.
+Continuing with our previous examples, if we modified the JSON structure to be
+the following:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: 42
+}
+</code></pre>
+<p>Then if we attempted to export both files, we would receive an error:</p>
+<blockquote>
+<p>name: conflicting values 42 and string (mismatched types int and string)</p>
+</blockquote>
+<p>CUE is informing us that we constrained <code>name</code> to a <code>string</code>, and yet we passed
+in an int (42) with our JSON data structure. This is a type mismatch and results
+in an error.</p>
+<h3 id="exporting-modified-structures"><a class="header" href="#exporting-modified-structures">Exporting Modified Structures</a></h3>
+<p>A common use case is transforming an incoming structure into a modified outgoing
+structure. Take the following input structure:</p>
+<pre><code class="language-json">{
+  &quot;first_name&quot;: &quot;john&quot;,
+  &quot;last_name&quot;: &quot;doe&quot;,
+  &quot;address&quot;: &quot;123 Lane&quot;,
+  &quot;city&quot;: &quot;Springfield&quot;,
+  &quot;state&quot;: &quot;OR&quot;
+}
+</code></pre>
+<p>We only want to export the name and a combined address:</p>
+<pre><code class="language-cue">import &quot;strings&quot;
+
+first_name: string
+last_name: string
+address: string
+city: string
+state: string
+
+result: {
+    name: strings.ToTitle(strings.Join([first_name, last_name], &quot; &quot;))
+    full_address: &quot;\(address)\n\(city), \(state)&quot;
+}
+</code></pre>
+<p>We can then ask CUE to <em>only</em> render our <code>result</code> expression:</p>
+<pre><code class="language-bash">$ cue export -e result file1.cue file2.json
+{
+    &quot;name&quot;: &quot;John Doe&quot;,
+    &quot;full_address&quot;: &quot;123 Lane\nSpringfield, OR&quot;
+}
+</code></pre>
+<p>This allows ingesting one data structure and exporting another. As shown in the
+example, we can perform many permutations on the incoming data using CUE's
+<a href="https://cuetorials.com/overview/standard-library/">standard library</a> and <a href="https://cuetorials.com/overview/expressions/#interpolation">interpolation</a>.</p>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<table><thead><tr><th>Argument</th><th>Required</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>files</code></td><td>Yes</td><td>A list of file paths to pass to CUE</td></tr>
+<tr><td><code>preHook</code></td><td>No</td><td>A shell hook to execute before CUE is invoked</td></tr>
+<tr><td><code>postHook</code></td><td>No</td><td>A shell hook to execute after CUE is invoked</td></tr>
+<tr><td><code>flags</code></td><td>No</td><td>Additional flags to pass to CUE</td></tr>
+<tr><td><code>cue</code></td><td>No</td><td>The <code>cue</code> package to use</td></tr>
+<tr><td><code>jq</code></td><td>No</td><td>The <code>jq</code> package to use</td></tr>
+</tbody></table>
+<p>The CUE engine builds off the concepts above. It takes a single required
+argument (<code>files</code>) which is the list of files to pass to CUE. In addition to
+these files, the engine will also convert the incoming configuration data into
+JSON and pass it as a file to CUE. The result is that CUE will evaluate the
+given <code>files</code> as well as the incoming configuration data. As noted earlier, CUE
+will merge all of these together into one final output.</p>
+<p>In addition to the <code>files</code> argument, pre and post-hooks can be provided that
+execute before and after CUE is invoked respectively. Finally, additional flags
+can be specified to further control the execution of the CUE CLI tool.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../plugins/just.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../engines/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../plugins/pre-commit.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../engines/nix.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -204,10 +267,10 @@ pre-commit:
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../plugins/just.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../engines/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../plugins/pre-commit.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../engines/nix.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
