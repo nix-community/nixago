@@ -31,13 +31,15 @@ should not be the default choice, as unmitigated changes can result in muddying
 the usefulness of the interface it provides.
 
 Nixago promises two outputs: a derivation for building the specified
-configuration file and a shell hook that manages the file locally. Nixago hands control over to the user regarding how the configuration should be built and how the hook should handle it.
+configuration file and a shell hook that manages the file locally. Nixago hands
+control over to the user regarding how the configuration should be built and how
+the hook should handle it.
 
 ## Engines
 
 There are many ways to generate a configuration file. The only restraint that
 Nixago imposes is that the input data must be a valid Nix expression. The entity
-that translates this Nix expression into a derivation is called an *engine*.
+that translates this Nix expression into a derivation is called an _engine_.
 
 The purpose of an engine is to receive and process a request. The request's
 processing depends on the engine and its underlying tools. The only expectation

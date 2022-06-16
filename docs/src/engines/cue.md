@@ -49,7 +49,8 @@ $ cue export file1.cue file2.cue
 
 ### Combining with JSON
 
-CUE is a superset of JSON, so it's possible to merge JSON and CUE files. Using our previous example, this time with JSON:
+CUE is a superset of JSON, so it's possible to merge JSON and CUE files. Using
+our previous example, this time with JSON:
 
 ```cue
 name: string
@@ -57,7 +58,7 @@ name: string
 
 ```json
 {
-    "name": "John Doe"
+  "name": "John Doe"
 }
 ```
 
@@ -68,19 +69,19 @@ cue export file1.cue file2.json
 }
 ```
 
-We get the same result because our JSON
-file and the previously defined CUE file are functionally equivalent.
+We get the same result because our JSON file and the previously defined CUE file
+are functionally equivalent.
 
 ### Constraints
 
-Performing input validation is a natural benefit when using the
-CUE language. We used a [constraint][5] earlier when
-we constrained the `name` field to a string. Continuing with our previous
-examples, if we modified the JSON structure to be the following:
+Performing input validation is a natural benefit when using the CUE language. We
+used a [constraint][5] earlier when we constrained the `name` field to a string.
+Continuing with our previous examples, if we modified the JSON structure to be
+the following:
 
 ```json
 {
-    "name": 42
+  "name": 42
 }
 ```
 
@@ -88,21 +89,22 @@ Then if we attempted to export both files, we would receive an error:
 
 > name: conflicting values 42 and string (mismatched types int and string)
 
-CUE is informing us that we constrained `name` to a `string`, and yet we passed in an int
-(42) with our JSON data structure. This is a type mismatch and results in an error.
+CUE is informing us that we constrained `name` to a `string`, and yet we passed
+in an int (42) with our JSON data structure. This is a type mismatch and results
+in an error.
 
 ### Exporting Modified Structures
 
-A common use case is transforming an incoming structure into a
-modified outgoing structure. Take the following input structure:
+A common use case is transforming an incoming structure into a modified outgoing
+structure. Take the following input structure:
 
 ```json
 {
-    "first_name": "john",
-    "last_name": "doe",
-    "address": "123 Lane",
-    "city": "Springfield",
-    "state": "OR"
+  "first_name": "john",
+  "last_name": "doe",
+  "address": "123 Lane",
+  "city": "Springfield",
+  "state": "OR"
 }
 ```
 
@@ -123,7 +125,7 @@ result: {
 }
 ```
 
-We can then ask CUE to *only* render our `result` expression:
+We can then ask CUE to _only_ render our `result` expression:
 
 ```bash
 $ cue export -e result file1.cue file2.json
@@ -133,7 +135,8 @@ $ cue export -e result file1.cue file2.json
 }
 ```
 
-This allows ingesting one data structure and exporting another. As shown in the example, we can perform many permutations on the incoming data using CUE's
+This allows ingesting one data structure and exporting another. As shown in the
+example, we can perform many permutations on the incoming data using CUE's
 [standard library][6] and [interpolation][7].
 
 ## Usage

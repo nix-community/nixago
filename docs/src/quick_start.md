@@ -19,8 +19,9 @@ recommended to force Nixago's copy to follow the one declared in your flake.
 
 ## Generate a Configuration
 
-Nixago offers various engines which can be used for transforming input data to the output file. By default, Nixago will use
-`pkgs.formats` from the internal Nix library.
+Nixago offers various engines which can be used for transforming input data to
+the output file. By default, Nixago will use `pkgs.formats` from the internal
+Nix library.
 
 ```nix
 let
