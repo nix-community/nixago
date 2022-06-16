@@ -1,13 +1,13 @@
 # Nixago
 
 <p align="center">
-    <a href="https://github.com/jmgilman/nixago/actions/workflows/ci.yml">
-        <img src="https://img.shields.io/github/workflow/status/jmgilman/nixago/CI?label=CI"/>
+    <a href="https://github.com/nix-community/nixago/actions/workflows/ci.yml">
+        <img src="https://img.shields.io/github/workflow/status/nix-community/nixago/CI?label=CI"/>
     </a>
-    <a href="https://jmgilman.github.io/nixago">
-        <img src="https://img.shields.io/github/workflow/status/jmgilman/nixago/CI?label=Docs"/>
+    <a href="https://nix-community.github.io/nixago">
+        <img src="https://img.shields.io/github/workflow/status/nix-community/nixago/CI?label=Docs"/>
     </a>
-    <img src="https://img.shields.io/github/license/jmgilman/nixago"/>
+    <img src="https://img.shields.io/github/license/nix-community/nixago"/>
     <a href="https://builtwithnix.org">
         <img src="https://img.shields.io/badge/-Built%20with%20Nix-green">
     </a>
@@ -16,22 +16,19 @@
 > Generate configuration files using [Nix][1].
 
 Ready to dynamically generate configuration files in your flake-based setup?
-Nixago is a flake library for easily generating configuration files using Nix
-expressions as the data source. It provides a rich [plugin system][2] for
-quickly generating configuration files for common development tools but can also
-be easily [customized][3] to fit any scenario.
+Nixago is a flake library for generating configuration files using Nix
+expressions as the data source.
 
 ## Features
 
 - Specify configuration data using native [Nix][1] syntax
-- Validate configuration data using the language features from [Cue][4]
-- Generate configuration files in any of the [supported formats][5]
+- Generate configuration files using any of the [supported engines][2]
 - Places all artifacts in the Nix store
-- Provides [plugins][2] for generating several types of configuration files
+- [Extensions][3] are provided for getting started
 
 ## Usage
 
-See the [quick start][6] for how to get started.
+See the [quick start][4] for how to get started.
 
 ## Testing
 
@@ -43,20 +40,18 @@ nix flake check
 
 ## Contributing
 
-[Read this][7], check out the [issues][8] for items needing attention or submit
+[Read this][5], check out the [issues][6] for items needing attention or submit
 your own, and then:
 
-1. Fork the repo (<https://github.com/jmgilman/nixago/fork>)
+1. Fork the repo (<https://github.com/nix-community/nixago/fork>)
 2. Create your feature branch (git checkout -b feature/fooBar)
 3. Commit your changes (git commit -am 'Add some fooBar')
 4. Push to the branch (git push origin feature/fooBar)
 5. Create a new Pull Request
 
 [1]: https://nixos.org/
-[2]: https://nix-community.github.io/nixago/plugins/index.html
-[3]: https://nix-community.github.io/nixago/usage/customizing.html
-[4]: https://cuelang.org/
-[5]: https://cuelang.org/docs/integrations/
-[6]: https://nix-community.github.io/nixago/usage/quick_start.html
-[7]: https://nix-community.github.io/nixago/contributing
-[8]: https://github.com/jmgilman/nixago/issues
+[2]: https://nix-community.github.io/nixago/engines/index.html
+[3]: https://github.com/nix-community/nixago-extensions
+[4]: https://nix-community.github.io/nixago/quick_start.html
+[5]: https://nix-community.github.io/nixago/contributing
+[6]: https://github.com/nix-community/nixago/issues
