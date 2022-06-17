@@ -2,9 +2,11 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
+    nixago-exts.url = "github:nix-community/nixago-extensions";
+    nixago-exts.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, nixago-exts }:
     rec {
       # Only run CI on Linux
       herculesCI.ciSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -26,7 +28,6 @@
 
           engines = import ./engines { inherit pkgs lib; };
           lib = (import ./lib { inherit pkgs lib engines; });
-          plugins = import ./plugins { inherit pkgs lib engines; };
 
           # Setup pkgs
           pkgs = import nixpkgs {
@@ -59,11 +60,12 @@
           ];
 
           # Define development tool configuration (with Nixago!)
-          configs = import ./.config.nix { inherit plugins tools; };
+          configs =
+            import ./.config.nix { inherit system tools; exts = nixago-exts; };
         in
         rec {
           # Expose external API
-          inherit engines lib plugins;
+          inherit engines lib;
 
           # Add local tests
           checks = import ./tests { inherit pkgs lib engines runTests; };

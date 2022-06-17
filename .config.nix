@@ -1,4 +1,4 @@
-{ plugins, tools }:
+{ exts, system, tools }:
 let
   colors = {
     black = "#000000";
@@ -246,11 +246,11 @@ let
 
 in
 [
-  (plugins.ghsettings github)
-  (plugins.conform conform)
-  (plugins.just just)
-  (plugins.lefthook lefthook)
-  (plugins.prettier prettier)
-  (plugins.prettier prettier-ignore)
+  (exts.ghsettings.${system} github)
+  (exts.conform.${system} conform)
+  (exts.just.${system} just)
+  (exts.lefthook.${system} lefthook)
+  (exts.prettier.${system} prettier)
+  (exts.prettier.${system} prettier-ignore)
 ]
 
