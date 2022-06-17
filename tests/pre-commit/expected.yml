@@ -1,8 +1,0 @@
-repos:
-  - hooks:
-      - entry: nixpkgs-fmt
-        files: \.nix
-        id: nixpkgs-fmt
-        language: system
-        name: nixpkgs-fmt
-    repo: local

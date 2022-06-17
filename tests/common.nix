@@ -1,17 +1,23 @@
 /* Common test runner used across all tests
 */
-{ pkgs, lib, plugins }:
-{ name, input, expected }:
+{ pkgs, engines }:
+{ name, tests }:
+with pkgs.lib;
 let
-  # Call make
-  result = lib.make (plugins.${name} input);
-
-  # Compare the result from make with the expected result
-  der = pkgs.runCommand "test.${name}"
-    { }
-    ''
-      cmp "${expected}" "${result.configFile}"
-      touch $out
-    '';
+  ders = builtins.map
+    (test:
+      let
+        result = engines.${name} test.args test.request;
+      in
+      {
+        "${name}.${test.name}" = pkgs.runCommand "test.${name}.${test.name}"
+          { }
+          ''
+            cmp "${test.expected}" "${result}"
+            touch $out
+          '';
+      }
+    )
+    tests;
 in
-der
+fold (x: y: recursiveUpdate x y) { } ders

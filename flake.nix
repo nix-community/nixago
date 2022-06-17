@@ -34,7 +34,7 @@
           };
 
           # Import test runner
-          runTest = import ./tests/common.nix { inherit pkgs lib plugins; };
+          runTests = import ./tests/common.nix { inherit pkgs engines; };
 
           # Helper function for aggregating development tools
           mkTools = tools: (builtins.listToAttrs
@@ -66,7 +66,7 @@
           inherit engines lib plugins;
 
           # Add local tests
-          checks = import ./tests { inherit pkgs runTest; };
+          checks = import ./tests { inherit pkgs runTests; };
 
           # Configure local development shell
           devShells = {
