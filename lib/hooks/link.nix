@@ -12,7 +12,10 @@ in
     log "${output} link updated"
 
     # Relink to the new result
-    unlink ${output} &>/dev/null
+    if [[ -L ${output} ]]; then
+      unlink ${output}
+    fi
+
     ln -s ${configFile} ${output}
 
     # Run extra shell hook

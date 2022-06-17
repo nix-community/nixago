@@ -25,7 +25,7 @@
           version = "2.1.0"; # x-release-please-version
 
           engines = import ./engines { inherit pkgs lib; };
-          lib = (import ./lib { inherit pkgs lib; });
+          lib = (import ./lib { inherit pkgs lib engines; });
           plugins = import ./plugins { inherit pkgs lib engines; };
 
           # Setup pkgs
@@ -66,7 +66,7 @@
           inherit engines lib plugins;
 
           # Add local tests
-          checks = import ./tests { inherit pkgs runTests; };
+          checks = import ./tests { inherit pkgs lib engines runTests; };
 
           # Configure local development shell
           devShells = {
