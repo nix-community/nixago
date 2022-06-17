@@ -22,7 +22,7 @@
     } // (flake-utils.lib.eachDefaultSystem
       (system:
         let
-          version = "2.1.0"; # x-release-please-version
+          version = "3.0.0"; # x-release-please-version
 
           engines = import ./engines { inherit pkgs lib; };
           lib = (import ./lib { inherit pkgs lib; });

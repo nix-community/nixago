@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.0.0](https://github.com/nix-community/nixago/compare/v2.1.0...v3.0.0) (2022-06-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* Simplifies external/internal API interface using engines (#23)
+
+### Features
+
+* adds flake template ([71abf4c](https://github.com/nix-community/nixago/commit/71abf4ce3e7c6e1ee17b00e70428d47784fb37fd))
+* adds flake template ([2826e31](https://github.com/nix-community/nixago/commit/2826e3122a361398de6cd2eb80cb10456d8019f6))
+* Simplifies external/internal API interface using engines ([#23](https://github.com/nix-community/nixago/issues/23)) ([e6a9566](https://github.com/nix-community/nixago/commit/e6a9566c18063db5b120e69e048d3627414e327d)), closes [#21](https://github.com/nix-community/nixago/issues/21)
+
+
+### Bug Fixes
+
+* isolates shell hooks and adds debugging information ([#20](https://github.com/nix-community/nixago/issues/20)) ([dd12078](https://github.com/nix-community/nixago/commit/dd1207883dd1b23f1c41917033a094b756916a9a))
+
 ## [2.1.0](https://github.com/jmgilman/nixago/compare/v2.0.0...v2.1.0) (2022-06-07)
 
 
