@@ -137,16 +137,16 @@
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <p>Nixago is a <a href="https://nixos.wiki/wiki/Flakes">flake</a> library for generating configuration files. It's
-primarily geared towards reducing clutter at the root of your repository added
-by various development tools (i.e., formatters, linters, etc.). However, Nixago
-is flexible enough to generate configuration files for most scenarios.</p>
+primarily geared towards reducing the clutter at the root of your repository
+added by various development tools (i.e., formatters, linters, etc.). However,
+Nixago is flexible enough to generate configuration files for most scenarios.</p>
 <p>Nixago is designed to be used in tandem with a <a href="https://nixos.org/manual/nix/stable/command-ref/nix-shell.html">nix shell</a> to dynamically
 create and manage configuration files in your existing development environments.
 Define the configurations in the <code>flake.nix</code> file at the root of your
 repository, and Nixago will automatically generate shell hooks for managing the
 files.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h1>
-<p>The first step is to add Nixago as an input to your <code>flake.nix</code>:</p>
+<p>Add Nixago as an input to your <code>flake.nix</code>:</p>
 <pre><code class="language-nix">{
   inputs = {
     # ...
@@ -157,12 +157,10 @@ files.</p>
   };
 }
 </code></pre>
-<p>To maintain consistency in the packages being used across flake, it's
-recommended to force Nixago's copy to follow the one declared in your flake.</p>
 <h2 id="generate-a-configuration"><a class="header" href="#generate-a-configuration">Generate a Configuration</a></h2>
-<p>Nixago offers various engines which can be used for transforming input data to
-the output file. By default, Nixago will use <code>pkgs.formats</code> from the internal
-Nix library.</p>
+<p>Nixago offers <a href="./engines/index.html">various engines</a> which can be used for
+transforming input data into an output file. Nixago will default to the
+<a href="./engines/nix.html">nix engine</a> that utilizes <code>pkgs.formats</code> from <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/pkgs-lib/formats.nix">nixpkgs</a>.</p>
 <pre><code class="language-nix">let
   configData = {
     &quot;field1&quot; = &quot;value1&quot;;
@@ -173,28 +171,13 @@ nixago.lib.make {
   inherit configData;
   output = &quot;config.json&quot;;
   format = &quot;json&quot;;
+  engine = nixago.engines.nix { }; # Optional as this is the default value
 }
 </code></pre>
-<p>This is functionally equivalent to:</p>
-<pre><code class="language-nix">let
-  configData = {
-    &quot;field1&quot; = &quot;value1&quot;;
-    &quot;field2&quot; = true;
-  };
-in
-nixago.lib.make {
-  inherit configData;
-  output = &quot;config.json&quot;;
-  format = &quot;json&quot;;
-  engine = nixago.engines.nix { };
-}
-</code></pre>
-<p>The first example omitted the engine attribute as it is the default value used
-when an engine isn't specified.</p>
 <p>The result of this invocation will be an attribute set with two attributes:</p>
 <ul>
-<li><code>configFile</code>: A derivation for building the configuration file</li>
-<li><code>shellHook</code>: A shell hook for managing the file</li>
+<li><code>configFile</code>: A derivation for building the configuration file.</li>
+<li><code>shellHook</code>: A shell hook for managing the file.</li>
 </ul>
 <p>Building the derivation produces a file with the following output:</p>
 <pre><code class="language-json">{
@@ -202,27 +185,38 @@ when an engine isn't specified.</p>
   &quot;field2&quot;: true
 }
 </code></pre>
-<p>The generated shell hook invokes the following script:</p>
-<pre><code class="language-bash">#!/nix/store/63a4li401f423jl8v5pwjwmyzlwd3lk9-bash-5.1-p16/bin/bash
-# Check if the link is pointing to the existing derivation result
-if readlink config.json &gt;/dev/null \
-  &amp;&amp; [[ $(readlink config.json) == /nix/store/gzf07xc8563kzvh157i27zpkr3cifzdv-config.json ]]; then
-  log &quot;config.json link is up to date&quot;
-elif [[ -L config.json || ! -f config.json ]]; then
-  # otherwise we need to update
-  log &quot;config.json link updated&quot;
-
-  # Relink to the new result
-  unlink config.json &amp;&gt;/dev/null
-  ln -s /nix/store/gzf07xc8563kzvh157i27zpkr3cifzdv-config.json config.json
-
-  # Run extra shell hook
-
-else
-  # this was an existing file
-  error &quot;refusing to overwrite config.json&quot;
-fi
+<p>The <code>make</code> function takes an attribute set that supports the options defined in
+the <a href="https://github.com/nix-community/nixago/blob/master/modules/request.nix">request module</a>. Please refer to the module definition for all of the
+available options.</p>
+<h2 id="using-the-shell-hook"><a class="header" href="#using-the-shell-hook">Using the Shell Hook</a></h2>
+<p>The generated shell hook will link the generated configuration file to one of
+two places:</p>
+<ul>
+<li>If <code>$PRJ_ROOT</code> is defined, the file will be linked to <code>$PRJ_ROOT/{output}</code>
+where <code>output</code> is the relative path defined in the call to <code>make</code>.</li>
+<li>If <code>$PRJ_ROOT</code> is not defined, the file will be linked to <code>./{output}</code>, where
+the relative path is determined by where the Nix CLI was invoked.</li>
+</ul>
+<p>For example, if <code>$PRJ_ROOT</code> is set to <code>/home/user/code/myprj</code> and the output is
+specified as <code>configs/config.json</code> then the file will be linked to
+<code>/home/user/code/myprj/configs/config.json</code>.</p>
+<p>The shell hook is designed to be integrated into a development shell:</p>
+<pre><code class="language-nix">{
+  # ...
+  devShells = {
+    default = pkgs.mkShell {
+      shellHook = (nixago.lib.make config).shellHook;
+    };
+  };
+ # ...
+}
 </code></pre>
+<p>This will ensure the file is generated and linked when you enter the shell. The
+behavior of the hook can be modified via the <a href="https://github.com/nix-community/nixago/blob/master/modules/request.nix#L8">available options</a>.</p>
+<h2 id="extending-nixago"><a class="header" href="#extending-nixago">Extending Nixago</a></h2>
+<p>An <a href="https://github.com/nix-community/nixago-extensions">additional repository</a> is available that provides extensions for Nixago.
+These simplify the process of generating configuration files for common
+development tools.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="engines"><a class="header" href="#engines">Engines</a></h1>
 <p>Nixago provides various engines which can be used for changing how the
 configuration file is being generated. If you would like to suggest a new
