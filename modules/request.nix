@@ -11,12 +11,12 @@ let
         # TODO: Make this a list
         extra = mkOption {
           type = types.str;
-          description = "Shell code to run after configuration file is updated";
+          description = "Shell code to run when the file is updated";
           default = "";
         };
         mode = mkOption {
           type = types.str;
-          description = "The output mode to use";
+          description = "The output mode to use (copy or link)";
           default = "link";
         };
       };
@@ -30,7 +30,7 @@ in
     };
     engine = mkOption {
       type = types.functionTo types.package;
-      description = "The engine to use for generating output";
+      description = "The engine to use for generating the derivation";
       default = engines.nix { };
     };
     format = mkOption {

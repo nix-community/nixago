@@ -216,9 +216,6 @@ let
           run = "${tools.prettier.exe} --check {staged_files}";
           glob = "*.{yaml,yml,md}";
         };
-        typos = {
-          run = "${tools.typos.exe} {staged_files}";
-        };
       };
     };
   };

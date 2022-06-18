@@ -1,9 +1,9 @@
 # Introduction
 
 Nixago is a [flake][1] library for generating configuration files. It's
-primarily geared towards reducing clutter at the root of your repository added
-by various development tools (i.e., formatters, linters, etc.). However, Nixago
-is flexible enough to generate configuration files for most scenarios.
+primarily geared towards reducing the clutter at the root of your repository
+added by various development tools (i.e., formatters, linters, etc.). However,
+Nixago is flexible enough to generate configuration files for most scenarios.
 
 Nixago is designed to be used in tandem with a [nix shell][2] to dynamically
 create and manage configuration files in your existing development environments.

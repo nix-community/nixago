@@ -1,6 +1,6 @@
 # Quick Start
 
-The first step is to add Nixago as an input to your `flake.nix`:
+Add Nixago as an input to your `flake.nix`:
 
 ```nix
 {
@@ -14,14 +14,11 @@ The first step is to add Nixago as an input to your `flake.nix`:
 }
 ```
 
-To maintain consistency in the packages being used across flake, it's
-recommended to force Nixago's copy to follow the one declared in your flake.
-
 ## Generate a Configuration
 
-Nixago offers various engines which can be used for transforming input data to
-the output file. By default, Nixago will use `pkgs.formats` from the internal
-Nix library.
+Nixago offers [various engines](./engines/index.md) which can be used for
+transforming input data into an output file. Nixago will default to the
+[nix engine](./engines/nix.md) that utilizes `pkgs.formats` from [nixpkgs][1].
 
 ```nix
 let
@@ -34,33 +31,14 @@ nixago.lib.make {
   inherit configData;
   output = "config.json";
   format = "json";
+  engine = nixago.engines.nix { }; # Optional as this is the default value
 }
 ```
-
-This is functionally equivalent to:
-
-```nix
-let
-  configData = {
-    "field1" = "value1";
-    "field2" = true;
-  };
-in
-nixago.lib.make {
-  inherit configData;
-  output = "config.json";
-  format = "json";
-  engine = nixago.engines.nix { };
-}
-```
-
-The first example omitted the engine attribute as it is the default value used
-when an engine isn't specified.
 
 The result of this invocation will be an attribute set with two attributes:
 
-- `configFile`: A derivation for building the configuration file
-- `shellHook`: A shell hook for managing the file
+- `configFile`: A derivation for building the configuration file.
+- `shellHook`: A shell hook for managing the file.
 
 Building the derivation produces a file with the following output:
 
@@ -71,26 +49,48 @@ Building the derivation produces a file with the following output:
 }
 ```
 
-The generated shell hook invokes the following script:
+The `make` function takes an attribute set that supports the options defined in
+the [request module][2]. Please refer to the module definition for all of the
+available options.
 
-```bash
-#!/nix/store/63a4li401f423jl8v5pwjwmyzlwd3lk9-bash-5.1-p16/bin/bash
-# Check if the link is pointing to the existing derivation result
-if readlink config.json >/dev/null \
-  && [[ $(readlink config.json) == /nix/store/gzf07xc8563kzvh157i27zpkr3cifzdv-config.json ]]; then
-  log "config.json link is up to date"
-elif [[ -L config.json || ! -f config.json ]]; then
-  # otherwise we need to update
-  log "config.json link updated"
+## Using the Shell Hook
 
-  # Relink to the new result
-  unlink config.json &>/dev/null
-  ln -s /nix/store/gzf07xc8563kzvh157i27zpkr3cifzdv-config.json config.json
+The generated shell hook will link the generated configuration file to one of
+two places:
 
-  # Run extra shell hook
+- If `$PRJ_ROOT` is defined, the file will be linked to `$PRJ_ROOT/{output}`
+  where `output` is the relative path defined in the call to `make`.
+- If `$PRJ_ROOT` is not defined, the file will be linked to `./{output}`, where
+  the relative path is determined by where the Nix CLI was invoked.
 
-else
-  # this was an existing file
-  error "refusing to overwrite config.json"
-fi
+For example, if `$PRJ_ROOT` is set to `/home/user/code/myprj` and the output is
+specified as `configs/config.json` then the file will be linked to
+`/home/user/code/myprj/configs/config.json`.
+
+The shell hook is designed to be integrated into a development shell:
+
+```nix
+{
+  # ...
+  devShells = {
+    default = pkgs.mkShell {
+      shellHook = (nixago.lib.make config).shellHook;
+    };
+  };
+ # ...
+}
 ```
+
+This will ensure the file is generated and linked when you enter the shell. The
+behavior of the hook can be modified via the [available options][3].
+
+## Extending Nixago
+
+An [additional repository][4] is available that provides extensions for Nixago.
+These simplify the process of generating configuration files for common
+development tools.
+
+[1]: https://github.com/NixOS/nixpkgs/blob/master/pkgs/pkgs-lib/formats.nix
+[2]: https://github.com/nix-community/nixago/blob/master/modules/request.nix
+[3]: https://github.com/nix-community/nixago/blob/master/modules/request.nix#L8
+[4]: https://github.com/nix-community/nixago-extensions
