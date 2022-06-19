@@ -1,4 +1,4 @@
-![logo](logo.png)
+![logo](logo.svg)
 
 <p align="center">
     <a href="https://github.com/nix-community/nixago/actions/workflows/ci.yml">
