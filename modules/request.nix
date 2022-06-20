@@ -23,6 +23,8 @@ let
     });
 in
 {
+  freeformType = types.anything;
+
   options = {
     configData = mkOption {
       type = types.anything;
