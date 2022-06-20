@@ -159,14 +159,11 @@ let
           "test"
         ];
         scopes = [
-          "conform"
-          "ghsettings"
-          "just"
-          "lefthook"
-          "pre-commit"
-          "prettier"
+          "engine"
+          "hook"
           "core"
           "flake"
+          "request"
         ];
       };
     };

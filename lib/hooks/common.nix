@@ -19,5 +19,12 @@
     fi
   }
 
+  try_make_path() {
+    dirname="$(dirname ''${1})"
+    if [[ ! -d "$dirname" ]]; then
+      mkdir -p "$dirname"
+    fi
+  }
+
   PS4='+ Line $(expr $LINENO + 4): '
 ''
