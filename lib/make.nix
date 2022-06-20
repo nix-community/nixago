@@ -1,8 +1,24 @@
 { pkgs, lib }:
+let
+  # compat: setDefaultModuleLocation is a relatively recent addition to pkgs.lib
+  setDefaultModuleLocation = pkgs.lib.setDefaultModuleLocation or (file: m:
+    { _file = file; imports = [ m ]; }
+  );
+in
 request:
 let
+  requestLocation = (builtins.unsafeGetAttrPos "configData" request).file or null;
+
   # Compile the request into its module equivalent
-  userRequest = lib.mkRequest [ request ];
+  userRequest =
+    let
+      maybeLocatedRequest =
+        if requestLocation == null then
+          request
+        else
+          setDefaultModuleLocation requestLocation request;
+    in
+    lib.mkRequest [ maybeLocatedRequest ];
 
   # The defined interface between Nixago and an engine is that it takes exactly
   # one parameter: an instance of the request module. The result should be a
