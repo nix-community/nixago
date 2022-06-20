@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.1.0](https://github.com/nix-community/nixago/compare/v3.0.0...v3.1.0) (2022-06-20)
+
+
+### Features
+
+* allow extra attributes that are transparently passed through ([#32](https://github.com/nix-community/nixago/issues/32)) ([59843d3](https://github.com/nix-community/nixago/commit/59843d34e6f369b65589dda00d2efe5d5164ce39))
+* locate the request file, if possible ([#30](https://github.com/nix-community/nixago/issues/30)) ([f904f54](https://github.com/nix-community/nixago/commit/f904f54eb5b60414d6411d0d43eb33360b707e88))
+* **request:** default format value to file extension ([#37](https://github.com/nix-community/nixago/issues/37)) ([c893573](https://github.com/nix-community/nixago/commit/c893573b94c0c76b2a701c811ceceaaa10f1d4c6)), closes [#28](https://github.com/nix-community/nixago/issues/28)
+
+
+### Bug Fixes
+
+* **core:** recover the unbound freeformType contract per module system ([#34](https://github.com/nix-community/nixago/issues/34)) ([1640dd9](https://github.com/nix-community/nixago/commit/1640dd9bc8246b5ef23664b5160a1b7a5b4cf57c))
+* **hook:** creates relative paths before linking/copying ([#36](https://github.com/nix-community/nixago/issues/36)) ([0fb7666](https://github.com/nix-community/nixago/commit/0fb76662c652c4b6668c73c357330d7457bc2ffe)), closes [#33](https://github.com/nix-community/nixago/issues/33)
+
 ## [3.0.0](https://github.com/nix-community/nixago/compare/v2.1.0...v3.0.0) (2022-06-17)
 
 
