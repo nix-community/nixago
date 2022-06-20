@@ -2,7 +2,7 @@
   This module holds the main data structure that's used when handling a
   "request" from the user to generate a configuration file.
 */
-{ lib, engines, ... }:
+{ lib, config, engines, ... }:
 with lib;
 let
   hook = types.submodule ({ config, lib, ... }:
@@ -38,6 +38,12 @@ in
     format = mkOption {
       type = types.str;
       description = "The format of the output file";
+      default = (
+        let
+          parts = splitString "." config.output;
+        in
+        builtins.elemAt parts ((builtins.length parts) - 1)
+      );
     };
     hook = mkOption {
       type = hook;
