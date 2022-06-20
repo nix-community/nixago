@@ -58,8 +58,8 @@ in
 nixago.lib.make {
   inherit configData;
   output = "config.json";
-  format = "json";
-  engine = nixago.engines.nix { }; # Optional as this is the default value
+  format = "json"; # Optional if it matches the file extension
+  engine = nixago.engines.nix { }; # Optional as this is the default engine
 }
 ```
 
