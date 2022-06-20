@@ -9,14 +9,19 @@ request:
 let
   requestLocation = (builtins.unsafeGetAttrPos "configData" request).file or null;
 
+  # Defunctor the request, because the module system can't deal with a functor-type module
+  # as an upstream contract, upstream should implement corresponding validators / sanators
+  # instead, upstream just "explodes"
+  defunctoredRequest = builtins.removeAttrs request [ "__functor" ];
+
   # Compile the request into its module equivalent
   userRequest =
     let
       maybeLocatedRequest =
         if requestLocation == null then
-          request
+          defunctoredRequest
         else
-          setDefaultModuleLocation requestLocation request;
+          setDefaultModuleLocation requestLocation defunctoredRequest;
     in
     lib.mkRequest [ maybeLocatedRequest ];
 
