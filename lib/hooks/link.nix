@@ -16,6 +16,7 @@ in
       unlink ${output}
     fi
 
+    try_make_path ${output}
     ln -s ${configFile} ${output}
 
     # Run extra shell hook

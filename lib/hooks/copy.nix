@@ -18,8 +18,9 @@ in
     fi
   else
     # We need to create the first iteration of the file
-    log "${output} copy created"
+    try_make_path ${output}
     install -m 644 ${configFile} ${output}
+    log "${output} copy created"
 
     # Run extra shell hook
     ${extra}
