@@ -8,12 +8,11 @@ let
 
   # Only include common shell code once
   common = (import ./hooks/common.nix);
-  shellHook = common + "\n" +
-    builtins.replaceStrings [ common ] [ "" ]
-      (concatStringsSep "\n"
-        (pkgs.lib.catAttrs "shellHook" result));
+  shellHook = common + "\nsource " +
+    (concatStringsSep "\nsource " (catAttrs "shellScript" result));
 in
 {
   inherit shellHook;
+  scripts = catAttrs "shellScript" result;
   configs = catAttrs "configFile" result;
 }

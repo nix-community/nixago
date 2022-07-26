@@ -40,9 +40,8 @@ let
   };
 
   # Builds the shell hook for managing the generated file.
-  shellHook =
-    lib.makeHook { inherit configFile name hookConfig; };
+  inherit (lib.makeHook { inherit configFile name hookConfig; }) shellHook shellScript;
 in
 {
-  inherit configFile shellHook;
+  inherit configFile shellHook shellScript;
 }
