@@ -50,6 +50,11 @@ in
       description = "Additional options for controlling hook generation";
       default = { };
     };
+    apply = mkOption {
+      type = types.functionTo types.anything;
+      description = "Apply this transformation to `configData`";
+      default = x: x;
+    };
     output = mkOption {
       type = types.str;
       description = "The relative path to link the generated file";
