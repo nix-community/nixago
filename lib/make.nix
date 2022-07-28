@@ -28,6 +28,12 @@ let
   # Apply specific transformations to the request's configData & extra
   reifiedRequest = userRequest // {
     configData = userRequest.apply userRequest.configData;
+    hook = userRequest.hook // {
+      extra =
+        if builtins.isFunction userRequest.hook.extra
+        then userRequest.hook.extra userRequest.configData
+        else userRequest.hook.extra;
+    };
   };
 
   # The defined interface between Nixago and an engine is that it takes exactly

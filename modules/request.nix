@@ -10,7 +10,7 @@ let
       options = {
         # TODO: Make this a list
         extra = mkOption {
-          type = types.str;
+          type = types.either types.str (types.functionTo types.str);
           description = "Shell code to run when the file is updated";
           default = "";
         };
