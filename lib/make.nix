@@ -25,18 +25,29 @@ let
     in
     lib.mkRequest [ maybeLocatedRequest ];
 
+  # Apply specific transformations to the request's configData & extra
+  reifiedRequest = userRequest // {
+    configData = userRequest.apply userRequest.configData;
+    hook = userRequest.hook // {
+      extra =
+        if builtins.isFunction userRequest.hook.extra
+        then userRequest.hook.extra userRequest.configData
+        else userRequest.hook.extra;
+    };
+  };
+
   # The defined interface between Nixago and an engine is that it takes exactly
   # one parameter: an instance of the request module. The result should be a
   # derivation which builds the desired configuration file.
-  configFile = userRequest.engine userRequest;
+  configFile = userRequest.engine reifiedRequest;
 
   # TODO: Remove this once we convert everything over to the new framework
   name = "temp";
 
   # TODO: Simplify this once we convert everything over to the new framework
   hookConfig = {
-    inherit (userRequest) output;
-    inherit (userRequest.hook) extra mode;
+    inherit (reifiedRequest) output;
+    inherit (reifiedRequest.hook) extra mode;
   };
 
   # Builds the shell hook for managing the generated file.

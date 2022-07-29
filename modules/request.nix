@@ -10,7 +10,7 @@ let
       options = {
         # TODO: Make this a list
         extra = mkOption {
-          type = types.str;
+          type = types.either types.str (types.functionTo types.str);
           description = "Shell code to run when the file is updated";
           default = "";
         };
@@ -49,6 +49,11 @@ in
       type = hook;
       description = "Additional options for controlling hook generation";
       default = { };
+    };
+    apply = mkOption {
+      type = types.functionTo types.anything;
+      description = "Apply this transformation to `configData`";
+      default = x: x;
     };
     output = mkOption {
       type = types.str;
