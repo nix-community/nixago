@@ -41,7 +41,10 @@ let
 
   # Builds the shell hook for managing the generated file.
   inherit (lib.makeHook { inherit configFile name hookConfig; }) shellHook shellScript;
+
+  # Provides a stand-alone `nix run`-runnable to install this Nixago file
+  install = pkgs.writeShellScriptBin "nixago_shell_hook" shellHook;
 in
 {
-  inherit configFile shellHook shellScript;
+  inherit configFile shellHook shellScript install;
 }
