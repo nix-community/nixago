@@ -3,6 +3,10 @@ let
   inherit (hookConfig) output extra;
 in
 ''
+  extra_hook() (
+  true
+  ${extra}
+  )
   # Check if the file exists
   if [[ -f ${output} ]]; then
     # Check if we need to update the local copy
@@ -12,7 +16,7 @@ in
       install -m 644 ${configFile} ${output}
 
       # Run extra shell hook
-      ${extra}
+      extra_hook
     else
       log "${output} copy is up to date"
     fi
@@ -23,6 +27,6 @@ in
     log "${output} copy created"
 
     # Run extra shell hook
-    ${extra}
+    extra_hook
   fi
 ''
