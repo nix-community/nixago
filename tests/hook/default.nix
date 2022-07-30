@@ -18,8 +18,10 @@ let
   linkHook = pkgs.writeShellScript "link" (lib.make linkRequest).shellHook;
   copyHook = pkgs.writeShellScript "copy" (lib.make copyRequest).shellHook;
 in
-pkgs.runCommand "test.hook" { }
+pkgs.runCommand "test.hook" { buildInputs = [ pkgs.gitMinimal ]; }
   ''
+    git init
+
     echo "Testing link hook"
     source ${linkHook}
     stat test.json
@@ -29,6 +31,8 @@ pkgs.runCommand "test.hook" { }
     source ${copyHook}
     stat test.json
     stat test.txt
+
+    rm -rf .git
 
     touch $out
   ''
