@@ -5,6 +5,10 @@ let
   gitignore-sentinel = "ignore-linked-files";
 in
 ''
+  extra_hook() (
+  true
+  ${extra}
+  )
   # Check if the link is pointing to the existing derivation result
   if readlink ${output} >/dev/null \
     && [[ $(readlink ${output}) == ${configFile} ]]; then
@@ -22,7 +26,7 @@ in
     ln -s ${configFile} ${output}
 
     # Run extra shell hook
-    ${extra}
+    extra_hook
   else
     # this was an existing file
     error "refusing to overwrite ${output}"
