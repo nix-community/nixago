@@ -1,6 +1,8 @@
 { configFile, hookConfig }:
 let
   inherit (hookConfig) output extra;
+
+  gitignore-sentinel = "ignore-linked-files";
 in
 ''
   # Check if the link is pointing to the existing derivation result
@@ -24,5 +26,21 @@ in
   else
     # this was an existing file
     error "refusing to overwrite ${output}"
+  fi
+  # Add this output to gitignore if not already
+  if ! test -f .gitignore
+  then
+    touch .gitignore
+  fi
+  if ! grep -qF "${output}" .gitignore
+  then
+    if ! grep -qF "${gitignore-sentinel}" .gitignore
+    then
+      echo -e "\n# nixago: ${gitignore-sentinel}" >> .gitignore
+    fi
+    newgitignore="$(awk '1;/${gitignore-sentinel}/{ print "${output}"; }' .gitignore)"
+    echo -e -n "$newgitignore" > .gitignore
+    git add .gitignore
+    log "${output} added to .gitignore"
   fi
 ''
