@@ -1,9 +1,11 @@
 .direnv/
-.conform.yaml
 .justfile
 .prettierignore
 .prettierrc.json
 docs/book
 docs/*.js
 site/
+
+# nixago: ignore-linked-files
+.conform.yaml
 lefthook.yml
