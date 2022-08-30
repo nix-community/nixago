@@ -3,6 +3,8 @@ let
   inherit (hookConfig) output extra;
 
   gitignore-sentinel = "ignore-linked-files";
+
+  ansi = import ./ansi.nix;
 in
 ''
   extra_hook() (
@@ -12,10 +14,10 @@ in
   # Check if the link is pointing to the existing derivation result
   if readlink ${output} >/dev/null \
     && [[ $(readlink ${output}) == ${configFile} ]]; then
-    log "${output} link is up to date"
+    log "'${output}' link is up to date"
   elif [[ -L ${output} || ! -f ${output} ]]; then
     # otherwise we need to update
-    log "${output} link updated"
+    log "${ansi.bold}${ansi."10"}'${output}' link updated${ansi.reset}"
 
     # Relink to the new result
     if [[ -L ${output} ]]; then
@@ -29,7 +31,7 @@ in
     extra_hook
   else
     # this was an existing file
-    error "refusing to overwrite ${output}"
+    error "refusing to overwrite '${output}'"
   fi
   # Add this output to gitignore if not already
   if ! test -f .gitignore
@@ -45,6 +47,6 @@ in
     newgitignore="$(awk '1;/${gitignore-sentinel}/{ print "${output}"; }' .gitignore)"
     echo -e -n "$newgitignore" > .gitignore
     git add .gitignore
-    log "${output} added to .gitignore"
+    log "${ansi.bold}${ansi."11"}'${output}' added to .gitignore${ansi.reset}"
   fi
 ''
