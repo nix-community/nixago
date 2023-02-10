@@ -1,24 +1,31 @@
-{ pkgs, lib, engines }:
-let
+{
+  pkgs,
+  lib,
+  engines,
+}: let
   linkRequest = {
     format = "json";
     output = "test.json";
-    configData = {
+    data = {
       field1 = "value1";
       field2 = 42;
       field3 = false;
     };
   };
 
-  copyRequest = linkRequest // {
-    hook =
-      { mode = "copy"; extra = "touch test.txt"; };
-  };
+  copyRequest =
+    linkRequest
+    // {
+      hook = {
+        mode = "copy";
+        extra = "touch test.txt";
+      };
+    };
 
   linkHook = pkgs.writeShellScript "link" (lib.make linkRequest).shellHook;
   copyHook = pkgs.writeShellScript "copy" (lib.make copyRequest).shellHook;
 in
-pkgs.runCommand "test.hook" { buildInputs = [ pkgs.gitMinimal ]; }
+  pkgs.runCommand "test.hook" {buildInputs = [pkgs.gitMinimal];}
   ''
     git init
 

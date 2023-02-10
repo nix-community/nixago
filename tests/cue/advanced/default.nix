@@ -2,7 +2,7 @@
   name = "advanced";
   expected = ./expected.txt;
   args = {
-    files = [ ./template.cue ];
+    files = [./template.cue];
     flags = {
       expression = "rendered";
     };
@@ -16,7 +16,7 @@
   request = {
     format = "text";
     output = "test.txt";
-    configData = {
+    data = {
       first_name = "john";
       last_name = "doe";
       address = "123 Lane";

@@ -1,11 +1,11 @@
 {
   name = "toml";
   expected = ./expected.toml;
-  args = { };
+  args = {};
   request = {
     format = "toml";
     output = "test.toml";
-    configData = {
+    data = {
       field1 = "value1";
       field2 = 42;
       field3 = false;

@@ -1,11 +1,11 @@
 {
   name = "json";
   expected = ./expected.json;
-  args = { };
+  args = {};
   request = {
     format = "json";
     output = "test.json";
-    configData = {
+    data = {
       field1 = "value1";
       field2 = 42;
       field3 = false;

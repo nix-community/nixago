@@ -1,48 +1,52 @@
-{ pkgs, lib }:
-{ files
-, preHook ? ""
-, postHook ? ""
-, flags ? { }
-, cue ? pkgs.cue
-, jq ? pkgs.jq
+{
+  pkgs,
+  lib,
+}: {
+  files,
+  preHook ? "",
+  postHook ? "",
+  flags ? {},
+  cue ? pkgs.cue,
+  jq ? pkgs.jq,
 }: request:
-with pkgs.lib;
-let
-  inherit (request) configData format output;
+with pkgs.lib; let
+  inherit (request) data format output;
 
   # We opt to feed configuration data as JSON to CUE
-  json = builtins.toJSON configData;
+  json = builtins.toJSON data;
 
   # Default the derivation name to the basename of the output file.
   name = builtins.baseNameOf output;
 
   allFlags =
-    ({
+    {
       # Output the result to the derivation output
       outfile = "$out";
 
       # Specify the desired output file format
       out = format;
-    } // flags);
+    }
+    // flags;
 
   /*
-    CUE can be informed about the format of any input files. Since our input
-    file will be extensionless (Nix generates a random name with no extension),
-    then we need to append `json:` to the input.
+  CUE can be informed about the format of any input files. Since our input
+  file will be extensionless (Nix generates a random name with no extension),
+  then we need to append `json:` to the input.
   */
-  allInputs = files ++ [ "json: $jsonPath" ];
+  allInputs = files ++ ["json: $jsonPath"];
 
   # Build the full CUE command
-  flagStr = builtins.concatStringsSep " " (cli.toGNUCommandLine { } allFlags);
+  flagStr = builtins.concatStringsSep " " (cli.toGNUCommandLine {} allFlags);
   inputStr = builtins.concatStringsSep " " allInputs;
   cueEvalCmd = "cue eval ${flagStr} ${inputStr}";
 
   # runCommand does the work of producing the derivation
-  result = pkgs.runCommand name
+  result =
+    pkgs.runCommand name
     {
       inherit json;
-      buildInputs = [ cue jq ];
-      passAsFile = [ "json" ];
+      buildInputs = [cue jq];
+      passAsFile = ["json"];
     }
     ''
       # Helpful details if an error occurs
@@ -81,5 +85,4 @@ let
       ${postHook}
     '';
 in
-result
-
+  result

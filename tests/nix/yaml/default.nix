@@ -1,11 +1,11 @@
 {
   name = "yaml";
   expected = ./expected.yml;
-  args = { };
+  args = {};
   request = {
     format = "yaml";
     output = "test.yaml";
-    configData = {
+    data = {
       field1 = "value1";
       field2 = 42;
       field3 = false;
