@@ -1,5 +1,8 @@
-{ exts, system, tools }:
-let
+{
+  exts,
+  system,
+  tools,
+}: let
   colors = {
     black = "#000000";
     blue = "#1565C0";
@@ -144,7 +147,7 @@ let
   # Conform
   conform = {
     commit = {
-      header = { length = 89; };
+      header = {length = 89;};
       conventional = {
         types = [
           "build"
@@ -219,12 +222,12 @@ let
 
   # Prettier
   prettier = {
-    configData = {
+    data = {
       proseWrap = "always";
     };
   };
   prettier-ignore = {
-    configData = [
+    data = [
       "docs/book"
       "docs/*.js"
       ".github/settings.yml"
@@ -237,9 +240,7 @@ let
     ];
     type = "ignore";
   };
-
-in
-[
+in [
   (exts.ghsettings.${system} github)
   (exts.conform.${system} conform)
   (exts.just.${system} just)
@@ -247,4 +248,3 @@ in
   (exts.prettier.${system} prettier)
   (exts.prettier.${system} prettier-ignore)
 ]
-

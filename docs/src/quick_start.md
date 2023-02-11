@@ -22,13 +22,13 @@ transforming input data into an output file. Nixago will default to the
 
 ```nix
 let
-  configData = {
+  data = {
     "field1" = "value1";
     "field2" = true;
   };
 in
 nixago.lib.make {
-  inherit configData;
+  inherit data;
   output = "config.json";
   format = "json";
   engine = nixago.engines.nix { }; # Optional as this is the default value

@@ -1,11 +1,11 @@
 {
   name = "ini";
   expected = ./expected.ini;
-  args = { };
+  args = {};
   request = {
     format = "ini";
     output = "test.ini";
-    configData = {
+    data = {
       config = {
         field1 = "value1";
         field2 = 42;
