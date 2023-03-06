@@ -47,6 +47,6 @@
   fi
 
   if [[ -n $nixago_log_format ]]; then
-    printf "nixago: updating repositoriy files\n"
+    printf "nixago: updating repository files\n"
   fi
 ''
