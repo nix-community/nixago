@@ -30,9 +30,7 @@
           lib = (import ./lib { inherit pkgs lib engines; });
 
           # Setup pkgs
-          pkgs = import nixpkgs {
-            inherit system;
-          };
+          pkgs = nixpkgs.legacyPackages.${system};
 
           # Import test runner
           runTests = import ./tests/common.nix { inherit pkgs engines; };
