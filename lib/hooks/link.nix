@@ -38,15 +38,15 @@ in
   then
     touch .gitignore
   fi
-  if ! grep -qF "${output}" .gitignore
+  if ! grep -qF "/${output}" .gitignore
   then
     if ! grep -qF "${gitignore-sentinel}" .gitignore
     then
       echo -e "\n# nixago: ${gitignore-sentinel}" >> .gitignore
     fi
-    newgitignore="$(awk '1;/${gitignore-sentinel}/{ print "${output}"; }' .gitignore)"
+    newgitignore="$(awk '1;/${gitignore-sentinel}/{ print "/${output}"; }' .gitignore)"
     echo -e -n "$newgitignore" > .gitignore
     git add .gitignore
-    log "${ansi.bold}${ansi."11"}'${output}' added to .gitignore${ansi.reset}"
+    log "${ansi.bold}${ansi."11"}'/${output}' added to .gitignore${ansi.reset}"
   fi
 ''
