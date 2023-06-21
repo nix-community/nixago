@@ -37,9 +37,9 @@
   PS4='+ Line $(expr $LINENO + 4): '
 
   if [[ ''${NIXAGO_LOG-1} -gt 0 ]]; then
-    if [[ -n $NIXAGO_LOG_FORMAT ]]; then
+    if [[ -n ''${NIXAGO_LOG_FORMAT-} ]]; then
       nixago_log_format="''${NIXAGO_LOG_FORMAT}"
-    elif [[ -n $DIRENV_LOG_FORMAT ]]; then
+    elif [[ -n ''${DIRENV_LOG_FORMAT-} ]]; then
       nixago_log_format="''${DIRENV_LOG_FORMAT/direnv/nixago}"
     else
       nixago_log_format=$'\E[mnixago: \E[38;5;8m%s\E[m'
