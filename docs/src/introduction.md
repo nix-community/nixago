@@ -11,5 +11,5 @@ Define the configurations in the `flake.nix` file at the root of your
 repository, and Nixago will automatically generate shell hooks for managing the
 files.
 
-[1]: https://nixos.wiki/wiki/Flakes
+[1]: https://wiki.nixos.org/wiki/Flakes
 [2]: https://nixos.org/manual/nix/stable/command-ref/nix-shell.html
