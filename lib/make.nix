@@ -37,10 +37,7 @@ in
         hook =
           userRequest.hook
           // {
-            extra =
-              if builtins.isFunction userRequest.hook.extra
-              then userRequest.hook.extra userRequest.data
-              else userRequest.hook.extra;
+            extra = (pkgs.lib.toFunction userRequest.hook.extra) userRequest.data;
           };
       };
 
